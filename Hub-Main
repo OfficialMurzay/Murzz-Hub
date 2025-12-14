@@ -108,7 +108,16 @@ task.wait(1)
             -- Handle dropdown changes here
         end,
     })
-end
+
+    local RegionalOreFarm1 = mainTab1:CreateToggle({
+       Name = "Regional Ore Farm",
+       CurrentValue = false,
+       Flag = "Toggle2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+       Callback = function(Value)
+       -- The function that takes place when the toggle is pressed
+       -- The variable (Value) is a boolean on whether the toggle is true or false
+       end,
+    })
 
 if game.PlaceId == 76558904092080 then
     WorldOneExclusive()
