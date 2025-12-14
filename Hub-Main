@@ -47,64 +47,47 @@ local Window = Rayfield:CreateWindow({
 })
 
 -- Discord Notify (10 mins)
-while true do
-   task.wait(600)
-   Rayfield:Notify({
-      Title = "Enjoy Murzz Hub?",
-      Content = "Join the Discord!",
-      Duration = 6.5,
-      Image = 4483362458,
-   })
-end
+spawn(function()
+    while true do
+        task.wait(600)
+        Rayfield:Notify({
+            Title = "Enjoy Murzz Hub?",
+            Content = "Join the Discord!",
+            Duration = 6.5,
+            Image = 4483362458,
+        })
+    end
+end)
 
 -- World One Exclusive (Game id: 76558904092080)
+local function WorldOneExclusive()
+    Rayfield:Notify({
+        Title = "World One Script Loaded",
+        Content = "Enjoy the BETA script!",
+        Duration = 6.5,
+        Image = 4483362458,
+    })
 
-Rayfield:Notify({
-   Title = "World One Script Loaded",
-   Content = "Enjoy the BETA script!",
-   Duration = 6.5,
-   Image = 4483362458,
-})
+    local mainTab = Window:CreateTab("Main", 0) -- Title, Image
+    local section = mainTab:CreateSection("Ore Farm")
 
-local 1MainTab = Window:CreateTab("Main", 0) -- Title, Image
-local 1Section = 1MainTab:CreateSection("Ore Farm")
-local 1Dropdown = 1MainTab:CreateDropdown({
-   Name = "Select Ore(s)",
-   Options = {"Pebble","Rock","Boulder"},
-   CurrentOption = {"Pebble"},
-   MultipleOptions = true,
-   Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Options)
-   -- The function that takes place when the selected option is changed
-   -- The variable (Options) is a table of strings for the current selected options
-   end,
-})
+    local dropdown = mainTab:CreateDropdown({
+        Name = "Select Ore(s)",
+        Options = {"Pebble","Rock","Boulder"},
+        CurrentOption = {"Pebble"},
+        MultipleOptions = true,
+        Flag = "Dropdown1", 
+        Callback = function(Options)
+            -- The function that takes place when the selected option is changed
+        end,
+    })
 
+    -- Add additional World One features here
+end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-- Run World One section only if in the correct game
+if game.PlaceId == 76558904092080 then
+    WorldOneExclusive()
+end
 
 Rayfield:LoadConfiguration()
