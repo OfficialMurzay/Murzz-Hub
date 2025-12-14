@@ -109,6 +109,8 @@ task.wait(1)
         end,
     })
 
+task.wait(1)
+
     local RegionalOreFarm1 = mainTab1:CreateToggle({
        Name = "Regional Ore Farm",
        CurrentValue = false,
@@ -118,6 +120,7 @@ task.wait(1)
        -- The variable (Value) is a boolean on whether the toggle is true or false
        end,
     })
+end
 
 if game.PlaceId == 76558904092080 then
     WorldOneExclusive()
