@@ -36,11 +36,11 @@ local Window = Rayfield:CreateWindow({
 
    KeySystem = true,
    KeySettings = {
-      Title = "Test 1",
-      Subtitle = "Test 2",
+      Title = "Murzz Hub | Key System",
+      Subtitle = "BETA v1",
       Note = "In BETA so free key!! Key is: Murzay",
-      FileName = "Key",
-      SaveKey = true,
+      FileName = "MurzzKey",
+      SaveKey = false,
       GrabKeyFromSite = false,
       Key = {"Murzay"}
    }
@@ -48,7 +48,7 @@ local Window = Rayfield:CreateWindow({
 
 -- Home Tab
 
-local HomeTab = Window:CreateTab("Automation", house) -- Title, Image
-local AutoFarmSection = HomeTab:CreateSection("Auto Farm")
+local MainTab = Window:CreateTab("Main", house) -- Title, Image
+local AutoFarmSection = MainTab:CreateSection("Auto Farm")
    
 Rayfield:LoadConfiguration()
