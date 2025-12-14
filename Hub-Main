@@ -49,7 +49,7 @@ local Window = Rayfield:CreateWindow({
 -- Home Tab
 
 local HomeTab = Window:CreateTab("Automation", house) -- Title, Image
-local AutoMineSection = HomeTab:CreateSection("Auto Farm")
+local AutoFarmSection = HomeTab:CreateSection("Auto Farm")
 local MineToggle = HomeTab:CreateToggle({
    Name = "Auto Mine",
    CurrentValue = false,
