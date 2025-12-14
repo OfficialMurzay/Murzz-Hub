@@ -50,15 +50,5 @@ local Window = Rayfield:CreateWindow({
 
 local HomeTab = Window:CreateTab("Automation", house) -- Title, Image
 local AutoFarmSection = HomeTab:CreateSection("Auto Farm")
-local MineToggle = HomeTab:CreateToggle({
-   Name = "Auto Mine",
-   CurrentValue = false,
-   Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(true)
-   -- The function that takes place when the toggle is pressed
-   -- The variable (Value) is a boolean on whether the toggle is true or false
-   end,
-})
-
    
 Rayfield:LoadConfiguration()
