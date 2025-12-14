@@ -48,7 +48,10 @@ local Window = Rayfield:CreateWindow({
 
 -- Home Tab
 
-local HomeTab = Window:CreateTab("Home", 4483362458) -- Title, Image
-local Section = HomeTab:CreateSection("Section Example")
+local HomeTab = Window:CreateTab("Home", 81381827579989) -- Title, Image
+local Divider1 = HomeTab:CreateDivider()
+local Section1 = HomeTab:CreateSection("Section Example")
+local Divider2 = HomeTab:CreateDivider()
+
    
 Rayfield:LoadConfiguration()
