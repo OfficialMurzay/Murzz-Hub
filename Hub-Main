@@ -48,9 +48,8 @@ local Window = Rayfield:CreateWindow({
 
 -- Home Tab
 
-local HomeTab = Window:CreateTab("Home", 81381827579989) -- Title, Image
-local Divider1 = HomeTab:CreateDivider()
-local Section1 = HomeTab:CreateSection("Section Example")
+local HomeTab = Window:CreateTab("Home", house) -- Title, Image
+local Section1 = HomeTab:CreateSection("Auto Mine")
 local Divider2 = HomeTab:CreateDivider()
 
    
