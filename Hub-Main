@@ -122,6 +122,8 @@ task.wait(1)
     })
 end
 
+task.wait(1)
+
     local section2 = mainTab1:CreateSection("Mob Farm")
 
 task.wait(1)
