@@ -6,74 +6,66 @@ local displayName = player.DisplayName or player.Name -- fallback to username if
 
 -- Load Rayfield safely
 local Rayfield
-do
-    print("[DEBUG] Loading Rayfield...")
-    local success, err = pcall(function()
-        Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-    end)
-    if not success then
-        warn("[DEBUG] Failed to load Rayfield: "..tostring(err))
-        return
-    end
-    print("[DEBUG] Rayfield loaded successfully")
+local success, err = pcall(function()
+    Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+end)
+if not success then
+    warn("Failed to load Rayfield: "..tostring(err))
+    return
 end
 
-task.wait(2)  -- give Rayfield time to initialize fully
+task.wait(2)
 
 -- Create the window with dynamic display name
 local Window
-do
-    print("[DEBUG] Creating Rayfield Window...")
-    local success, err = pcall(function()
-        Window = Rayfield:CreateWindow({
-            Name = "Murzz Hub v1 | @" .. displayName,
-            Icon = 0,
-            LoadingTitle = "Loading Murzz Hub",
-            LoadingSubtitle = "by Murzay",
-            ShowText = "Powered By Rayfield",
-            Theme = "Default",
+success, err = pcall(function()
+    Window = Rayfield:CreateWindow({
+        Name = "Murzz Hub v1 | @" .. displayName,
+        Icon = 0,
+        LoadingTitle = "Loading Murzz Hub",
+        LoadingSubtitle = "by Murzay",
+        ShowText = "Powered By Rayfield",
+        Theme = "Default",
 
-            ToggleUIKeybind = "K",
+        ToggleUIKeybind = "K",
 
-            DisableRayfieldPrompts = false,
-            DisableBuildWarnings = false,
+        DisableRayfieldPrompts = false,
+        DisableBuildWarnings = false,
 
-            ConfigurationSaving = {
-                Enabled = true,
-                FolderName = nil,
-                FileName = "MurzzHub"
-            },
+        ConfigurationSaving = {
+            Enabled = true,
+            FolderName = nil,
+            FileName = "MurzzHub"
+        },
 
-            Discord = {
-                Enabled = false,
-                Invite = "noinvitelink",
-                RememberJoins = true
-            },
+        Discord = {
+            Enabled = false,
+            Invite = "noinvitelink",
+            RememberJoins = true
+        },
 
-            KeySystem = true,
-            KeySettings = {
-                Title = "Murzz Hub | Key System",
-                Subtitle = "BETA v1",
-                Note = "In BETA so free key!! Key is: Murzay",
-                FileName = "MurzKey",
-                SaveKey = false,
-                GrabKeyFromSite = false,
-                Key = {"Murzay"}
-            }
-        })
-    end)
-    if not success or not Window then
-        warn("[DEBUG] Failed to create Window: "..tostring(err))
-        return
-    end
-    print("[DEBUG] Rayfield Window created successfully")
+        KeySystem = true,
+        KeySettings = {
+            Title = "Murzz Hub | Key System",
+            Subtitle = "BETA v1",
+            Note = "In BETA so free key!! Key is: Murzay",
+            FileName = "MurzKey",
+            SaveKey = false,
+            GrabKeyFromSite = false,
+            Key = {"Murzay"}
+        }
+    })
+end)
+if not success or not Window then
+    warn("Failed to create Window: "..tostring(err))
+    return
 end
 
 -- Discord Notify (10 mins)
 spawn(function()
     while true do
         task.wait(600)
-        local ok, e = pcall(function()
+        pcall(function()
             Rayfield:Notify({
                 Title = "Enjoy Murzz Hub?",
                 Content = "Join the Discord!",
@@ -81,7 +73,6 @@ spawn(function()
                 Image = 4483362458,
             })
         end)
-        if not ok then warn("[DEBUG] Discord Notify failed: "..tostring(e)) end
     end
 end)
 
@@ -91,8 +82,7 @@ task.wait(0.2)  -- extra short delay to ensure all elements are ready
 
 -- World One Exclusive (Game id: 76558904092080)
 local function WorldOneExclusive()
-    print("[DEBUG] Entering World One Exclusive Function")
-    local success, err = pcall(function()
+    pcall(function()
         Rayfield:Notify({
             Title = "World One Script Loaded",
             Content = "Enjoy the BETA script!",
@@ -102,42 +92,21 @@ local function WorldOneExclusive()
 
         -- Create Main Tab safely
         local mainTab1 = Window:CreateTab("Main", 0)
-        assert(mainTab1, "Failed to create Main tab")
-        print("[DEBUG] Main tab created")
+        if mainTab1 then
+            local section1 = mainTab1:CreateSection("Ore Farm")
 
-        -- Create Sections
-        local section1 = mainTab1:CreateSection("Ore Farm")
-        assert(section1, "Failed to create Ore Farm section")
-        print("[DEBUG] Ore Farm section created")
-
-        local section2 = mainTab1:CreateSection("Mob Farm")
-        assert(section2, "Failed to create Mob Farm section")
-        print("[DEBUG] Mob Farm section created")
-
-        local section3 = mainTab1:CreateSection("Farm Settings")
-        assert(section3, "Failed to create Farm Settings section")
-        print("[DEBUG] Farm Settings section created")
-
-        -- Create Dropdown
-        local dropdown1 = mainTab1:CreateDropdown({
-            Name = "Select Ore(s)",
-            Options = {"Pebble","Rock","Boulder"},
-            CurrentOption = {"Pebble"},
-            MultipleOptions = true,
-            Flag = "Dropdown1",
-            Callback = function(Options)
-                print("[DEBUG] Dropdown changed: ", table.concat(Options, ", "))
-            end,
-        })
-        assert(dropdown1, "Failed to create Dropdown")
-        print("[DEBUG] Dropdown created successfully")
+            local dropdown1 = mainTab1:CreateDropdown({
+                Name = "Select Ore(s)",
+                Options = {"Pebble","Rock","Boulder"},
+                CurrentOption = {"Pebble"},
+                MultipleOptions = true,
+                Flag = "Dropdown1",
+                Callback = function(Options)
+                    -- Handle dropdown changes here
+                end,
+            })
+        end
     end)
-
-    if not success then
-        warn("[DEBUG] World One Exclusive Error: "..tostring(err))
-    else
-        print("[DEBUG] World One tab and sections loaded successfully")
-    end
 end
 
 -- Run World One section only if in the correct game
@@ -147,11 +116,6 @@ end
 
 -- Safe LoadConfiguration with short wait
 task.wait(0.2)
-local ok, e = pcall(function()
+pcall(function()
     Rayfield:LoadConfiguration()
 end)
-if not ok then
-    warn("[DEBUG] LoadConfiguration warning: "..tostring(e))
-else
-    print("[DEBUG] Configuration loaded successfully")
-end
