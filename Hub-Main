@@ -100,8 +100,8 @@ task.wait(1)
 
     local dropdown2 = mainTab1:CreateDropdown({
         Name = "Select Region",
-        Options = {"Test"},
-        CurrentOption = {"Test"},
+        Options = {"Cave Entrance", "Cave Middle", "Cave Deep"},
+        CurrentOption = {"Cave Entrance"},
         MultipleOptions = false,
         Flag = "Dropdown2",
         Callback = function(Options)
