@@ -7,20 +7,23 @@ local displayName = player.DisplayName or player.Name -- fallback to username if
 -- Load Rayfield safely
 local Rayfield
 do
+    print("[DEBUG] Loading Rayfield...")
     local success, err = pcall(function()
         Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
     end)
     if not success then
-        warn("Failed to load Rayfield: "..tostring(err))
+        warn("[DEBUG] Failed to load Rayfield: "..tostring(err))
         return
     end
+    print("[DEBUG] Rayfield loaded successfully")
 end
 
-task.wait(2)
+task.wait(2)  -- give Rayfield time to initialize fully
 
 -- Create the window with dynamic display name
 local Window
 do
+    print("[DEBUG] Creating Rayfield Window...")
     local success, err = pcall(function()
         Window = Rayfield:CreateWindow({
             Name = "Murzz Hub v1 | @" .. displayName,
@@ -52,7 +55,7 @@ do
                 Title = "Murzz Hub | Key System",
                 Subtitle = "BETA v1",
                 Note = "In BETA so free key!! Key is: Murzay",
-                FileName = "MurzzKey",
+                FileName = "MurzKey",
                 SaveKey = false,
                 GrabKeyFromSite = false,
                 Key = {"Murzay"}
@@ -60,9 +63,10 @@ do
         })
     end)
     if not success or not Window then
-        warn("Failed to create Rayfield Window: "..tostring(err))
+        warn("[DEBUG] Failed to create Window: "..tostring(err))
         return
     end
+    print("[DEBUG] Rayfield Window created successfully")
 end
 
 -- Discord Notify (10 mins)
@@ -77,17 +81,17 @@ spawn(function()
                 Image = 4483362458,
             })
         end)
-        if not ok then warn("Discord Notify failed: "..tostring(e)) end
+        if not ok then warn("[DEBUG] Discord Notify failed: "..tostring(e)) end
     end
 end)
 
 -- Wait until Window is fully ready before creating tabs
 repeat task.wait(0.1) until Window
+task.wait(0.2)  -- extra short delay to ensure all elements are ready
 
 -- World One Exclusive (Game id: 76558904092080)
 local function WorldOneExclusive()
     print("[DEBUG] Entering World One Exclusive Function")
-
     local success, err = pcall(function()
         Rayfield:Notify({
             Title = "World One Script Loaded",
@@ -99,10 +103,20 @@ local function WorldOneExclusive()
         -- Create Main Tab safely
         local mainTab1 = Window:CreateTab("Main", 0)
         assert(mainTab1, "Failed to create Main tab")
+        print("[DEBUG] Main tab created")
 
         -- Create Sections
         local section1 = mainTab1:CreateSection("Ore Farm")
         assert(section1, "Failed to create Ore Farm section")
+        print("[DEBUG] Ore Farm section created")
+
+        local section2 = mainTab1:CreateSection("Mob Farm")
+        assert(section2, "Failed to create Mob Farm section")
+        print("[DEBUG] Mob Farm section created")
+
+        local section3 = mainTab1:CreateSection("Farm Settings")
+        assert(section3, "Failed to create Farm Settings section")
+        print("[DEBUG] Farm Settings section created")
 
         -- Create Dropdown
         local dropdown1 = mainTab1:CreateDropdown({
@@ -116,6 +130,7 @@ local function WorldOneExclusive()
             end,
         })
         assert(dropdown1, "Failed to create Dropdown")
+        print("[DEBUG] Dropdown created successfully")
     end)
 
     if not success then
@@ -130,8 +145,13 @@ if game.PlaceId == 76558904092080 then
     WorldOneExclusive()
 end
 
--- Load saved configuration
+-- Safe LoadConfiguration with short wait
+task.wait(0.2)
 local ok, e = pcall(function()
     Rayfield:LoadConfiguration()
 end)
-if not ok then warn("Failed to load Rayfield Configuration: "..tostring(e)) end
+if not ok then
+    warn("[DEBUG] LoadConfiguration warning: "..tostring(e))
+else
+    print("[DEBUG] Configuration loaded successfully")
+end
