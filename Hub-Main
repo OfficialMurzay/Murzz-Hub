@@ -71,9 +71,9 @@ local function WorldOneExclusive()
     })
 
     local mainTab1 = Window:CreateTab("Main", 0) -- Title, Image
-    local section1 = mainTab:CreateSection("Ore Farm")
+    local section1 = mainTab1:CreateSection("Ore Farm")
 
-    local dropdown1 = mainTab:CreateDropdown({
+    local dropdown1 = mainTab1:CreateDropdown({
         Name = "Select Ore(s)",
         Options = {"Pebble","Rock","Boulder"},
         CurrentOption = {"Pebble"},
