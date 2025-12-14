@@ -124,21 +124,6 @@ end
 
 task.wait(1)
 
-    local section2 = mainTab1:CreateSection("Mob Farm")
-
-task.wait(1)
-
-    local dropdown3 = mainTab1:CreateDropdown({
-        Name = "Select Mob(s)",
-        Options = {"Regular Zombie","Delver Zombie","Elite Zombie", "Brute Zombie"},
-        CurrentOption = {"Regular Zombie"},
-        MultipleOptions = true,
-        Flag = "Dropdown3",
-        Callback = function(Options)
-            -- Handle dropdown changes here
-        end,
-    })
-
 if game.PlaceId == 76558904092080 then
     WorldOneExclusive()
 end
