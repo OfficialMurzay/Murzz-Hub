@@ -68,10 +68,10 @@ local function WorldOneExclusive()
         Image = 4483362458,
     })
 
-    local mainTab = Window:CreateTab("Main", 0) -- Title, Image
-    local section = mainTab:CreateSection("Ore Farm")
+    local mainTab1 = Window:CreateTab("Main", 0) -- Title, Image
+    local section1 = mainTab:CreateSection("Ore Farm")
 
-    local dropdown = mainTab:CreateDropdown({
+    local dropdown1 = mainTab:CreateDropdown({
         Name = "Select Ore(s)",
         Options = {"Pebble","Rock","Boulder"},
         CurrentOption = {"Pebble"},
