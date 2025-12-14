@@ -46,6 +46,9 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local Tab = Window:CreateTab("Tab Example", 4483362458) -- Title, Image
+-- Home Tab
+
+local HomeTab = Window:CreateTab("Home", 4483362458) -- Title, Image
+local Section = HomeTab:CreateSection("Section Example")
    
 Rayfield:LoadConfiguration()
