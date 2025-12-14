@@ -66,8 +66,12 @@ local function WorldOneExclusive()
         Image = 4483362458,
     })
 
+task.wait(1)
+
     local mainTab1 = Window:CreateTab("Main", 0)
     local section1 = mainTab1:CreateSection("Ore Farm")
+
+task.wait(1)
 
     local dropdown1 = mainTab1:CreateDropdown({
         Name = "Select Ore(s)",
@@ -79,19 +83,22 @@ local function WorldOneExclusive()
             -- Handle dropdown changes here
         end,
     })
-end
 
-local OreFarm1 = mainTab1:CreateToggle({
-   Name = "Farm Ores",
-   CurrentValue = false,
-   Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Value)
-   -- The function that takes place when the toggle is pressed
-   -- The variable (Value) is a boolean on whether the toggle is true or false
-   end,
-})
+task.wait(1)
 
-local dropdown2 = mainTab1:CreateDropdown({
+    local OreFarm1 = mainTab1:CreateToggle({
+       Name = "Farm Ores",
+       CurrentValue = false,
+       Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+       Callback = function(Value)
+       -- The function that takes place when the toggle is pressed
+       -- The variable (Value) is a boolean on whether the toggle is true or false
+       end,
+    })
+
+task.wait(1)
+
+    local dropdown2 = mainTab1:CreateDropdown({
         Name = "Select Region",
         Options = {"Test"},
         CurrentOption = {"Test"},
@@ -101,6 +108,7 @@ local dropdown2 = mainTab1:CreateDropdown({
             -- Handle dropdown changes here
         end,
     })
+end
 
 if game.PlaceId == 76558904092080 then
     WorldOneExclusive()
