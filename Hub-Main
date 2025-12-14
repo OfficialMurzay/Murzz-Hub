@@ -59,6 +59,8 @@ spawn(function()
     end
 end)
 
+task.wait(2)
+
 -- World One Exclusive (Game id: 76558904092080)
 local function WorldOneExclusive()
     Rayfield:Notify({
