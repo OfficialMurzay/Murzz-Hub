@@ -4,87 +4,125 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local displayName = player.DisplayName or player.Name -- fallback to username if needed
 
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+-- Load Rayfield safely
+local Rayfield
+do
+    local success, err = pcall(function()
+        Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+    end)
+    if not success then
+        warn("Failed to load Rayfield: "..tostring(err))
+        return
+    end
+end
 
 task.wait(2)
 
 -- Create the window with dynamic display name
-local Window = Rayfield:CreateWindow({
-   Name = "Murzz Hub v1 | @" .. displayName,
-   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
-   LoadingTitle = "Loading Murzz Hub",
-   LoadingSubtitle = "by Murzay",
-   ShowText = "Powered By Rayfield",
-   Theme = "Default",
+local Window
+do
+    local success, err = pcall(function()
+        Window = Rayfield:CreateWindow({
+            Name = "Murzz Hub v1 | @" .. displayName,
+            Icon = 0,
+            LoadingTitle = "Loading Murzz Hub",
+            LoadingSubtitle = "by Murzay",
+            ShowText = "Powered By Rayfield",
+            Theme = "Default",
 
-   ToggleUIKeybind = "K",
+            ToggleUIKeybind = "K",
 
-   DisableRayfieldPrompts = false,
-   DisableBuildWarnings = false,
+            DisableRayfieldPrompts = false,
+            DisableBuildWarnings = false,
 
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = nil,
-      FileName = "MurzzHub"
-   },
+            ConfigurationSaving = {
+                Enabled = true,
+                FolderName = nil,
+                FileName = "MurzzHub"
+            },
 
-   Discord = {
-      Enabled = false,
-      Invite = "noinvitelink",
-      RememberJoins = true
-   },
+            Discord = {
+                Enabled = false,
+                Invite = "noinvitelink",
+                RememberJoins = true
+            },
 
-   KeySystem = true,
-   KeySettings = {
-      Title = "Murzz Hub | Key System",
-      Subtitle = "BETA v1",
-      Note = "In BETA so free key!! Key is: Murzay",
-      FileName = "MurzzKey",
-      SaveKey = false,
-      GrabKeyFromSite = false,
-      Key = {"Murzay"}
-   }
-})
+            KeySystem = true,
+            KeySettings = {
+                Title = "Murzz Hub | Key System",
+                Subtitle = "BETA v1",
+                Note = "In BETA so free key!! Key is: Murzay",
+                FileName = "MurzzKey",
+                SaveKey = false,
+                GrabKeyFromSite = false,
+                Key = {"Murzay"}
+            }
+        })
+    end)
+    if not success or not Window then
+        warn("Failed to create Rayfield Window: "..tostring(err))
+        return
+    end
+end
 
 -- Discord Notify (10 mins)
 spawn(function()
     while true do
         task.wait(600)
-        Rayfield:Notify({
-            Title = "Enjoy Murzz Hub?",
-            Content = "Join the Discord!",
-            Duration = 6.5,
-            Image = 4483362458,
-        })
+        local ok, e = pcall(function()
+            Rayfield:Notify({
+                Title = "Enjoy Murzz Hub?",
+                Content = "Join the Discord!",
+                Duration = 6.5,
+                Image = 4483362458,
+            })
+        end)
+        if not ok then warn("Discord Notify failed: "..tostring(e)) end
     end
 end)
 
-task.wait(2)
+-- Wait until Window is fully ready before creating tabs
+repeat task.wait(0.1) until Window
 
 -- World One Exclusive (Game id: 76558904092080)
 local function WorldOneExclusive()
-    Rayfield:Notify({
-        Title = "World One Script Loaded",
-        Content = "Enjoy the BETA script!",
-        Duration = 6.5,
-        Image = 4483362458,
-    })
+    print("[DEBUG] Entering World One Exclusive Function")
 
-    local mainTab1 = Window:CreateTab("Main", 0) -- Title, Image
-    local section1 = mainTab1:CreateSection("Ore Farm")
+    local success, err = pcall(function()
+        Rayfield:Notify({
+            Title = "World One Script Loaded",
+            Content = "Enjoy the BETA script!",
+            Duration = 6.5,
+            Image = 4483362458,
+        })
 
-    local dropdown1 = mainTab1:CreateDropdown({
-        Name = "Select Ore(s)",
-        Options = {"Pebble","Rock","Boulder"},
-        CurrentOption = {"Pebble"},
-        MultipleOptions = true,
-        Flag = "Dropdown1", 
-        Callback = function(Options)
-            -- The function that takes place when the selected option is changed
-        end,
-    })
+        -- Create Main Tab safely
+        local mainTab1 = Window:CreateTab("Main", 0)
+        assert(mainTab1, "Failed to create Main tab")
 
-    -- Add additional World One features here
+        -- Create Sections
+        local section1 = mainTab1:CreateSection("Ore Farm")
+        assert(section1, "Failed to create Ore Farm section")
+
+        -- Create Dropdown
+        local dropdown1 = mainTab1:CreateDropdown({
+            Name = "Select Ore(s)",
+            Options = {"Pebble","Rock","Boulder"},
+            CurrentOption = {"Pebble"},
+            MultipleOptions = true,
+            Flag = "Dropdown1",
+            Callback = function(Options)
+                print("[DEBUG] Dropdown changed: ", table.concat(Options, ", "))
+            end,
+        })
+        assert(dropdown1, "Failed to create Dropdown")
+    end)
+
+    if not success then
+        warn("[DEBUG] World One Exclusive Error: "..tostring(err))
+    else
+        print("[DEBUG] World One tab and sections loaded successfully")
+    end
 end
 
 -- Run World One section only if in the correct game
@@ -92,4 +130,8 @@ if game.PlaceId == 76558904092080 then
     WorldOneExclusive()
 end
 
-Rayfield:LoadConfiguration()
+-- Load saved configuration
+local ok, e = pcall(function()
+    Rayfield:LoadConfiguration()
+end)
+if not ok then warn("Failed to load Rayfield Configuration: "..tostring(e)) end
