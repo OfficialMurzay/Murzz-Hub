@@ -1,186 +1,256 @@
+-- =========================================
+-- Murzz Universal Hub - Orion Style UI
+-- Dark Theme + Neon Accent + UserId Rank Access
+-- =========================================
+
 -- SERVICES
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local TeleportService = game:GetService("TeleportService")
-
 local LocalPlayer = Players.LocalPlayer
-local Mouse = LocalPlayer:GetMouse()
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
--- RANK SYSTEM
-local Rank = "Member"
+-- =======================
+-- RANK SYSTEM (USERID-BASED)
+-- =======================
+local PlayerRank = "Member"
 if LocalPlayer.UserId == 1178706563 then
-    Rank = "Owner"
+    PlayerRank = "Scripter"
+elseif LocalPlayer.UserId == 2910574312 then
+    PlayerRank = "Tester"
 end
 
--- LOAD LINORIA
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/Library.lua"))()
-local ThemeManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/ThemeManager.lua"))()
-local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/SaveManager.lua"))()
-
--- WINDOW
-local Window = Library:CreateWindow({
-    Title = "Universal Script Hub",
-    Center = true,
-    AutoShow = true
+-- =======================
+-- LOAD ORION LIBRARY
+-- =======================
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/DozeIsOkLol/UILibarySource/main/Orion"))()
+local Window = OrionLib:MakeWindow({
+    Name = "Murzz Universal Hub",
+    HidePremium = true,
+    SaveConfig = true,
+    ConfigFolder = "MurzzHub"
 })
 
--- TABS
-local Tabs = {
-    Info    = Window:AddTab("Info"),
-    Player  = Window:AddTab("Player"),
-    Tools   = Window:AddTab("Tools"),
-    Scripts = Window:AddTab("Scripts"),
-    Aimbot  = Window:AddTab("Aimbot"),
+-- =======================
+-- THEME
+-- =======================
+OrionLib:SetTheme({
+    MainFrame = Color3.fromRGB(25, 25, 25),
+    ToggleButton = Color3.fromRGB(0, 255, 255),
+    Accent = Color3.fromRGB(0, 255, 255),
+    Tab = Color3.fromRGB(35, 35, 35),
+    TabAccent = Color3.fromRGB(0, 255, 255),
+    TextColor = Color3.fromRGB(255, 255, 255),
+})
+
+-- =======================
+-- INFO TAB
+-- =======================
+local InfoTab = Window:MakeTab({
+    Name = "Info",
+    Icon = "rbxassetid://4483345998", -- info icon
+    PremiumOnly = false
+})
+
+InfoTab:AddLabel("Discord: discord.gg/unknowfornow")
+InfoTab:AddButton({
+    Name = "Copy Invite",
+    Callback = function()
+        setclipboard("https://discord.gg/unknowfornow")
+        OrionLib:MakeNotification({
+            Name = "Murzz Hub",
+            Content = "Discord invite copied!",
+            Image = "rbxassetid://4483345998",
+            Time = 3
+        })
+    end
+})
+
+-- Rank List
+local RankList = {
+    ["Murzay"] = "Scripter",
+    ["TanerBannerJ"] = "Tester",
 }
 
--------------------------------------------------
--- INFO TAB
--------------------------------------------------
-local InfoLeft = Tabs.Info:AddLeftGroupbox("Rank")
-InfoLeft:AddLabel("@" .. LocalPlayer.Name)
-InfoLeft:AddLabel(Rank)
+InfoTab:AddLabel("Rank List:")
+for playerName, rank in pairs(RankList) do
+    local labelText = playerName .. " = " .. rank
+    if playerName == LocalPlayer.Name then
+        labelText = labelText .. " <- You"
+    end
+    InfoTab:AddLabel(labelText)
+end
 
-local InfoRight = Tabs.Info:AddRightGroupbox("Discord")
-InfoRight:AddLabel("discord.gg/unknowfornow")
-InfoRight:AddButton("Copy Invite", function()
-    setclipboard("https://discord.gg/unknowfornow")
-    Library:Notify("Copied Discord invite")
-end)
+InfoTab:AddLabel("Your Rank: " .. PlayerRank)
 
--------------------------------------------------
+-- =======================
 -- PLAYER TAB
--------------------------------------------------
-local PlayerGroup = Tabs.Player:AddLeftGroupbox("Movement")
-
-PlayerGroup:AddSlider("WalkSpeed", {
-    Text = "WalkSpeed",
-    Default = 16,
-    Min = 16,
-    Max = 150,
-    Rounding = 0,
-    Callback = function(v)
-        local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-        if hum then hum.WalkSpeed = v end
-    end
+-- =======================
+local PlayerTab = Window:MakeTab({
+    Name = "Player",
+    Icon = "rbxassetid://4483362458",
 })
 
-PlayerGroup:AddSlider("JumpPower", {
-    Text = "JumpPower",
-    Default = 50,
-    Min = 50,
-    Max = 200,
-    Callback = function(v)
-        local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-        if hum then hum.JumpPower = v end
+-- Infinite Jump
+PlayerTab:AddToggle({
+    Name = "Infinite Jump",
+    Default = false,
+    Callback = function(val)
+        getgenv().InfiniteJumpEnabled = val
     end
-})
-
-PlayerGroup:AddToggle("InfiniteJump", {
-    Text = "Infinite Jump",
-    Default = false
 })
 
 UserInputService.JumpRequest:Connect(function()
-    if Library.Flags.InfiniteJump then
+    if getgenv().InfiniteJumpEnabled then
         local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-        if hum then
-            hum:ChangeState(Enum.HumanoidStateType.Jumping)
-        end
+        if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
     end
 end)
 
--------------------------------------------------
--- TOOLS TAB
--------------------------------------------------
-local ToolsGroup = Tabs.Tools:AddLeftGroupbox("Utilities")
-
-ToolsGroup:AddButton("Rejoin Server", function()
-    TeleportService:Teleport(game.PlaceId, LocalPlayer)
-end)
-
-ToolsGroup:AddButton("Server Hop", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/FE/main/ServerHop.lua"))()
-end)
-
-if Rank == "Owner" then
-    local OwnerGroup = Tabs.Tools:AddRightGroupbox("Owner Only")
-
-    OwnerGroup:AddButton("Print Players", function()
-        for _, v in ipairs(Players:GetPlayers()) do
-            print(v.Name)
-        end
-    end)
-end
-
--------------------------------------------------
--- SCRIPTS TAB
--------------------------------------------------
-local ScriptsGroup = Tabs.Scripts:AddLeftGroupbox("Universal Scripts")
-
-ScriptsGroup:AddButton("Infinite Yield", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
-end)
-
-ScriptsGroup:AddButton("Simple ESP", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/FE/main/ESP.lua"))()
-end)
-
--------------------------------------------------
--- AIMBOT TAB
--------------------------------------------------
-local AimbotGroup = Tabs.Aimbot:AddLeftGroupbox("Aimbot")
-
-AimbotGroup:AddToggle("AimbotEnabled", {
-    Text = "Enable Aimbot",
-    Default = false
+-- Movement Speed
+PlayerTab:AddSlider({
+    Name = "Movement Speed",
+    Min = 16,
+    Max = 150,
+    Default = 16,
+    Callback = function(val)
+        local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then hum.WalkSpeed = val end
+    end
 })
 
-AimbotGroup:AddSlider("AimbotFOV", {
-    Text = "FOV",
-    Default = 100,
+-- Jump Strength
+PlayerTab:AddSlider({
+    Name = "Jump Strength",
     Min = 50,
-    Max = 500
+    Max = 200,
+    Default = 50,
+    Callback = function(val)
+        local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then hum.JumpPower = val end
+    end
 })
 
-local function GetClosestPlayer()
-    local closest, shortest = nil, math.huge
-    for _, v in ipairs(Players:GetPlayers()) do
-        if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("Head") then
-            local pos, onscreen = workspace.CurrentCamera:WorldToViewportPoint(v.Character.Head.Position)
-            if onscreen then
-                local dist = (Vector2.new(pos.X, pos.Y) - Vector2.new(Mouse.X, Mouse.Y)).Magnitude
-                if dist < shortest and dist < Library.Flags.AimbotFOV then
-                    shortest = dist
-                    closest = v
-                end
+-- No Clip
+PlayerTab:AddToggle({
+    Name = "No Clip",
+    Default = false,
+    Callback = function(val)
+        getgenv().NoClipEnabled = val
+    end
+})
+
+RunService.RenderStepped:Connect(function()
+    if getgenv().NoClipEnabled then
+        for _, part in pairs(LocalPlayer.Character:GetChildren()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = false
             end
         end
     end
-    return closest
-end
-
-RunService.RenderStepped:Connect(function()
-    if Library.Flags.AimbotEnabled then
-        local target = GetClosestPlayer()
-        if target and target.Character and target.Character:FindFirstChild("Head") then
-            workspace.CurrentCamera.CFrame =
-                CFrame.new(
-                    workspace.CurrentCamera.CFrame.Position,
-                    target.Character.Head.Position
-                )
-        end
-    end
 end)
 
--------------------------------------------------
--- THEMES & CONFIGS
--------------------------------------------------
-ThemeManager:SetLibrary(Library)
-SaveManager:SetLibrary(Library)
+-- =======================
+-- AIMBOT TAB
+-- =======================
+local AimbotTab = Window:MakeTab({
+    Name = "Aimbot",
+    Icon = "rbxassetid://4483362458"
+})
+AimbotTab:AddLabel("Aimbot settings placeholder (Coming Soon)")
 
-ThemeManager:SetFolder("UniversalHub")
-SaveManager:SetFolder("UniversalHub/Configs")
+-- =======================
+-- SCRIPT TAB
+-- =======================
+local ScriptTab = Window:MakeTab({
+    Name = "Script",
+    Icon = "rbxassetid://4483362458",
+})
 
-ThemeManager:ApplyToTab(Tabs.Info)
-SaveManager:BuildConfigSection(Tabs.Info)
+-- Script buttons (accessible to everyone)
+ScriptTab:AddButton({Name = "Infinite Yield", Callback = function() print("Clicked Infinite Yield") end})
+ScriptTab:AddButton({Name = "Dex Explorer", Callback = function() print("Clicked Dex Explorer") end})
+ScriptTab:AddButton({Name = "Remote Spy", Callback = function() print("Clicked Remote Spy") end})
+
+-- =======================
+-- ANIMATION TAB
+-- =======================
+local AnimationTab = Window:MakeTab({
+    Name = "Animation",
+    Icon = "rbxassetid://4483362458",
+})
+
+local animInput
+AnimationTab:AddTextbox({
+    Name = "Animation ID",
+    Default = "",
+    TextDisappear = true,
+    Callback = function(val)
+        animInput = val
+    end
+})
+
+AnimationTab:AddButton({Name = "Play Animation", Callback = function() print("Play Animation ID:", animInput) end})
+AnimationTab:AddButton({Name = "Loop Animation", Callback = function() print("Loop Animation ID:", animInput) end})
+AnimationTab:AddButton({Name = "Stop Animation", Callback = function() print("Stop Animation") end})
+
+-- =======================
+-- SETTINGS TAB
+-- =======================
+local SettingsTab = Window:MakeTab({
+    Name = "Settings",
+    Icon = "rbxassetid://4483362458",
+})
+
+SettingsTab:AddBind({
+    Name = "Open/Close Hub",
+    Default = Enum.KeyCode.RightControl,
+    Hold = false,
+    Callback = function()
+        Window:Toggle()
+    end
+})
+
+SettingsTab:AddToggle({
+    Name = "Auto Open on Start",
+    Default = true,
+    Callback = function(val)
+        print("Auto Open on Start:", val)
+    end
+})
+
+-- =======================
+-- DEBUG TAB (Scripter Only)
+-- =======================
+if PlayerRank == "Scripter" then
+    local DebugTab = Window:MakeTab({
+        Name = "Debug",
+        Icon = "rbxassetid://4483362458"
+    })
+    DebugTab:AddToggle({
+        Name = "Enable Debugging",
+        Default = false,
+        Callback = function(val)
+            print("Debugging Enabled:", val)
+        end
+    })
+else
+    -- Notify non-scripters if they attempt to access Debug tab
+    OrionLib:MakeNotification({
+        Name = "Murzz Hub",
+        Content = "Access denied, not high enough rank",
+        Image = "rbxassetid://4483345998",
+        Time = 3
+    })
+end
+
+-- =======================
+-- UI Loaded Notification
+-- =======================
+OrionLib:MakeNotification({
+    Name = "Murzz Hub",
+    Content = "Universal Hub Loaded Successfully!",
+    Image = "rbxassetid://4483345998",
+    Time = 3
+})
+
+print("Murzz Universal Hub Loaded | Rank:", PlayerRank)
