@@ -1,78 +1,186 @@
--- Services
+-- SERVICES
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local UserId = LocalPlayer.UserId
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TeleportService = game:GetService("TeleportService")
 
--- Rank System
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+
+-- RANK SYSTEM
 local Rank = "Member"
-if UserId == 1178706563 then
+if LocalPlayer.UserId == 1178706563 then
     Rank = "Owner"
 end
 
--- Load Rayfield
-local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+-- LOAD LINORIA
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/Library.lua"))()
+local ThemeManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/ThemeManager.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/violin-suzutsuki/LinoriaLib/main/addons/SaveManager.lua"))()
 
--- Create Window
-local Window = Rayfield:CreateWindow({
-    Name = "My Script Hub",
-    LoadingTitle = "Starting Hub",
-    LoadingSubtitle = "Rayfield UI",
-    ShowText = "Toggle UI",
-    ToggleUIKeybind = "K",
-    Theme = "Default",
-    ConfigurationSaving = {
-        Enabled = true,
-        FileName = "MyHubConfig"
-    }
+-- WINDOW
+local Window = Library:CreateWindow({
+    Title = "Universal Script Hub",
+    Center = true,
+    AutoShow = true
 })
 
--- Tabs
-local InfoTab   = Window:CreateTab("Info", "info")
-local PlayerTab = Window:CreateTab("Player", "user")
-local ToolsTab  = Window:CreateTab("Tools", "wrench")
-local ScriptsTab= Window:CreateTab("Scripts", "code")
-local AimbotTab = Window:CreateTab("Aimbot", "crosshair")
+-- TABS
+local Tabs = {
+    Info    = Window:AddTab("Info"),
+    Player  = Window:AddTab("Player"),
+    Tools   = Window:AddTab("Tools"),
+    Scripts = Window:AddTab("Scripts"),
+    Aimbot  = Window:AddTab("Aimbot"),
+}
 
 -------------------------------------------------
 -- INFO TAB
 -------------------------------------------------
+local InfoLeft = Tabs.Info:AddLeftGroupbox("Rank")
+InfoLeft:AddLabel("@" .. LocalPlayer.Name)
+InfoLeft:AddLabel(Rank)
 
--- Rank Section
-InfoTab:CreateSection("Rank")
+local InfoRight = Tabs.Info:AddRightGroupbox("Discord")
+InfoRight:AddLabel("discord.gg/unknowfornow")
+InfoRight:AddButton("Copy Invite", function()
+    setclipboard("https://discord.gg/unknowfornow")
+    Library:Notify("Copied Discord invite")
+end)
 
-InfoTab:CreateParagraph({
-    Title = "@" .. LocalPlayer.Name,
-    Content = Rank
-})
+-------------------------------------------------
+-- PLAYER TAB
+-------------------------------------------------
+local PlayerGroup = Tabs.Player:AddLeftGroupbox("Movement")
 
--- Divider (visual spacing)
-InfoTab:CreateSection(" ")
-
--- Discord Section
-InfoTab:CreateSection("Discord")
-
-InfoTab:CreateParagraph({
-    Title = "discord.gg/unknowfornow",
-    Content = "Join the community server"
-})
-
-InfoTab:CreateButton({
-    Name = "Copy Discord Invite",
-    Callback = function()
-        setclipboard("https://discord.gg/unknowfornow")
-        Rayfield:Notify({
-            Title = "Copied!",
-            Content = "Discord invite copied to clipboard",
-            Duration = 3
-        })
+PlayerGroup:AddSlider("WalkSpeed", {
+    Text = "WalkSpeed",
+    Default = 16,
+    Min = 16,
+    Max = 150,
+    Rounding = 0,
+    Callback = function(v)
+        local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then hum.WalkSpeed = v end
     end
 })
 
--------------------------------------------------
--- PLACEHOLDERS (you can expand later)
--------------------------------------------------
+PlayerGroup:AddSlider("JumpPower", {
+    Text = "JumpPower",
+    Default = 50,
+    Min = 50,
+    Max = 200,
+    Callback = function(v)
+        local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then hum.JumpPower = v end
+    end
+})
 
-PlayerTab:CreateSection("Player Features")
-ToolsTab:CreateSection("Tools")
-ScriptsTab:CreateSection("Script Loader")
-AimbotTab:CreateSection("Aimbot Settings")
+PlayerGroup:AddToggle("InfiniteJump", {
+    Text = "Infinite Jump",
+    Default = false
+})
+
+UserInputService.JumpRequest:Connect(function()
+    if Library.Flags.InfiniteJump then
+        local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum:ChangeState(Enum.HumanoidStateType.Jumping)
+        end
+    end
+end)
+
+-------------------------------------------------
+-- TOOLS TAB
+-------------------------------------------------
+local ToolsGroup = Tabs.Tools:AddLeftGroupbox("Utilities")
+
+ToolsGroup:AddButton("Rejoin Server", function()
+    TeleportService:Teleport(game.PlaceId, LocalPlayer)
+end)
+
+ToolsGroup:AddButton("Server Hop", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/FE/main/ServerHop.lua"))()
+end)
+
+if Rank == "Owner" then
+    local OwnerGroup = Tabs.Tools:AddRightGroupbox("Owner Only")
+
+    OwnerGroup:AddButton("Print Players", function()
+        for _, v in ipairs(Players:GetPlayers()) do
+            print(v.Name)
+        end
+    end)
+end
+
+-------------------------------------------------
+-- SCRIPTS TAB
+-------------------------------------------------
+local ScriptsGroup = Tabs.Scripts:AddLeftGroupbox("Universal Scripts")
+
+ScriptsGroup:AddButton("Infinite Yield", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+end)
+
+ScriptsGroup:AddButton("Simple ESP", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/FilteringEnabled/FE/main/ESP.lua"))()
+end)
+
+-------------------------------------------------
+-- AIMBOT TAB
+-------------------------------------------------
+local AimbotGroup = Tabs.Aimbot:AddLeftGroupbox("Aimbot")
+
+AimbotGroup:AddToggle("AimbotEnabled", {
+    Text = "Enable Aimbot",
+    Default = false
+})
+
+AimbotGroup:AddSlider("AimbotFOV", {
+    Text = "FOV",
+    Default = 100,
+    Min = 50,
+    Max = 500
+})
+
+local function GetClosestPlayer()
+    local closest, shortest = nil, math.huge
+    for _, v in ipairs(Players:GetPlayers()) do
+        if v ~= LocalPlayer and v.Character and v.Character:FindFirstChild("Head") then
+            local pos, onscreen = workspace.CurrentCamera:WorldToViewportPoint(v.Character.Head.Position)
+            if onscreen then
+                local dist = (Vector2.new(pos.X, pos.Y) - Vector2.new(Mouse.X, Mouse.Y)).Magnitude
+                if dist < shortest and dist < Library.Flags.AimbotFOV then
+                    shortest = dist
+                    closest = v
+                end
+            end
+        end
+    end
+    return closest
+end
+
+RunService.RenderStepped:Connect(function()
+    if Library.Flags.AimbotEnabled then
+        local target = GetClosestPlayer()
+        if target and target.Character and target.Character:FindFirstChild("Head") then
+            workspace.CurrentCamera.CFrame =
+                CFrame.new(
+                    workspace.CurrentCamera.CFrame.Position,
+                    target.Character.Head.Position
+                )
+        end
+    end
+end)
+
+-------------------------------------------------
+-- THEMES & CONFIGS
+-------------------------------------------------
+ThemeManager:SetLibrary(Library)
+SaveManager:SetLibrary(Library)
+
+ThemeManager:SetFolder("UniversalHub")
+SaveManager:SetFolder("UniversalHub/Configs")
+
+ThemeManager:ApplyToTab(Tabs.Info)
+SaveManager:BuildConfigSection(Tabs.Info)
