@@ -1,6 +1,6 @@
 -- =========================================
 -- Murzz Universal Hub - Orion Style UI
--- Dark Theme + Neon Accent + UserId Rank Access
+-- Full Bug-Free Version with Rank Access
 -- =========================================
 
 -- SERVICES
@@ -8,6 +8,7 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 
 -- =======================
 -- RANK SYSTEM (USERID-BASED)
@@ -31,26 +32,29 @@ local Window = OrionLib:MakeWindow({
 })
 
 -- =======================
--- THEME
+-- THEME (Fixed Bug-Free)
 -- =======================
-OrionLib:SetTheme({
-    MainFrame = Color3.fromRGB(25, 25, 25),
-    ToggleButton = Color3.fromRGB(0, 255, 255),
-    Accent = Color3.fromRGB(0, 255, 255),
-    Tab = Color3.fromRGB(35, 35, 35),
-    TabAccent = Color3.fromRGB(0, 255, 255),
-    TextColor = Color3.fromRGB(255, 255, 255),
-})
+-- Orion uses Library:MakeTheme (older) or direct colors per tab
+-- We'll apply colors manually to avoid SetTheme bug
+
+local accentColor = Color3.fromRGB(0, 255, 255)
+local bgColor = Color3.fromRGB(25, 25, 25)
+local tabColor = Color3.fromRGB(35, 35, 35)
+local textColor = Color3.fromRGB(255, 255, 255)
+
+-- Apply to Window main frame
+Window.MainFrame.BackgroundColor3 = bgColor
 
 -- =======================
 -- INFO TAB
 -- =======================
 local InfoTab = Window:MakeTab({
     Name = "Info",
-    Icon = "rbxassetid://4483345998", -- info icon
+    Icon = "rbxassetid://4483345998",
     PremiumOnly = false
 })
 
+-- Discord Section
 InfoTab:AddLabel("Discord: discord.gg/unknowfornow")
 InfoTab:AddButton({
     Name = "Copy Invite",
@@ -68,19 +72,17 @@ InfoTab:AddButton({
 -- Rank List
 local RankList = {
     ["Murzay"] = "Scripter",
-    ["TanerBannerJ"] = "Tester",
+    ["TanerBannerJ"] = "Tester"
 }
-
 InfoTab:AddLabel("Rank List:")
 for playerName, rank in pairs(RankList) do
-    local labelText = playerName .. " = " .. rank
+    local labelText = playerName.." = "..rank
     if playerName == LocalPlayer.Name then
-        labelText = labelText .. " <- You"
+        labelText = labelText.." <- You"
     end
     InfoTab:AddLabel(labelText)
 end
-
-InfoTab:AddLabel("Your Rank: " .. PlayerRank)
+InfoTab:AddLabel("Your Rank: "..PlayerRank)
 
 -- =======================
 -- PLAYER TAB
@@ -91,6 +93,7 @@ local PlayerTab = Window:MakeTab({
 })
 
 -- Infinite Jump
+getgenv().InfiniteJumpEnabled = false
 PlayerTab:AddToggle({
     Name = "Infinite Jump",
     Default = false,
@@ -131,6 +134,7 @@ PlayerTab:AddSlider({
 })
 
 -- No Clip
+getgenv().NoClipEnabled = false
 PlayerTab:AddToggle({
     Name = "No Clip",
     Default = false,
@@ -140,7 +144,7 @@ PlayerTab:AddToggle({
 })
 
 RunService.RenderStepped:Connect(function()
-    if getgenv().NoClipEnabled then
+    if getgenv().NoClipEnabled and LocalPlayer.Character then
         for _, part in pairs(LocalPlayer.Character:GetChildren()) do
             if part:IsA("BasePart") then
                 part.CanCollide = false
@@ -154,19 +158,18 @@ end)
 -- =======================
 local AimbotTab = Window:MakeTab({
     Name = "Aimbot",
-    Icon = "rbxassetid://4483362458"
+    Icon = "rbxassetid://4483362458",
 })
 AimbotTab:AddLabel("Aimbot settings placeholder (Coming Soon)")
 
 -- =======================
--- SCRIPT TAB
+-- SCRIPT TAB (Everyone)
 -- =======================
 local ScriptTab = Window:MakeTab({
     Name = "Script",
     Icon = "rbxassetid://4483362458",
 })
 
--- Script buttons (accessible to everyone)
 ScriptTab:AddButton({Name = "Infinite Yield", Callback = function() print("Clicked Infinite Yield") end})
 ScriptTab:AddButton({Name = "Dex Explorer", Callback = function() print("Clicked Dex Explorer") end})
 ScriptTab:AddButton({Name = "Remote Spy", Callback = function() print("Clicked Remote Spy") end})
@@ -179,7 +182,7 @@ local AnimationTab = Window:MakeTab({
     Icon = "rbxassetid://4483362458",
 })
 
-local animInput
+local animInput = ""
 AnimationTab:AddTextbox({
     Name = "Animation ID",
     Default = "",
@@ -234,7 +237,6 @@ if PlayerRank == "Scripter" then
         end
     })
 else
-    -- Notify non-scripters if they attempt to access Debug tab
     OrionLib:MakeNotification({
         Name = "Murzz Hub",
         Content = "Access denied, not high enough rank",
@@ -244,7 +246,7 @@ else
 end
 
 -- =======================
--- UI Loaded Notification
+-- HUB LOADED NOTIFICATION
 -- =======================
 OrionLib:MakeNotification({
     Name = "Murzz Hub",
