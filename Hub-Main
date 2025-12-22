@@ -6,7 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 -- Load Rayfield
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
--- Window
+-- Window (no tab icons)
 local Window = Rayfield:CreateWindow({
     Name = "Murzz Hub | AFSE",
     LoadingTitle = "Murzz Hub | AFSE",
@@ -15,8 +15,8 @@ local Window = Rayfield:CreateWindow({
     KeySystem = false
 })
 
--- Home Tab
-local HomeTab = Window:CreateTab("🏠 Home", 4483362458)
+-- Home Tab (stats)
+local HomeTab = Window:CreateTab("🏠 Home") -- removed icon
 HomeTab:CreateSection("📊 Live Stats")
 
 -- Number Formatter
@@ -63,7 +63,7 @@ local StatMap = {
     Speed      = 6
 }
 
--- Update Loop
+-- Update Loop for stats
 task.spawn(function()
     while true do
         local statsFolder = player:FindFirstChild("Stats")
@@ -92,7 +92,6 @@ end)
 -- ========================
 local mainClient = player:WaitForChild("PlayerGui"):WaitForChild("Main"):WaitForChild("MainClient")
 local StatFunctions = require(mainClient:WaitForChild("StatFunctions"))
-
 local CharacterModule
 repeat
     CharacterModule = StatFunctions.characterModule
@@ -102,13 +101,34 @@ until CharacterModule
 local GameData = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameData"))
 local tbl_upvr = {}
 
--- Create Auto Train tab
-local AutoTrainTab = Window:CreateTab("⚡ Auto Train", 4483362458)
+-- Auto Train tab (no icon)
+local AutoTrainTab = Window:CreateTab("⚡ Auto Train")
 AutoTrainTab:CreateSection("Enable Auto Training for Stats")
 
--- Function to start training a specific stat (checks toggle continuously)
-local function startAutoTrain(statID, flagName)
+-- Stat toggles with emojis on the right
+local statToggles = {
+    {Name = "Auto Strength 💪",   ID = 1},
+    {Name = "Auto Durability 🛡️", ID = 2},
+    {Name = "Auto Chakra 🌀",     ID = 3},
+    {Name = "Auto Sword ⚔️",      ID = 4},
+    {Name = "Auto Agility 🪽",    ID = 5}, -- wings emoji
+    {Name = "Auto Speed 💨",      ID = 6},
+}
+
+-- Create flags for all toggles first
+for _, stat in ipairs(statToggles) do
+    AutoTrainTab:CreateToggle({
+        Name = stat.Name,
+        CurrentValue = false,
+        Flag = "AutoStat"..stat.ID,
+        Callback = function() end -- no need to start loop here
+    })
+end
+
+-- Start persistent loops for all stats
+for _, stat in ipairs(statToggles) do
     task.spawn(function()
+        local flagName = "AutoStat"..stat.ID
         while true do
             if Rayfield.Flags[flagName] then
                 if CharacterModule.states.Dead then
@@ -117,8 +137,8 @@ local function startAutoTrain(statID, flagName)
                     CharacterModule.characterStopped = false
                     CharacterModule:ResumeCharacter()
 
-                    StatFunctions.CurrentKey = statID
-                    StatFunctions[statID] = false -- unblock cooldown
+                    StatFunctions.CurrentKey = stat.ID
+                    StatFunctions[stat.ID] = false -- unblock cooldown
 
                     local success, err = pcall(function()
                         if not StatFunctions.CurrentKey or tbl_upvr[StatFunctions.CurrentKey] then return end
@@ -129,36 +149,17 @@ local function startAutoTrain(statID, flagName)
                     end)
 
                     if not success then
-                        warn("TrainStat error for statID "..statID..":", err)
+                        warn("TrainStat error for statID "..stat.ID..":", err)
                     end
 
-                    local cooldown = GameData.Stats[statID].Cooldown
+                    local cooldown = GameData.Stats[stat.ID].Cooldown
                     task.wait(cooldown)
                 end
             else
-                task.wait(0.5) -- wait before checking again
+                task.wait(0.5)
             end
         end
     end)
 end
 
--- Create toggles for each stat in Auto Train tab
-local statToggles = {
-    {Name = "💪 Auto Strength",   ID = 1},
-    {Name = "🛡️ Auto Durability", ID = 2},
-    {Name = "🌀 Auto Chakra",     ID = 3},
-    {Name = "⚔️ Auto Sword",      ID = 4},
-    {Name = "🤸 Auto Agility",    ID = 5},
-    {Name = "💨 Auto Speed",      ID = 6},
-}
-
-for _, stat in ipairs(statToggles) do
-    AutoTrainTab:CreateToggle({
-        Name = stat.Name,
-        CurrentValue = false,
-        Flag = "AutoStat"..stat.ID,
-        Callback = function(enabled)
-            startAutoTrain(stat.ID, "AutoStat"..stat.ID)
-        end
-    })
-end
+Rayfield:LoadConfiguration()
