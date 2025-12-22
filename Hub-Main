@@ -14,128 +14,120 @@ local Window = Rayfield:CreateWindow({
 -- HOME TAB
 -------------------------------------------------
 local HomeTab = Window:CreateTab("🏠 Home", 4483362458)
-
 HomeTab:CreateSection("📊 Live Stats")
 
-HomeTab:CreateParagraph({
-    Title = "Durability",
-    Content = "2t"
-})
+--------------------------------------------------
+-- Number Formatter
+--------------------------------------------------
+local function formatNumber(num)
+    if not num then return "Loading..." end
+    num = tonumber(num)
+    if not num then return "Loading..." end
 
-HomeTab:CreateParagraph({
-    Title = "Agility",
-    Content = "4m"
-})
+    local formats = {
+        {1e18, "Qn"},
+        {1e15, "Qd"},
+        {1e12, "T"},
+        {1e9,  "B"},
+        {1e6,  "M"},
+        {1e3,  "K"},
+    }
 
-HomeTab:CreateParagraph({
-    Title = "Speed",
-    Content = "5m"
-})
+    for _, f in ipairs(formats) do
+        if num >= f[1] then
+            return string.format("%.2f%s", num / f[1], f[2])
+                :gsub("%.00", "")
+        end
+    end
 
-HomeTab:CreateParagraph({
-    Title = "Sword",
-    Content = "10b"
-})
+    return tostring(num)
+end
 
-HomeTab:CreateParagraph({
-    Title = "Strength",
-    Content = "50lb"
-})
+--------------------------------------------------
+-- Create Stat Cards (Dynamic)
+--------------------------------------------------
+local StatCards = {
+    Strength   = HomeTab:CreateParagraph({ Title = "Strength",   Content = "Loading..." }),
+    Durability = HomeTab:CreateParagraph({ Title = "Durability", Content = "Loading..." }),
+    Chakra     = HomeTab:CreateParagraph({ Title = "Chakra",     Content = "Loading..." }),
+    Sword      = HomeTab:CreateParagraph({ Title = "Sword",      Content = "Loading..." }),
+    Agility    = HomeTab:CreateParagraph({ Title = "Agility",    Content = "Loading..." }),
+    Speed      = HomeTab:CreateParagraph({ Title = "Speed",      Content = "Loading..." }),
+}
 
-HomeTab:CreateParagraph({
-    Title = "Chakra",
-    Content = "50lb"
-})
+-- Map stat names to folder indices
+local StatMap = {
+    Strength   = 1,
+    Durability = 2,
+    Chakra     = 3,
+    Sword      = 4,
+    Agility    = 5,
+    Speed      = 6
+}
+
+-- Get Local Player
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+--------------------------------------------------
+-- Update Loop
+--------------------------------------------------
+task.spawn(function()
+    while true do
+        local statsFolder = player:FindFirstChild("Stats")
+
+        if statsFolder then
+            for name, index in pairs(StatMap) do
+                local stat = statsFolder:FindFirstChild(tostring(index))
+                if stat and stat.Value ~= nil then
+                    StatCards[name]:Set({
+                        Title = name,
+                        Content = formatNumber(stat.Value)
+                    })
+                else
+                    StatCards[name]:Set({
+                        Title = name,
+                        Content = "Loading..."
+                    })
+                end
+            end
+        end
+
+        task.wait(0.5)
+    end
+end)
 
 -------------------------------------------------
 -- AUTO TRAIN TAB
 -------------------------------------------------
 local AutoTrainTab = Window:CreateTab("💪 Auto Train", 4483362458)
-
 AutoTrainTab:CreateSection("⚙️ Auto Training")
 
-AutoTrainTab:CreateParagraph({
-    Title = "Auto Durability",
-    Content = "Automatically trains durability when enabled."
-})
-
-AutoTrainTab:CreateParagraph({
-    Title = "Auto Agility",
-    Content = "Automatically trains agility when enabled."
-})
-
-AutoTrainTab:CreateParagraph({
-    Title = "Auto Speed",
-    Content = "Automatically trains speed when enabled."
-})
-
-AutoTrainTab:CreateParagraph({
-    Title = "Auto Sword",
-    Content = "Automatically trains sword when enabled."
-})
-
-AutoTrainTab:CreateParagraph({
-    Title = "Auto Strength",
-    Content = "Automatically trains strength when enabled."
-})
-
-AutoTrainTab:CreateParagraph({
-    Title = "Auto Chakra",
-    Content = "Automatically trains chakra when enabled."
-})
+AutoTrainTab:CreateParagraph({ Title = "Auto Durability", Content = "Automatically trains durability when enabled." })
+AutoTrainTab:CreateParagraph({ Title = "Auto Agility", Content = "Automatically trains agility when enabled." })
+AutoTrainTab:CreateParagraph({ Title = "Auto Speed", Content = "Automatically trains speed when enabled." })
+AutoTrainTab:CreateParagraph({ Title = "Auto Sword", Content = "Automatically trains sword when enabled." })
+AutoTrainTab:CreateParagraph({ Title = "Auto Strength", Content = "Automatically trains strength when enabled." })
+AutoTrainTab:CreateParagraph({ Title = "Auto Chakra", Content = "Automatically trains chakra when enabled." })
 
 -------------------------------------------------
 -- TELEPORTS TAB
 -------------------------------------------------
 local TeleportsTab = Window:CreateTab("🚀 Teleports", 4483362458)
-
 TeleportsTab:CreateSection("📍 Locations")
 
-TeleportsTab:CreateParagraph({
-    Title = "Training Area",
-    Content = "Teleport to the main training area."
-})
-
-TeleportsTab:CreateParagraph({
-    Title = "Boss Arena",
-    Content = "Teleport to the boss arena."
-})
-
-TeleportsTab:CreateParagraph({
-    Title = "Village",
-    Content = "Teleport back to the village."
-})
-
-TeleportsTab:CreateParagraph({
-    Title = "Safe Zone",
-    Content = "Teleport to a safe zone."
-})
+TeleportsTab:CreateParagraph({ Title = "Training Area", Content = "Teleport to the main training area." })
+TeleportsTab:CreateParagraph({ Title = "Boss Arena", Content = "Teleport to the boss arena." })
+TeleportsTab:CreateParagraph({ Title = "Village", Content = "Teleport back to the village." })
+TeleportsTab:CreateParagraph({ Title = "Safe Zone", Content = "Teleport to a safe zone." })
 
 -------------------------------------------------
 -- UTILITIES TAB
 -------------------------------------------------
 local UtilitiesTab = Window:CreateTab("🛠 Utilities", 4483362458)
-
 UtilitiesTab:CreateSection("🔧 Utilities")
 
-UtilitiesTab:CreateParagraph({
-    Title = "Anti AFK",
-    Content = "Prevents you from being kicked for idling."
-})
-
-UtilitiesTab:CreateParagraph({
-    Title = "Server Hop",
-    Content = "Join a different server."
-})
-
-UtilitiesTab:CreateParagraph({
-    Title = "Rejoin",
-    Content = "Rejoin the current server."
-})
-
-UtilitiesTab:CreateParagraph({
-    Title = "UI Settings",
-    Content = "Manage hub UI preferences."
-})
-
-Rayfield:LoadConfiguration()
+UtilitiesTab:CreateParagraph({ Title = "Anti AFK", Content = "Prevents you from being kicked for idling." })
+UtilitiesTab:CreateParagraph({ Title = "Server Hop", Content = "Join a different server." })
+UtilitiesTab:CreateParagraph({ Title = "Rejoin", Content = "Rejoin the current server." })
+UtilitiesTab:CreateParagraph({ Title = "UI Settings", Content = "Manage hub UI preferences." })
