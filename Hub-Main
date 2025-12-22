@@ -1,7 +1,12 @@
+-- Services
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 -- Load Rayfield
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
--- Create Window
+-- Window
 local Window = Rayfield:CreateWindow({
     Name = "Murzz Hub | AFSE",
     LoadingTitle = "Murzz Hub | AFSE",
@@ -10,15 +15,11 @@ local Window = Rayfield:CreateWindow({
     KeySystem = false
 })
 
--------------------------------------------------
--- HOME TAB
--------------------------------------------------
+-- Home Tab
 local HomeTab = Window:CreateTab("🏠 Home", 4483362458)
 HomeTab:CreateSection("📊 Live Stats")
 
---------------------------------------------------
 -- Number Formatter
---------------------------------------------------
 local function formatNumber(num)
     if not num then return "Loading..." end
     num = tonumber(num)
@@ -35,27 +36,24 @@ local function formatNumber(num)
 
     for _, f in ipairs(formats) do
         if num >= f[1] then
-            return string.format("%.2f%s", num / f[1], f[2])
-                :gsub("%.00", "")
+            return string.format("%.2f%s", num / f[1], f[2]):gsub("%.00", "")
         end
     end
 
     return tostring(num)
 end
 
---------------------------------------------------
--- Create Stat Cards (Dynamic)
---------------------------------------------------
-local StatCards = {
-    Strength   = HomeTab:CreateParagraph({ Title = "Strength",   Content = "Loading..." }),
-    Durability = HomeTab:CreateParagraph({ Title = "Durability", Content = "Loading..." }),
-    Chakra     = HomeTab:CreateParagraph({ Title = "Chakra",     Content = "Loading..." }),
-    Sword      = HomeTab:CreateParagraph({ Title = "Sword",      Content = "Loading..." }),
-    Agility    = HomeTab:CreateParagraph({ Title = "Agility",    Content = "Loading..." }),
-    Speed      = HomeTab:CreateParagraph({ Title = "Speed",      Content = "Loading..." }),
-}
+-- Create Stat Cards
+local StatCards = {}
+local StatNames = { "Strength", "Durability", "Chakra", "Sword", "Agility", "Speed" }
+for _, statName in ipairs(StatNames) do
+    StatCards[statName] = HomeTab:CreateParagraph({
+        Title = statName,
+        Content = "Loading..."
+    })
+end
 
--- Map stat names to folder indices
+-- Stat Index Mapping
 local StatMap = {
     Strength   = 1,
     Durability = 2,
@@ -65,17 +63,10 @@ local StatMap = {
     Speed      = 6
 }
 
--- Get Local Player
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-
---------------------------------------------------
 -- Update Loop
---------------------------------------------------
 task.spawn(function()
     while true do
         local statsFolder = player:FindFirstChild("Stats")
-
         if statsFolder then
             for name, index in pairs(StatMap) do
                 local stat = statsFolder:FindFirstChild(tostring(index))
@@ -92,74 +83,76 @@ task.spawn(function()
                 end
             end
         end
-
         task.wait(0.5)
     end
 end)
 
--------------------------------------------------
--- AUTO TRAIN TAB
--------------------------------------------------
-local AutoTrainTab = Window:CreateTab("💪 Auto Train", 4483362458)
-AutoTrainTab:CreateSection("⚙️ Auto Training")
+-- ========================
+-- Auto Train Setup
+-- ========================
+local mainClient = player:WaitForChild("PlayerGui"):WaitForChild("Main"):WaitForChild("MainClient")
+local StatFunctions = require(mainClient:WaitForChild("StatFunctions"))
 
--- Dynamic switches for each stat
-local AutoTrainFlags = {}
+local CharacterModule
+repeat
+    CharacterModule = StatFunctions.characterModule
+    task.wait(0.1)
+until CharacterModule
 
-AutoTrainFlags.Durability = AutoTrainTab:CreateToggle({
-    Name = "Auto Durability",
-    CurrentValue = false,
-    Flag = "AutoDurability"
-})
+local GameData = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameData"))
+local tbl_upvr = {}
 
-AutoTrainFlags.Agility = AutoTrainTab:CreateToggle({
-    Name = "Auto Agility",
-    CurrentValue = false,
-    Flag = "AutoAgility"
-})
+-- Function to start training a specific stat
+local function startAutoTrain(statID)
+    task.spawn(function()
+        while Rayfield.Flags["AutoStat"..statID] do
+            if CharacterModule.states.Dead then
+                task.wait(1)
+            else
+                CharacterModule.characterStopped = false
+                CharacterModule:ResumeCharacter()
 
-AutoTrainFlags.Speed = AutoTrainTab:CreateToggle({
-    Name = "Auto Speed",
-    CurrentValue = false,
-    Flag = "AutoSpeed"
-})
+                StatFunctions.CurrentKey = statID
+                StatFunctions[statID] = false -- unblock cooldown
 
-AutoTrainFlags.Sword = AutoTrainTab:CreateToggle({
-    Name = "Auto Sword",
-    CurrentValue = false,
-    Flag = "AutoSword"
-})
+                local success, err = pcall(function()
+                    if not StatFunctions.CurrentKey or tbl_upvr[StatFunctions.CurrentKey] then return end
+                    local CurrentKey = StatFunctions.CurrentKey
+                    tbl_upvr[CurrentKey] = true
+                    ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train", CurrentKey)
+                    tbl_upvr[CurrentKey] = false
+                end)
 
-AutoTrainFlags.Strength = AutoTrainTab:CreateToggle({
-    Name = "Auto Strength",
-    CurrentValue = false,
-    Flag = "AutoStrength"
-})
+                if not success then
+                    warn("TrainStat error for statID "..statID..":", err)
+                end
 
-AutoTrainFlags.Chakra = AutoTrainTab:CreateToggle({
-    Name = "Auto Chakra",
-    CurrentValue = false,
-    Flag = "AutoChakra"
-})
+                local cooldown = GameData.Stats[statID].Cooldown
+                task.wait(cooldown)
+            end
+        end
+    end)
+end
 
--------------------------------------------------
--- TELEPORTS TAB
--------------------------------------------------
-local TeleportsTab = Window:CreateTab("🚀 Teleports", 4483362458)
-TeleportsTab:CreateSection("📍 Locations")
+-- Create toggles for each stat with emojis
+local statToggles = {
+    {Name = "💪 Auto Strength",   ID = 1},
+    {Name = "🛡️ Auto Durability", ID = 2},
+    {Name = "🌀 Auto Chakra",     ID = 3},
+    {Name = "⚔️ Auto Sword",      ID = 4},
+    {Name = "🤸 Auto Agility",    ID = 5},
+    {Name = "💨 Auto Speed",      ID = 6},
+}
 
-TeleportsTab:CreateParagraph({ Title = "Training Area", Content = "Teleport to the main training area." })
-TeleportsTab:CreateParagraph({ Title = "Boss Arena", Content = "Teleport to the boss arena." })
-TeleportsTab:CreateParagraph({ Title = "Village", Content = "Teleport back to the village." })
-TeleportsTab:CreateParagraph({ Title = "Safe Zone", Content = "Teleport to a safe zone." })
-
--------------------------------------------------
--- UTILITIES TAB
--------------------------------------------------
-local UtilitiesTab = Window:CreateTab("🛠 Utilities", 4483362458)
-UtilitiesTab:CreateSection("🔧 Utilities")
-
-UtilitiesTab:CreateParagraph({ Title = "Anti AFK", Content = "Prevents you from being kicked for idling." })
-UtilitiesTab:CreateParagraph({ Title = "Server Hop", Content = "Join a different server." })
-UtilitiesTab:CreateParagraph({ Title = "Rejoin", Content = "Rejoin the current server." })
-UtilitiesTab:CreateParagraph({ Title = "UI Settings", Content = "Manage hub UI preferences." })
+for _, stat in ipairs(statToggles) do
+    HomeTab:CreateToggle({
+        Name = stat.Name,
+        CurrentValue = false,
+        Flag = "AutoStat"..stat.ID,
+        Callback = function(enabled)
+            if enabled then
+                startAutoTrain(stat.ID)
+            end
+        end
+    })
+end
