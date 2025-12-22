@@ -103,12 +103,44 @@ end)
 local AutoTrainTab = Window:CreateTab("💪 Auto Train", 4483362458)
 AutoTrainTab:CreateSection("⚙️ Auto Training")
 
-AutoTrainTab:CreateParagraph({ Title = "Auto Durability", Content = "Automatically trains durability when enabled." })
-AutoTrainTab:CreateParagraph({ Title = "Auto Agility", Content = "Automatically trains agility when enabled." })
-AutoTrainTab:CreateParagraph({ Title = "Auto Speed", Content = "Automatically trains speed when enabled." })
-AutoTrainTab:CreateParagraph({ Title = "Auto Sword", Content = "Automatically trains sword when enabled." })
-AutoTrainTab:CreateParagraph({ Title = "Auto Strength", Content = "Automatically trains strength when enabled." })
-AutoTrainTab:CreateParagraph({ Title = "Auto Chakra", Content = "Automatically trains chakra when enabled." })
+-- Dynamic switches for each stat
+local AutoTrainFlags = {}
+
+AutoTrainFlags.Durability = AutoTrainTab:CreateToggle({
+    Name = "Auto Durability",
+    CurrentValue = false,
+    Flag = "AutoDurability"
+})
+
+AutoTrainFlags.Agility = AutoTrainTab:CreateToggle({
+    Name = "Auto Agility",
+    CurrentValue = false,
+    Flag = "AutoAgility"
+})
+
+AutoTrainFlags.Speed = AutoTrainTab:CreateToggle({
+    Name = "Auto Speed",
+    CurrentValue = false,
+    Flag = "AutoSpeed"
+})
+
+AutoTrainFlags.Sword = AutoTrainTab:CreateToggle({
+    Name = "Auto Sword",
+    CurrentValue = false,
+    Flag = "AutoSword"
+})
+
+AutoTrainFlags.Strength = AutoTrainTab:CreateToggle({
+    Name = "Auto Strength",
+    CurrentValue = false,
+    Flag = "AutoStrength"
+})
+
+AutoTrainFlags.Chakra = AutoTrainTab:CreateToggle({
+    Name = "Auto Chakra",
+    CurrentValue = false,
+    Flag = "AutoChakra"
+})
 
 -------------------------------------------------
 -- TELEPORTS TAB
