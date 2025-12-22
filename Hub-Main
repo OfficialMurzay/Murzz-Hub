@@ -6,26 +6,35 @@ local Window = Rayfield:CreateWindow({
     Name = "Murzz Hub | AFSE",
     LoadingTitle = "Murzz Hub | AFSE",
     LoadingSubtitle = "by You",
-    ConfigurationSaving = {
-       Enabled = false,
-    },
+    ConfigurationSaving = { Enabled = false },
     KeySystem = false
 })
 
 -- Home Tab
 local HomeTab = Window:CreateTab("Home", 4483362458)
 
--- Live Stats Section
-local LiveStatsSection = HomeTab:CreateSection("Live Stats")
+-- Each stat in its own section
 
--- Stats
-local stats = {"Durability", "Agility", "Speed", "Sword", "Strength", "Chakra"}
+-- Durability
+local DurabilitySection = HomeTab:CreateSection("Durability")
+HomeTab:CreateLabel("0")
 
-for _, stat in ipairs(stats) do
-    -- Stat name
-    HomeTab:CreateLabel(stat)
-    -- Number underneath
-    HomeTab:CreateLabel("0")
-    -- Separator
-    HomeTab:CreateLabel("-----")
-end
+-- Agility
+local AgilitySection = HomeTab:CreateSection("Agility")
+HomeTab:CreateLabel("0")
+
+-- Speed
+local SpeedSection = HomeTab:CreateSection("Speed")
+HomeTab:CreateLabel("0")
+
+-- Sword
+local SwordSection = HomeTab:CreateSection("Sword")
+HomeTab:CreateLabel("0")
+
+-- Strength
+local StrengthSection = HomeTab:CreateSection("Strength")
+HomeTab:CreateLabel("0")
+
+-- Chakra
+local ChakraSection = HomeTab:CreateSection("Chakra")
+HomeTab:CreateLabel("0")
