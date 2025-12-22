@@ -1,42 +1,141 @@
 -- Load Rayfield
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
--- Create the Window
+-- Create Window
 local Window = Rayfield:CreateWindow({
     Name = "Murzz Hub | AFSE",
     LoadingTitle = "Murzz Hub | AFSE",
-    LoadingSubtitle = "by You",
+    LoadingSubtitle = "AFSE",
     ConfigurationSaving = { Enabled = false },
     KeySystem = false
 })
 
--- Home Tab
-local HomeTab = Window:CreateTab("Home", 4483362458)
+-------------------------------------------------
+-- HOME TAB
+-------------------------------------------------
+local HomeTab = Window:CreateTab("🏠 Home", 4483362458)
 
--- Each stat in its own section
+HomeTab:CreateSection("📊 Live Stats")
 
--- Durability
-local DurabilitySection = HomeTab:CreateSection("Durability")
-HomeTab:CreateLabel("0")
+HomeTab:CreateParagraph({
+    Title = "Durability",
+    Content = "2t"
+})
 
--- Agility
-local AgilitySection = HomeTab:CreateSection("Agility")
-HomeTab:CreateLabel("0")
+HomeTab:CreateParagraph({
+    Title = "Agility",
+    Content = "4m"
+})
 
--- Speed
-local SpeedSection = HomeTab:CreateSection("Speed")
-HomeTab:CreateLabel("0")
+HomeTab:CreateParagraph({
+    Title = "Speed",
+    Content = "5m"
+})
 
--- Sword
-local SwordSection = HomeTab:CreateSection("Sword")
-HomeTab:CreateLabel("0")
+HomeTab:CreateParagraph({
+    Title = "Sword",
+    Content = "10b"
+})
 
--- Strength
-local StrengthSection = HomeTab:CreateSection("Strength")
-HomeTab:CreateLabel("0")
+HomeTab:CreateParagraph({
+    Title = "Strength",
+    Content = "50lb"
+})
 
--- Chakra
-local ChakraSection = HomeTab:CreateSection("Chakra")
-HomeTab:CreateLabel("0")
+HomeTab:CreateParagraph({
+    Title = "Chakra",
+    Content = "50lb"
+})
+
+-------------------------------------------------
+-- AUTO TRAIN TAB
+-------------------------------------------------
+local AutoTrainTab = Window:CreateTab("💪 Auto Train", 4483362458)
+
+AutoTrainTab:CreateSection("⚙️ Auto Training")
+
+AutoTrainTab:CreateParagraph({
+    Title = "Auto Durability",
+    Content = "Automatically trains durability when enabled."
+})
+
+AutoTrainTab:CreateParagraph({
+    Title = "Auto Agility",
+    Content = "Automatically trains agility when enabled."
+})
+
+AutoTrainTab:CreateParagraph({
+    Title = "Auto Speed",
+    Content = "Automatically trains speed when enabled."
+})
+
+AutoTrainTab:CreateParagraph({
+    Title = "Auto Sword",
+    Content = "Automatically trains sword when enabled."
+})
+
+AutoTrainTab:CreateParagraph({
+    Title = "Auto Strength",
+    Content = "Automatically trains strength when enabled."
+})
+
+AutoTrainTab:CreateParagraph({
+    Title = "Auto Chakra",
+    Content = "Automatically trains chakra when enabled."
+})
+
+-------------------------------------------------
+-- TELEPORTS TAB
+-------------------------------------------------
+local TeleportsTab = Window:CreateTab("🚀 Teleports", 4483362458)
+
+TeleportsTab:CreateSection("📍 Locations")
+
+TeleportsTab:CreateParagraph({
+    Title = "Training Area",
+    Content = "Teleport to the main training area."
+})
+
+TeleportsTab:CreateParagraph({
+    Title = "Boss Arena",
+    Content = "Teleport to the boss arena."
+})
+
+TeleportsTab:CreateParagraph({
+    Title = "Village",
+    Content = "Teleport back to the village."
+})
+
+TeleportsTab:CreateParagraph({
+    Title = "Safe Zone",
+    Content = "Teleport to a safe zone."
+})
+
+-------------------------------------------------
+-- UTILITIES TAB
+-------------------------------------------------
+local UtilitiesTab = Window:CreateTab("🛠 Utilities", 4483362458)
+
+UtilitiesTab:CreateSection("🔧 Utilities")
+
+UtilitiesTab:CreateParagraph({
+    Title = "Anti AFK",
+    Content = "Prevents you from being kicked for idling."
+})
+
+UtilitiesTab:CreateParagraph({
+    Title = "Server Hop",
+    Content = "Join a different server."
+})
+
+UtilitiesTab:CreateParagraph({
+    Title = "Rejoin",
+    Content = "Rejoin the current server."
+})
+
+UtilitiesTab:CreateParagraph({
+    Title = "UI Settings",
+    Content = "Manage hub UI preferences."
+})
 
 Rayfield:LoadConfiguration()
