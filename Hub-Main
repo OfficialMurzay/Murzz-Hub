@@ -15,8 +15,10 @@ local Window = Rayfield:CreateWindow({
     KeySystem = false
 })
 
--- Home Tab (stats)
-local HomeTab = Window:CreateTab("🏠 Home") -- removed icon
+-- ========================
+-- Home Tab (Stats)
+-- ========================
+local HomeTab = Window:CreateTab("Home") -- no icon
 HomeTab:CreateSection("📊 Live Stats")
 
 -- Number Formatter
@@ -88,7 +90,7 @@ task.spawn(function()
 end)
 
 -- ========================
--- Auto Train Tab Setup
+-- Auto Train Tab
 -- ========================
 local mainClient = player:WaitForChild("PlayerGui"):WaitForChild("Main"):WaitForChild("MainClient")
 local StatFunctions = require(mainClient:WaitForChild("StatFunctions"))
@@ -101,34 +103,33 @@ until CharacterModule
 local GameData = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameData"))
 local tbl_upvr = {}
 
--- Auto Train tab (no icon)
-local AutoTrainTab = Window:CreateTab("⚡ Auto Train")
+local AutoTrainTab = Window:CreateTab("Auto Train") -- no icon
 AutoTrainTab:CreateSection("Enable Auto Training for Stats")
 
--- Stat toggles with emojis on the right
+-- Stat toggles with compatible emojis
 local statToggles = {
     {Name = "Auto Strength 💪",   ID = 1},
     {Name = "Auto Durability 🛡️", ID = 2},
     {Name = "Auto Chakra 🌀",     ID = 3},
     {Name = "Auto Sword ⚔️",      ID = 4},
-    {Name = "Auto Agility 🪽",    ID = 5}, -- wings emoji
+    {Name = "Auto Agility 🕊️",    ID = 5}, -- more compatible wings
     {Name = "Auto Speed 💨",      ID = 6},
 }
 
--- Create flags for all toggles first
+-- Create flags for toggles
 for _, stat in ipairs(statToggles) do
     AutoTrainTab:CreateToggle({
         Name = stat.Name,
         CurrentValue = false,
         Flag = "AutoStat"..stat.ID,
-        Callback = function() end -- no need to start loop here
+        Callback = function() end -- loop handles it
     })
 end
 
--- Start persistent loops for all stats
+-- Persistent loops for auto train
 for _, stat in ipairs(statToggles) do
+    local flagName = "AutoStat"..stat.ID
     task.spawn(function()
-        local flagName = "AutoStat"..stat.ID
         while true do
             if Rayfield.Flags[flagName] then
                 if CharacterModule.states.Dead then
@@ -162,4 +163,7 @@ for _, stat in ipairs(statToggles) do
     end)
 end
 
+-- ========================
+-- Load configuration
+-- ========================
 Rayfield:LoadConfiguration()
