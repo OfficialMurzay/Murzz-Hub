@@ -7,14 +7,7 @@ local Window = Rayfield:CreateWindow({
     LoadingTitle = "Murzz Hub | AFSE",
     LoadingSubtitle = "by You",
     ConfigurationSaving = {
-       Enabled = true,
-       FolderName = nil, -- Customize folder
-       FileName = "MurzzHubSettings"
-    },
-    Discord = {
        Enabled = false,
-       Invite = "", 
-       RememberJoins = true 
     },
     KeySystem = false
 })
@@ -27,40 +20,12 @@ local LiveStatsSection = HomeTab:CreateSection("Live Stats")
 
 -- Stats
 local stats = {"Durability", "Agility", "Speed", "Sword", "Strength", "Chakra"}
-local statsValues = {}
 
 for _, stat in ipairs(stats) do
+    -- Stat name
     HomeTab:CreateLabel(stat)
-    local valueLabel = HomeTab:CreateLabel("0")
-    statsValues[stat] = valueLabel
+    -- Number underneath
+    HomeTab:CreateLabel("0")
+    -- Separator
     HomeTab:CreateLabel("-----")
 end
-
--- Function to update stats dynamically
-local function UpdateStat(statName, newValue)
-    if statsValues[statName] then
-        statsValues[statName].Label.Text = tostring(newValue)
-    end
-end
-
--- Auto Train Tab
-local AutoTrainTab = Window:CreateTab("Auto Train", 4483362458)
-
--- Auto Train Toggles
-local autoTrainToggles = {}
-for _, stat in ipairs(stats) do
-    AutoTrainTab:CreateToggle({
-        Name = "Auto " .. stat,
-        CurrentValue = false,
-        Flag = "Auto"..stat,
-        Callback = function(Value)
-            autoTrainToggles[stat] = Value
-        end
-    })
-end
-
--- Teleports Tab
-local TeleportsTab = Window:CreateTab("Teleports", 4483362458)
-
--- Utilities Tab
-local UtilitiesTab = Window:CreateTab("Utilities", 4483362458)
