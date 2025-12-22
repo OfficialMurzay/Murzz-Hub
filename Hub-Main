@@ -1,5 +1,5 @@
 -- Load Rayfield
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 -- Create the Window
 local Window = Rayfield:CreateWindow({
@@ -38,3 +38,5 @@ HomeTab:CreateLabel("0")
 -- Chakra
 local ChakraSection = HomeTab:CreateSection("Chakra")
 HomeTab:CreateLabel("0")
+
+Rayfield:LoadConfiguration()
