@@ -88,7 +88,7 @@ task.spawn(function()
 end)
 
 -- ========================
--- Auto Train Setup
+-- Auto Train Tab Setup
 -- ========================
 local mainClient = player:WaitForChild("PlayerGui"):WaitForChild("Main"):WaitForChild("MainClient")
 local StatFunctions = require(mainClient:WaitForChild("StatFunctions"))
@@ -102,39 +102,47 @@ until CharacterModule
 local GameData = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameData"))
 local tbl_upvr = {}
 
--- Function to start training a specific stat
-local function startAutoTrain(statID)
+-- Create Auto Train tab
+local AutoTrainTab = Window:CreateTab("⚡ Auto Train", 4483362458)
+AutoTrainTab:CreateSection("Enable Auto Training for Stats")
+
+-- Function to start training a specific stat (checks toggle continuously)
+local function startAutoTrain(statID, flagName)
     task.spawn(function()
-        while Rayfield.Flags["AutoStat"..statID] do
-            if CharacterModule.states.Dead then
-                task.wait(1)
-            else
-                CharacterModule.characterStopped = false
-                CharacterModule:ResumeCharacter()
+        while true do
+            if Rayfield.Flags[flagName] then
+                if CharacterModule.states.Dead then
+                    task.wait(1)
+                else
+                    CharacterModule.characterStopped = false
+                    CharacterModule:ResumeCharacter()
 
-                StatFunctions.CurrentKey = statID
-                StatFunctions[statID] = false -- unblock cooldown
+                    StatFunctions.CurrentKey = statID
+                    StatFunctions[statID] = false -- unblock cooldown
 
-                local success, err = pcall(function()
-                    if not StatFunctions.CurrentKey or tbl_upvr[StatFunctions.CurrentKey] then return end
-                    local CurrentKey = StatFunctions.CurrentKey
-                    tbl_upvr[CurrentKey] = true
-                    ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train", CurrentKey)
-                    tbl_upvr[CurrentKey] = false
-                end)
+                    local success, err = pcall(function()
+                        if not StatFunctions.CurrentKey or tbl_upvr[StatFunctions.CurrentKey] then return end
+                        local CurrentKey = StatFunctions.CurrentKey
+                        tbl_upvr[CurrentKey] = true
+                        ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train", CurrentKey)
+                        tbl_upvr[CurrentKey] = false
+                    end)
 
-                if not success then
-                    warn("TrainStat error for statID "..statID..":", err)
+                    if not success then
+                        warn("TrainStat error for statID "..statID..":", err)
+                    end
+
+                    local cooldown = GameData.Stats[statID].Cooldown
+                    task.wait(cooldown)
                 end
-
-                local cooldown = GameData.Stats[statID].Cooldown
-                task.wait(cooldown)
+            else
+                task.wait(0.5) -- wait before checking again
             end
         end
     end)
 end
 
--- Create toggles for each stat with emojis
+-- Create toggles for each stat in Auto Train tab
 local statToggles = {
     {Name = "💪 Auto Strength",   ID = 1},
     {Name = "🛡️ Auto Durability", ID = 2},
@@ -145,14 +153,12 @@ local statToggles = {
 }
 
 for _, stat in ipairs(statToggles) do
-    HomeTab:CreateToggle({
+    AutoTrainTab:CreateToggle({
         Name = stat.Name,
         CurrentValue = false,
         Flag = "AutoStat"..stat.ID,
         Callback = function(enabled)
-            if enabled then
-                startAutoTrain(stat.ID)
-            end
+            startAutoTrain(stat.ID, "AutoStat"..stat.ID)
         end
     })
 end
