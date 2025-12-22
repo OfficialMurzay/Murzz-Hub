@@ -8,7 +8,7 @@ local Window = Rayfield:CreateWindow({
     LoadingSubtitle = "by You",
     ConfigurationSaving = {
        Enabled = true,
-       FolderName = nil, -- Create a custom folder for your hub settings
+       FolderName = nil, -- Customize folder
        FileName = "MurzzHubSettings"
     },
     Discord = {
@@ -16,45 +16,51 @@ local Window = Rayfield:CreateWindow({
        Invite = "", 
        RememberJoins = true 
     },
-    KeySystem = false -- Set to true if you want a key system
+    KeySystem = false
 })
 
 -- Home Tab
-local HomeTab = Window:CreateTab("Home", 4483362458) -- The second argument is an image ID, optional
+local HomeTab = Window:CreateTab("Home", 4483362458)
 
 -- Live Stats Section
 local LiveStatsSection = HomeTab:CreateSection("Live Stats")
 
--- Individual Stats Labels
+-- Stats
 local stats = {"Durability", "Agility", "Speed", "Sword", "Strength", "Chakra"}
 local statsValues = {}
 
 for _, stat in ipairs(stats) do
-    -- Create label for the stat
     HomeTab:CreateLabel(stat)
-    -- Create label for the value (starting at 0)
     local valueLabel = HomeTab:CreateLabel("0")
     statsValues[stat] = valueLabel
-    -- Optional: separator
     HomeTab:CreateLabel("-----")
 end
 
--- Auto Train Tab
-local AutoTrainTab = Window:CreateTab("Auto Train", 4483362458)
-
--- Teleports Tab
-local TeleportsTab = Window:CreateTab("Teleports", 4483362458)
-
--- Utilities Tab
-local UtilitiesTab = Window:CreateTab("Utilities", 4483362458)
-
--- Example: Function to update a stat dynamically
+-- Function to update stats dynamically
 local function UpdateStat(statName, newValue)
     if statsValues[statName] then
         statsValues[statName].Label.Text = tostring(newValue)
     end
 end
 
--- Example usage
--- UpdateStat("Durability", 10)
--- UpdateStat("Agility", 5)
+-- Auto Train Tab
+local AutoTrainTab = Window:CreateTab("Auto Train", 4483362458)
+
+-- Auto Train Toggles
+local autoTrainToggles = {}
+for _, stat in ipairs(stats) do
+    AutoTrainTab:CreateToggle({
+        Name = "Auto " .. stat,
+        CurrentValue = false,
+        Flag = "Auto"..stat,
+        Callback = function(Value)
+            autoTrainToggles[stat] = Value
+        end
+    })
+end
+
+-- Teleports Tab
+local TeleportsTab = Window:CreateTab("Teleports", 4483362458)
+
+-- Utilities Tab
+local UtilitiesTab = Window:CreateTab("Utilities", 4483362458)
