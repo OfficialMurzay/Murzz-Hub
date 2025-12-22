@@ -1,155 +1,60 @@
-task.wait(2)
+-- Load Rayfield
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
 
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local displayName = player.DisplayName or player.Name -- fallback to username if needed
-
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-
-task.wait(2)
-
+-- Create the Window
 local Window = Rayfield:CreateWindow({
-    Name = "Murzz Hub v1 | @" .. displayName,
-    Icon = 0,
-    LoadingTitle = "Loading Murzz Hub",
-    LoadingSubtitle = "by Murzay",
-    ShowText = "Powered By Rayfield",
-    Theme = "Default",
-
-    ToggleUIKeybind = "K",
-
-    DisableRayfieldPrompts = false,
-    DisableBuildWarnings = false,
-
+    Name = "Murzz Hub | AFSE",
+    LoadingTitle = "Murzz Hub | AFSE",
+    LoadingSubtitle = "by You",
     ConfigurationSaving = {
-        Enabled = true,
-        FolderName = nil,
-        FileName = "MurzzHub"
+       Enabled = true,
+       FolderName = nil, -- Create a custom folder for your hub settings
+       FileName = "MurzzHubSettings"
     },
-
     Discord = {
-        Enabled = false,
-        Invite = "noinvitelink",
-        RememberJoins = true
+       Enabled = false,
+       Invite = "", 
+       RememberJoins = true 
     },
-
-    KeySystem = true,
-    KeySettings = {
-        Title = "Murzz Hub | Key System",
-        Subtitle = "BETA v1",
-        Note = "In BETA so free key!! Key is: Murzay",
-        FileName = "MurzKey",
-        SaveKey = false,
-        GrabKeyFromSite = false,
-        Key = {"Murzay"}
-    }
+    KeySystem = false -- Set to true if you want a key system
 })
 
-spawn(function()
-    while true do
-        task.wait(600)
-        Rayfield:Notify({
-            Title = "Enjoy Murzz Hub?",
-            Content = "Join the Discord!",
-            Duration = 6.5,
-            Image = 4483362458,
-        })
+-- Home Tab
+local HomeTab = Window:CreateTab("Home", 4483362458) -- The second argument is an image ID, optional
+
+-- Live Stats Section
+local LiveStatsSection = HomeTab:CreateSection("Live Stats")
+
+-- Individual Stats Labels
+local stats = {"Durability", "Agility", "Speed", "Sword", "Strength", "Chakra"}
+local statsValues = {}
+
+for _, stat in ipairs(stats) do
+    -- Create label for the stat
+    HomeTab:CreateLabel(stat)
+    -- Create label for the value (starting at 0)
+    local valueLabel = HomeTab:CreateLabel("0")
+    statsValues[stat] = valueLabel
+    -- Optional: separator
+    HomeTab:CreateLabel("-----")
+end
+
+-- Auto Train Tab
+local AutoTrainTab = Window:CreateTab("Auto Train", 4483362458)
+
+-- Teleports Tab
+local TeleportsTab = Window:CreateTab("Teleports", 4483362458)
+
+-- Utilities Tab
+local UtilitiesTab = Window:CreateTab("Utilities", 4483362458)
+
+-- Example: Function to update a stat dynamically
+local function UpdateStat(statName, newValue)
+    if statsValues[statName] then
+        statsValues[statName].Label.Text = tostring(newValue)
     end
-end)
-
--- World One Exclusive (Game id: 76558904092080)
-local function WorldOneExclusive()
-    Rayfield:Notify({
-        Title = "World One Script Loaded",
-        Content = "Enjoy the BETA script!",
-        Duration = 6.5,
-        Image = 4483362458,
-    })
-
-task.wait(1)
-
-    local mainTab1 = Window:CreateTab("Main", 0)
-    local section1 = mainTab1:CreateSection("Ore Farm")
-
-task.wait(1)
-
-    local dropdown1 = mainTab1:CreateDropdown({
-        Name = "Select Ore(s)",
-        Options = {"Pebble","Rock","Boulder"},
-        CurrentOption = {"Pebble"},
-        MultipleOptions = true,
-        Flag = "Dropdown1",
-        Callback = function(Options)
-            -- Handle dropdown changes here
-        end,
-    })
-
-task.wait(1)
-
-    local OreFarm1 = mainTab1:CreateToggle({
-       Name = "Farm Ores",
-       CurrentValue = false,
-       Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-       Callback = function(Value)
-       -- The function that takes place when the toggle is pressed
-       -- The variable (Value) is a boolean on whether the toggle is true or false
-       end,
-    })
-
-task.wait(1)
-
-    local dropdown2 = mainTab1:CreateDropdown({
-        Name = "Select Region",
-        Options = {"Cave Entrance", "Cave Middle", "Cave Deep"},
-        CurrentOption = {"Cave Entrance"},
-        MultipleOptions = false,
-        Flag = "Dropdown2",
-        Callback = function(Options)
-            -- Handle dropdown changes here
-        end,
-    })
-
-task.wait(1)
-
-    local RegionalOreFarm1 = mainTab1:CreateToggle({
-       Name = "Regional Ore Farm",
-       CurrentValue = false,
-       Flag = "Toggle2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-       Callback = function(Value)
-       -- The function that takes place when the toggle is pressed
-       -- The variable (Value) is a boolean on whether the toggle is true or false
-       end,
-    })
 end
 
-task.wait(1)
-
-    local section2 = mainTab1:CreateSection("Mob Farm")
-
-    local dropdown3 = Tab:CreateDropdown({
-       Name = "Select Mob(s)",
-       Options = {"Zombie", "Delver Zombie", "Elite Zombie", "Brute Zombie"},
-       CurrentOption = {"Zombie"},
-       MultipleOptions = false,
-       Flag = "Dropdown3", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-       Callback = function(Options)
-       -- The function that takes place when the selected option is changed
-       -- The variable (Options) is a table of strings for the current selected options
-      end,
-})
-
-    local MobFarm1 = Tab:CreateToggle({
-       Name = "Farm Mobs",
-       CurrentValue = false,
-       Flag = "Toggle3", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-       Callback = function(Value)
-       -- The function that takes place when the toggle is pressed
-       -- The variable (Value) is a boolean on whether the toggle is true or false
-    end,
-})
-
-if game.PlaceId == 76558904092080 then
-    WorldOneExclusive()
-end
-
-Rayfield:LoadConfiguration()
+-- Example usage
+-- UpdateStat("Durability", 10)
+-- UpdateStat("Agility", 5)
