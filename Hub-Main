@@ -217,13 +217,15 @@ local function createBoomQuestUI(questFolder)
     end
 end
 
--- Loop Boom1–Boom30 individually
+-- Manually check Boom1 → Boom30
 for i = 1, 30 do
-    local boomQuest = QuestsFolder:FindFirstChild("Boom"..i)
+    local boomName = "Boom"..i
+    local boomQuest = QuestsFolder:FindFirstChild(boomName)
     if boomQuest then
         createBoomQuestUI(boomQuest)
     end
 end
+
 
 -- ========================
 -- Load Configuration
