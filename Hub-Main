@@ -20,14 +20,14 @@ local Window = Rayfield:CreateWindow({
 local HomeTab = Window:CreateTab("Home")
 HomeTab:CreateSection("Info")
 
--- Classes mapping with emojis
+-- Classes mapping with neat emojis
 local ClassMap = {
     [1] = "Fighter 🥊",
     [2] = "Shinobi 🥷",
     [3] = "Pirate ☠️",
     [4] = "Ghoul 👹",
     [5] = "Hero 🦸",
-    [6] = "Reaper ☠️",
+    [6] = "Reaper ⚰️",
     [7] = "Saiyan 💥",
     [8] = "Sin 😈",
     [9] = "Magi 🧙",
@@ -43,10 +43,10 @@ local ClassMap = {
     [19] = "Hashira 🗡️",
     [20] = "Hakaishin 💣",
     [21] = "Otsutsuki 🌙",
-    [22] = "Pirate King 👑🏴‍☠️",
+    [22] = "Pirate King 🏴‍☠️",
     [23] = "Kishin 👺",
     [24] = "Angel 😇",
-    [25] = "Demon King 👹👑",
+    [25] = "Demon King 👹",
     [26] = "Ultra Instinct 🌀✨",
     [27] = "Upper Moon 🌙🔝"
 }
@@ -82,15 +82,21 @@ local TotalPowerLabel = HomeTab:CreateLabel("Total Power: Loading ⚡")
 -- Live Stats section
 HomeTab:CreateSection("Live Stats")
 
--- Live stats labels with emojis on the right
-local liveStats = {
-    Strength = HomeTab:CreateLabel("Strength: Loading 💪"),
-    Durability = HomeTab:CreateLabel("Durability: Loading 🛡️"),
-    Chakra = HomeTab:CreateLabel("Chakra: Loading 🌀"),
-    Sword = HomeTab:CreateLabel("Sword: Loading ⚔️"),
-    Agility = HomeTab:CreateLabel("Agility: Loading 🕊️"),
-    Speed = HomeTab:CreateLabel("Speed: Loading 💨")
+-- Stat emojis mapping (neat)
+local StatEmojis = {
+    Strength = "💪",
+    Durability = "🛡️",
+    Chakra = "🌀",
+    Sword = "⚔️",
+    Agility = "🕊️",
+    Speed = "💨"
 }
+
+-- Live stats labels
+local liveStats = {}
+for statName, emoji in pairs(StatEmojis) do
+    liveStats[statName] = HomeTab:CreateLabel(statName..": Loading "..emoji)
+end
 
 -- Stat ID mapping
 local StatMap = {
@@ -102,7 +108,7 @@ local StatMap = {
     Speed = "6"
 }
 
--- Update loop for live stats, total power, and class
+-- Update loop
 task.spawn(function()
     while true do
         -- Live stats
@@ -110,11 +116,11 @@ task.spawn(function()
         if statsFolder then
             for statName, statID in pairs(StatMap) do
                 local stat = statsFolder:FindFirstChild(statID)
+                local valueText = "Loading"
                 if stat and stat.Value ~= nil then
-                    liveStats[statName]:Set(statName..": "..formatNumber(stat.Value).." "..(liveStats[statName].Name:match("%S+$") or ""))
-                else
-                    liveStats[statName]:Set(statName..": Loading")
+                    valueText = formatNumber(stat.Value)
                 end
+                liveStats[statName]:Set(statName..": "..valueText.." "..StatEmojis[statName])
             end
         end
 
