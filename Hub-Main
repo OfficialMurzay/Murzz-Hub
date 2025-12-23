@@ -25,10 +25,20 @@ local HomeTab = Window:CreateTab("Home 🏠")
 -- Player Data Section
 HomeTab:CreateSection("Player Data 👤")
 
+-- Wait for OtherData to exist
+local OtherData = player:WaitForChild("OtherData")
+
 local ClassLabel = HomeTab:CreateLabel("Class: ... 🏆")
+ClassLabel:AddTooltip("Shows your current class")
+
 local TotalPowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡️")
+TotalPowerLabel:AddTooltip("Exact Total Power")
+
 local YenLabel = HomeTab:CreateLabel("Yen: ... 💰")
+YenLabel:AddTooltip("Exact Yen")
+
 local ChakiraLabel = HomeTab:CreateLabel("Chakira: ... 💎")
+ChakiraLabel:AddTooltip("Exact Chakira")
 
 -- Live Stats Section
 HomeTab:CreateSection("Live Stats 📊")
@@ -42,10 +52,14 @@ local StatEmojis = {
     Speed = "💨"
 }
 
--- Create labels for stats
+-- Fixed order of stats
+local OrderedStats = {"Strength", "Durability", "Chakra", "Sword", "Speed", "Agility"}
+
+-- Create labels for stats in fixed order
 local liveStats = {}
-for statName, emoji in pairs(StatEmojis) do
-    liveStats[statName] = HomeTab:CreateLabel(statName..": ... "..emoji)
+for _, statName in ipairs(OrderedStats) do
+    liveStats[statName] = HomeTab:CreateLabel(statName..": ... "..StatEmojis[statName])
+    liveStats[statName]:AddTooltip("Exact "..statName.." value")
 end
 
 local StatMap = {
@@ -112,7 +126,7 @@ local function formatNumber(num)
     return tostring(num)
 end
 
--- Helper to animate numbers smoothly
+-- Animate numbers
 local function animateValue(labelObj, oldVal, newVal, emoji)
     local steps = 15
     local increment = (newVal - oldVal) / steps
@@ -122,11 +136,10 @@ local function animateValue(labelObj, oldVal, newVal, emoji)
         labelObj:Set(labelObj.Text:match("^(%w+):").." "..formatNumber(current).." "..emoji)
         RunService.RenderStepped:Wait()
     end
-    -- Ensure exact value
     labelObj:Set(labelObj.Text:match("^(%w+):").." "..formatNumber(newVal).." "..emoji)
 end
 
--- Keep track of previous values for animation
+-- Previous values for animation
 local previousStats = {}
 local previousTotalPower = 0
 local previousYen = 0
@@ -135,55 +148,45 @@ local previousChakira = 0
 -- Update Loop
 task.spawn(function()
     while true do
+        -- Stats
         local statsFolder = player:FindFirstChild("Stats")
-        local otherData = player:FindFirstChild("OtherData")
-
-        -- Animate live stats
         if statsFolder then
-            for statName, statID in pairs(StatMap) do
-                local stat = statsFolder:FindFirstChild(statID)
+            for _, statName in ipairs(OrderedStats) do
+                local stat = statsFolder:FindFirstChild(StatMap[statName])
                 local value = stat and stat.Value or 0
                 local oldValue = previousStats[statName] or 0
                 if value ~= oldValue then
                     animateValue(liveStats[statName], oldValue, value, StatEmojis[statName])
                     previousStats[statName] = value
                 end
-                -- Tooltip showing raw value
-                liveStats[statName]:AddTooltip("Exact value: "..(stat and stat.Value or 0))
             end
         end
 
         -- Total Power
-        local totalPower = (otherData and otherData:FindFirstChild("TotalPower") and otherData.TotalPower.Value) or 0
+        local totalPower = (OtherData:FindFirstChild("TotalPower") and OtherData.TotalPower.Value) or 0
         if totalPower ~= previousTotalPower then
             animateValue(TotalPowerLabel, previousTotalPower, totalPower, "⚡️")
             previousTotalPower = totalPower
         end
-        TotalPowerLabel:AddTooltip("Exact Total Power: "..totalPower)
 
         -- Class
-        if otherData and otherData:FindFirstChild("Class") then
-            local classID = otherData.Class.Value
-            local className = ClassMap[classID] or "Unknown ❓"
-            ClassLabel:Set("Class: "..className)
-            ClassLabel:AddTooltip("Class ID: "..classID)
-        end
+        local classID = (OtherData:FindFirstChild("Class") and OtherData.Class.Value) or 0
+        local className = ClassMap[classID] or "Unknown ❓"
+        ClassLabel:Set("Class: "..className)
 
         -- Yen
-        local yen = (otherData and otherData:FindFirstChild("Yen") and otherData.Yen.Value) or 0
+        local yen = (OtherData:FindFirstChild("Yen") and OtherData.Yen.Value) or 0
         if yen ~= previousYen then
             animateValue(YenLabel, previousYen, yen, "💰")
             previousYen = yen
         end
-        YenLabel:AddTooltip("Exact Yen: "..yen)
 
         -- Chakira
-        local chakira = (otherData and otherData:FindFirstChild("Chakira") and otherData.Chakira.Value) or 0
+        local chakira = (OtherData:FindFirstChild("Chakira") and OtherData.Chakira.Value) or 0
         if chakira ~= previousChakira then
             animateValue(ChakiraLabel, previousChakira, chakira, "💎")
             previousChakira = chakira
         end
-        ChakiraLabel:AddTooltip("Exact Chakira: "..chakira)
 
         task.wait(0.5)
     end
