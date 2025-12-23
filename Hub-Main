@@ -178,6 +178,14 @@ task.spawn(function()
     end
 end)
 
+-- ========================
+-- Quests Tab
+-- ========================
+local QuestsTab = Window:CreateTab("Quests 🏹")
+
+-- Wait for Quests folder
+local QuestsFolder = player:WaitForChild("Quests")
+
 -- Stat ID mapping for Boom quest progress
 local StatIdMap = {
     [1] = "Strength",
@@ -209,7 +217,7 @@ local function createBoomQuestUI(questFolder)
 
     -- Progress
     if progressFolder and requirementsFolder then
-        for _, statValue in ipairs(progressFolder:GetChildren()) do
+        for _, statValue in ipairs(progressFolder:GetChildren() or {}) do
             local statID = tonumber(statValue.Name)
             local statName = StatIdMap[statID] or "Unknown"
             local emoji = StatEmojis[statName] or ""
@@ -222,7 +230,7 @@ local function createBoomQuestUI(questFolder)
     -- Rewards
     if rewardsFolder then
         local rewardParts = {}
-        for _, reward in ipairs(rewardsFolder:GetChildren()) do
+        for _, reward in ipairs(rewardsFolder:GetChildren() or {}) do
             if reward:IsA("IntValue") then
                 local emoji = reward.Name == "Yen" and "💰" or (reward.Name == "Chikara" and "💎" or (reward.Name == "Power" and "⚡️" or ""))
                 table.insert(rewardParts, formatNumber(reward.Value).." "..emoji)
@@ -236,7 +244,7 @@ end
 
 -- Find current Boom quest dynamically
 local currentBoom
-for _, child in ipairs(QuestsFolder:GetChildren()) do
+for _, child in ipairs(QuestsFolder:GetChildren() or {}) do
     if child:IsA("Folder") and child.Name:match("Boom") then
         currentBoom = child
         break
@@ -245,10 +253,9 @@ end
 
 if currentBoom then
     createBoomQuestUI(currentBoom)
+else
+    QuestsTab:CreateSection("No active Boom quest 🕵️‍♂️")
 end
-
-
-
 
 -- ========================
 -- Load Configuration
