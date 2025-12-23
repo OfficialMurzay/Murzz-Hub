@@ -7,7 +7,7 @@ local RunService = game:GetService("RunService")
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 -- ========================
--- Main Window (with loading screen)
+-- Main Window
 -- ========================
 local Window = Rayfield:CreateWindow({
     Name = "MurzzHub v1.0",
@@ -24,7 +24,6 @@ local HomeTab = Window:CreateTab("Home 🏠")
 
 -- Player Data Section
 HomeTab:CreateSection("Player Data 👤")
-
 local OtherData = player:WaitForChild("OtherData")
 
 local ClassLabel = HomeTab:CreateLabel("Class: ... 🏆")
@@ -95,10 +94,9 @@ local ClassMap = {
 
 -- Number Formatter
 local function formatNumber(num)
-    if not num then return "..." end
+    if not num then return "0" end
     num = tonumber(num)
-    if not num then return "..." end
-
+    if not num then return "0" end
     local formats = {
         {1e18, "Qn"},
         {1e15, "Qd"},
@@ -107,13 +105,11 @@ local function formatNumber(num)
         {1e6,  "M"},
         {1e3,  "K"},
     }
-
     for _, f in ipairs(formats) do
         if num >= f[1] then
             return string.format("%.2f%s", num / f[1], f[2]):gsub("%.00", "")
         end
     end
-
     return tostring(num)
 end
 
@@ -130,13 +126,13 @@ local function animateValue(labelObj, statName, oldVal, newVal, emoji)
     labelObj:Set(statName..": "..formatNumber(newVal).." "..emoji)
 end
 
--- Previous values for animation
+-- Previous values
 local previousStats = {}
 local previousTotalPower = 0
 local previousYen = 0
 local previousChikara = 0
 
--- Update Loop
+-- Home Tab Update Loop
 task.spawn(function()
     while true do
         -- Stats
@@ -162,8 +158,7 @@ task.spawn(function()
 
         -- Class
         local classID = (OtherData:FindFirstChild("Class") and OtherData.Class.Value) or 0
-        local className = ClassMap[classID] or "Unknown ❓"
-        ClassLabel:Set("Class: "..className)
+        ClassLabel:Set("Class: "..(ClassMap[classID] or "Unknown ❓"))
 
         -- Yen
         local yen = (OtherData:FindFirstChild("Yen") and OtherData.Yen.Value) or 0
@@ -175,7 +170,7 @@ task.spawn(function()
         -- Chikara
         local chikara = (OtherData:FindFirstChild("Chikara") and OtherData.Chikara.Value) or 0
         if chikara ~= previousChikara then
-            animateValue(ChikaraLabel, "Chakira", previousChikara, chikara, "💎") -- UI still says Chakira
+            animateValue(ChikaraLabel, "Chakira", previousChikara, chikara, "💎")
             previousChikara = chikara
         end
 
@@ -183,5 +178,51 @@ task.spawn(function()
     end
 end)
 
+-- ========================
+-- Quests Tab
+-- ========================
+local QuestsTab = Window:CreateTab("Quests 🏹")
+local QuestsFolder = player:WaitForChild("Quests"):WaitForChild("Boom")
+
+-- Function to create a single Boom quest UI
+local function createBoomQuestUI(questName, questFolder)
+    QuestsTab:CreateSection(questName)
+    local progressFolder = questFolder:FindFirstChild("Progress")
+    local requirementsFolder = questFolder:FindFirstChild("Requirements")
+    local rewardsFolder = questFolder:FindFirstChild("Rewards")
+    -- Progress
+    if progressFolder and requirementsFolder then
+        for _, statValue in ipairs(progressFolder:GetChildren()) do
+            local statID = tonumber(statValue.Name)
+            local requirementValue = requirementsFolder:FindFirstChild(statValue.Name)
+            local requirement = requirementValue and requirementValue.Value or 0
+            QuestsTab:CreateLabel(formatNumber(statValue.Value).."/"..formatNumber(requirement).." "..(StatEmojis[statID] or ""))
+        end
+    end
+    -- Rewards
+    if rewardsFolder then
+        local rewardParts = {}
+        for _, reward in ipairs(rewardsFolder:GetChildren()) do
+            if reward:IsA("IntValue") then
+                local emoji = reward.Name == "Yen" and "💰" or (reward.Name == "Chikara" and "💎" or (reward.Name == "Power" and "⚡️" or ""))
+                table.insert(rewardParts, formatNumber(reward.Value).." "..emoji)
+            end
+        end
+        if #rewardParts > 0 then
+            QuestsTab:CreateLabel("Rewards: "..table.concat(rewardParts, ", "))
+        end
+    end
+end
+
+-- Loop through Boom1–Boom30
+for i = 1, 30 do
+    local boomQuest = QuestsFolder:FindFirstChild("Boom"..i)
+    if boomQuest then
+        createBoomQuestUI("Boom Quest "..i, boomQuest)
+    end
+end
+
+-- ========================
 -- Load Configuration
+-- ========================
 Rayfield:LoadConfiguration()
