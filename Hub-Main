@@ -185,8 +185,10 @@ local QuestsTab = Window:CreateTab("Quests 🏹")
 local QuestsFolder = player:WaitForChild("Quests"):WaitForChild("Boom")
 
 -- Function to create a single Boom quest UI
-local function createBoomQuestUI(questName, questFolder)
-    QuestsTab:CreateSection(questName)
+local function createBoomQuestUI(questFolder)
+    if not questFolder then return end
+    QuestsTab:CreateSection(questFolder.Name)
+    
     local progressFolder = questFolder:FindFirstChild("Progress")
     local requirementsFolder = questFolder:FindFirstChild("Requirements")
     local rewardsFolder = questFolder:FindFirstChild("Rewards")
@@ -216,14 +218,12 @@ local function createBoomQuestUI(questName, questFolder)
     end
 end
 
--- Loop through Boom1–Boom30 explicitly
-for i = 1, 30 do
-    local boomQuest = QuestsFolder:FindFirstChild("Boom"..i)
-    if boomQuest then
-        createBoomQuestUI("Boom Quest "..i, boomQuest)
+-- Find all children in Boom folder that contain "Boom" in the name
+for _, child in ipairs(QuestsFolder:GetChildren()) do
+    if child:IsA("Folder") and child.Name:match("Boom") then
+        createBoomQuestUI(child)
     end
 end
-
 
 -- ========================
 -- Load Configuration
