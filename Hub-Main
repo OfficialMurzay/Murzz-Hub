@@ -1,6 +1,7 @@
 -- Services
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
+local RunService = game:GetService("RunService")
 
 -- Load Rayfield
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
@@ -10,8 +11,8 @@ local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 -- ========================
 local Window = Rayfield:CreateWindow({
     Name = "MurzzHub v1.0",
-    LoadingTitle = "MurzzHub v1.0",         -- This appears as the mini loading section
-    LoadingSubtitle = "Auto Train • Teleports", -- Subtitle under the loading title
+    LoadingTitle = "MurzzHub v1.0",         
+    LoadingSubtitle = "Auto Train • Teleports",
     ConfigurationSaving = { Enabled = false },
     KeySystem = false
 })
@@ -24,10 +25,10 @@ local HomeTab = Window:CreateTab("Home 🏠")
 -- Player Data Section
 HomeTab:CreateSection("Player Data 👤")
 
-local ClassLabel = HomeTab:CreateLabel("Class: Loading 🏆")
-local TotalPowerLabel = HomeTab:CreateLabel("Total Power: Loading ⚡️")
-local YenLabel = HomeTab:CreateLabel("Yen: Loading 💰")
-local ChakiraLabel = HomeTab:CreateLabel("Chikara: Loading 💎")
+local ClassLabel = HomeTab:CreateLabel("Class: ... 🏆")
+local TotalPowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡️")
+local YenLabel = HomeTab:CreateLabel("Yen: ... 💰")
+local ChakiraLabel = HomeTab:CreateLabel("Chakira: ... 💎")
 
 -- Live Stats Section
 HomeTab:CreateSection("Live Stats 📊")
@@ -41,9 +42,10 @@ local StatEmojis = {
     Speed = "💨"
 }
 
+-- Create labels for stats
 local liveStats = {}
 for statName, emoji in pairs(StatEmojis) do
-    liveStats[statName] = HomeTab:CreateLabel(statName..": Loading "..emoji)
+    liveStats[statName] = HomeTab:CreateLabel(statName..": ... "..emoji)
 end
 
 local StatMap = {
@@ -88,9 +90,9 @@ local ClassMap = {
 
 -- Number Formatter
 local function formatNumber(num)
-    if not num then return "Loading..." end
+    if not num then return "..." end
     num = tonumber(num)
-    if not num then return "Loading..." end
+    if not num then return "..." end
 
     local formats = {
         {1e18, "Qn"},
@@ -110,52 +112,78 @@ local function formatNumber(num)
     return tostring(num)
 end
 
+-- Helper to animate numbers smoothly
+local function animateValue(labelObj, oldVal, newVal, emoji)
+    local steps = 15
+    local increment = (newVal - oldVal) / steps
+    local current = oldVal
+    for i = 1, steps do
+        current = current + increment
+        labelObj:Set(labelObj.Text:match("^(%w+):").." "..formatNumber(current).." "..emoji)
+        RunService.RenderStepped:Wait()
+    end
+    -- Ensure exact value
+    labelObj:Set(labelObj.Text:match("^(%w+):").." "..formatNumber(newVal).." "..emoji)
+end
+
+-- Keep track of previous values for animation
+local previousStats = {}
+local previousTotalPower = 0
+local previousYen = 0
+local previousChakira = 0
+
 -- Update Loop
 task.spawn(function()
     while true do
-        -- Stats
         local statsFolder = player:FindFirstChild("Stats")
+        local otherData = player:FindFirstChild("OtherData")
+
+        -- Animate live stats
         if statsFolder then
             for statName, statID in pairs(StatMap) do
                 local stat = statsFolder:FindFirstChild(statID)
-                local valueText = "Loading"
-                if stat and stat.Value ~= nil then
-                    valueText = formatNumber(stat.Value)
+                local value = stat and stat.Value or 0
+                local oldValue = previousStats[statName] or 0
+                if value ~= oldValue then
+                    animateValue(liveStats[statName], oldValue, value, StatEmojis[statName])
+                    previousStats[statName] = value
                 end
-                liveStats[statName]:Set(statName..": "..valueText.." "..StatEmojis[statName])
+                -- Tooltip showing raw value
+                liveStats[statName]:AddTooltip("Exact value: "..(stat and stat.Value or 0))
             end
         end
 
         -- Total Power
-        local otherData = player:FindFirstChild("OtherData")
-        if otherData and otherData:FindFirstChild("TotalPower") then
-            TotalPowerLabel:Set("Total Power: "..formatNumber(otherData.TotalPower.Value).." ⚡️")
-        else
-            TotalPowerLabel:Set("Total Power: Loading ⚡️")
+        local totalPower = (otherData and otherData:FindFirstChild("TotalPower") and otherData.TotalPower.Value) or 0
+        if totalPower ~= previousTotalPower then
+            animateValue(TotalPowerLabel, previousTotalPower, totalPower, "⚡️")
+            previousTotalPower = totalPower
         end
+        TotalPowerLabel:AddTooltip("Exact Total Power: "..totalPower)
 
         -- Class
         if otherData and otherData:FindFirstChild("Class") then
             local classID = otherData.Class.Value
             local className = ClassMap[classID] or "Unknown ❓"
             ClassLabel:Set("Class: "..className)
-        else
-            ClassLabel:Set("Class: Loading 🏆")
+            ClassLabel:AddTooltip("Class ID: "..classID)
         end
 
         -- Yen
-        if otherData and otherData:FindFirstChild("Yen") then
-            YenLabel:Set("Yen: "..formatNumber(otherData.Yen.Value).." 💰")
-        else
-            YenLabel:Set("Yen: Loading 💰")
+        local yen = (otherData and otherData:FindFirstChild("Yen") and otherData.Yen.Value) or 0
+        if yen ~= previousYen then
+            animateValue(YenLabel, previousYen, yen, "💰")
+            previousYen = yen
         end
+        YenLabel:AddTooltip("Exact Yen: "..yen)
 
         -- Chakira
-        if otherData and otherData:FindFirstChild("Chakira") then
-            ChakiraLabel:Set("Chikara: "..formatNumber(otherData.Chakira.Value).." 💎")
-        else
-            ChakiraLabel:Set("Chikara: Loading 💎")
+        local chakira = (otherData and otherData:FindFirstChild("Chakira") and otherData.Chakira.Value) or 0
+        if chakira ~= previousChakira then
+            animateValue(ChakiraLabel, previousChakira, chakira, "💎")
+            previousChakira = chakira
         end
+        ChakiraLabel:AddTooltip("Exact Chakira: "..chakira)
 
         task.wait(0.5)
     end
