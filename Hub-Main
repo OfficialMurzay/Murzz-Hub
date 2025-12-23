@@ -30,7 +30,7 @@ local OtherData = player:WaitForChild("OtherData")
 local ClassLabel = HomeTab:CreateLabel("Class: ... 🏆")
 local TotalPowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡️")
 local YenLabel = HomeTab:CreateLabel("Yen: ... 💰")
-local ChakiraLabel = HomeTab:CreateLabel("Chakira: ... 💎")
+local ChikaraLabel = HomeTab:CreateLabel("Chakira: ... 💎") -- UI text stays Chakira
 
 -- Live Stats Section
 HomeTab:CreateSection("Live Stats 📊")
@@ -134,7 +134,7 @@ end
 local previousStats = {}
 local previousTotalPower = 0
 local previousYen = 0
-local previousChakira = 0
+local previousChikara = 0
 
 -- Update Loop
 task.spawn(function()
@@ -172,11 +172,11 @@ task.spawn(function()
             previousYen = yen
         end
 
-        -- Chakira
-        local chakira = (OtherData:FindFirstChild("Chakira") and OtherData.Chakira.Value) or 0
-        if chakira ~= previousChakira then
-            animateValue(ChakiraLabel, "Chakira", previousChakira, chakira, "💎")
-            previousChakira = chakira
+        -- Chikara
+        local chikara = (OtherData:FindFirstChild("Chikara") and OtherData.Chikara.Value) or 0
+        if chikara ~= previousChikara then
+            animateValue(ChikaraLabel, "Chakira", previousChikara, chikara, "💎") -- UI still says Chakira
+            previousChikara = chikara
         end
 
         task.wait(0.5)
