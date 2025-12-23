@@ -182,11 +182,9 @@ end)
 -- Quests Tab
 -- ========================
 local QuestsTab = Window:CreateTab("Quests 🏹")
-
--- Wait for Quests folder
 local QuestsFolder = player:WaitForChild("Quests")
 
--- Stat ID mapping for Boom quest progress
+-- Stat ID mapping
 local StatIdMap = {
     [1] = "Strength",
     [2] = "Durability",
@@ -196,7 +194,7 @@ local StatIdMap = {
     [6] = "Speed"
 }
 
--- Stat emojis (same as Home tab)
+-- Stat emojis
 local StatEmojis = {
     Strength = "💪",
     Durability = "🛡️",
@@ -206,10 +204,33 @@ local StatEmojis = {
     Speed = "💨"
 }
 
--- Function to create the UI for a single Boom quest
+-- Power mapping
+local PowerMap = {
+    [1] = "Rapid Punch",
+    [2] = "Kings Aura",
+    [3] = "Spiral Sphere",
+    [4] = "Water Running",
+    [5] = "Flying Slash",
+    [6] = "Flight",
+    [7] = "Rapid Slash",
+    [8] = "Fire Fist",
+    [9] = "Flame Flight",
+    [10] = "Serious Punch",
+    [11] = "Super Human",
+    [12] = "Dragon's Wrath",
+    [13] = "Energy Beam",
+    [14] = "Tornado Smash",
+    [15] = "Skeleton",
+    [17] = "Blink",
+    [18] = "Ice Smash",
+    [19] = "Armoured Colossus",
+    [20] = "Gear 4"
+}
+
+-- Function to create Boom quest UI
 local function createBoomQuestUI(questFolder)
     if not questFolder then return end
-    QuestsTab:CreateSection(questFolder.Name .. " 🏹") -- add emoji to section
+    QuestsTab:CreateSection(questFolder.Name .. " 🏹")
 
     local progressFolder = questFolder:FindFirstChild("Progress")
     local requirementsFolder = questFolder:FindFirstChild("Requirements")
@@ -232,8 +253,14 @@ local function createBoomQuestUI(questFolder)
         local rewardParts = {}
         for _, reward in ipairs(rewardsFolder:GetChildren() or {}) do
             if reward:IsA("IntValue") then
-                local emoji = reward.Name == "Yen" and "💰" or (reward.Name == "Chikara" and "💎" or (reward.Name == "Power" and "⚡️" or ""))
-                table.insert(rewardParts, formatNumber(reward.Value).." "..emoji)
+                if reward.Name == "Yen" then
+                    table.insert(rewardParts, formatNumber(reward.Value).." 💰")
+                elseif reward.Name == "Chikara" then
+                    table.insert(rewardParts, formatNumber(reward.Value).." 💎")
+                elseif reward.Name == "Power" then
+                    local powerName = PowerMap[reward.Value] or "Unknown Power"
+                    table.insert(rewardParts, powerName)
+                end
             end
         end
         if #rewardParts > 0 then
@@ -242,7 +269,7 @@ local function createBoomQuestUI(questFolder)
     end
 end
 
--- Find current Boom quest dynamically
+-- Detect current Boom quest
 local currentBoom
 for _, child in ipairs(QuestsFolder:GetChildren() or {}) do
     if child:IsA("Folder") and child.Name:match("Boom") then
@@ -256,6 +283,7 @@ if currentBoom then
 else
     QuestsTab:CreateSection("No active Boom quest 🕵️‍♂️")
 end
+
 
 -- ========================
 -- Load Configuration
