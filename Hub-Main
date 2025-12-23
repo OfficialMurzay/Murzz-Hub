@@ -182,8 +182,9 @@ end)
 -- Quests Tab
 -- ========================
 local QuestsTab = Window:CreateTab("Quests 🏹")
-local QuestsFolder = player:WaitForChild("Quests"):WaitForChild("Boom")
+local QuestsFolder = player:WaitForChild("Quests")
 
+-- Function to create the UI for a single Boom quest
 local function createBoomQuestUI(questFolder)
     if not questFolder then return end
     QuestsTab:CreateSection(questFolder.Name)
@@ -217,14 +218,19 @@ local function createBoomQuestUI(questFolder)
     end
 end
 
--- Manually check Boom1 → Boom30
-for i = 1, 30 do
-    local boomName = "Boom"..i
-    local boomQuest = QuestsFolder:FindFirstChild(boomName)
-    if boomQuest then
-        createBoomQuestUI(boomQuest)
+-- Find the current Boom quest dynamically
+local currentBoom
+for _, child in ipairs(QuestsFolder:GetChildren()) do
+    if child:IsA("Folder") and child.Name:match("Boom") then
+        currentBoom = child
+        break
     end
 end
+
+if currentBoom then
+    createBoomQuestUI(currentBoom)
+end
+
 
 
 -- ========================
