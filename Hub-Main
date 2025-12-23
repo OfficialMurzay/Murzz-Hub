@@ -11,7 +11,7 @@ local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 -- ========================
 local Window = Rayfield:CreateWindow({
     Name = "MurzzHub v1.0",
-    LoadingTitle = "MurzzHub v1.0",         
+    LoadingTitle = "MurzzHub v1.0",
     LoadingSubtitle = "Auto Train • Teleports",
     ConfigurationSaving = { Enabled = false },
     KeySystem = false
@@ -25,7 +25,6 @@ local HomeTab = Window:CreateTab("Home 🏠")
 -- Player Data Section
 HomeTab:CreateSection("Player Data 👤")
 
--- Wait for OtherData to exist
 local OtherData = player:WaitForChild("OtherData")
 
 local ClassLabel = HomeTab:CreateLabel("Class: ... 🏆")
@@ -118,18 +117,17 @@ local function formatNumber(num)
     return tostring(num)
 end
 
--- Animate numbers (fixed for nil match)
-local function animateValue(labelObj, oldVal, newVal, emoji)
+-- Animate numbers safely
+local function animateValue(labelObj, statName, oldVal, newVal, emoji)
     local steps = 15
     local increment = (newVal - oldVal) / steps
     local current = oldVal
-    local prefix = labelObj.Text:match("^(.-):") or "Stat"
     for i = 1, steps do
         current = current + increment
-        labelObj:Set(prefix..": "..formatNumber(current).." "..emoji)
+        labelObj:Set(statName..": "..formatNumber(current).." "..emoji)
         RunService.RenderStepped:Wait()
     end
-    labelObj:Set(prefix..": "..formatNumber(newVal).." "..emoji)
+    labelObj:Set(statName..": "..formatNumber(newVal).." "..emoji)
 end
 
 -- Previous values for animation
@@ -149,7 +147,7 @@ task.spawn(function()
                 local value = stat and stat.Value or 0
                 local oldValue = previousStats[statName] or 0
                 if value ~= oldValue then
-                    animateValue(liveStats[statName], oldValue, value, StatEmojis[statName])
+                    animateValue(liveStats[statName], statName, oldValue, value, StatEmojis[statName])
                     previousStats[statName] = value
                 end
             end
@@ -158,7 +156,7 @@ task.spawn(function()
         -- Total Power
         local totalPower = (OtherData:FindFirstChild("TotalPower") and OtherData.TotalPower.Value) or 0
         if totalPower ~= previousTotalPower then
-            animateValue(TotalPowerLabel, previousTotalPower, totalPower, "⚡️")
+            animateValue(TotalPowerLabel, "Total Power", previousTotalPower, totalPower, "⚡️")
             previousTotalPower = totalPower
         end
 
@@ -170,14 +168,14 @@ task.spawn(function()
         -- Yen
         local yen = (OtherData:FindFirstChild("Yen") and OtherData.Yen.Value) or 0
         if yen ~= previousYen then
-            animateValue(YenLabel, previousYen, yen, "💰")
+            animateValue(YenLabel, "Yen", previousYen, yen, "💰")
             previousYen = yen
         end
 
         -- Chakira
         local chakira = (OtherData:FindFirstChild("Chakira") and OtherData.Chakira.Value) or 0
         if chakira ~= previousChakira then
-            animateValue(ChakiraLabel, previousChakira, chakira, "💎")
+            animateValue(ChakiraLabel, "Chakira", previousChakira, chakira, "💎")
             previousChakira = chakira
         end
 
