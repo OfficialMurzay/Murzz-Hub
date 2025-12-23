@@ -230,7 +230,7 @@ local PowerMap = {
 -- Function to create Boom quest UI
 local function createBoomQuestUI(questFolder)
     if not questFolder then return end
-    QuestsTab:CreateSection(questFolder.Name .. " 🏹")
+    QuestsTab:CreateSection(questFolder.Name .. " 🏹") -- Emoji next to quest name
 
     local progressFolder = questFolder:FindFirstChild("Progress")
     local requirementsFolder = questFolder:FindFirstChild("Requirements")
@@ -251,8 +251,10 @@ local function createBoomQuestUI(questFolder)
     -- Rewards
     if rewardsFolder then
         local rewardParts = {}
+
+        -- Make sure we only check IntValue children
         for _, reward in ipairs(rewardsFolder:GetChildren() or {}) do
-            if reward:IsA("IntValue") then
+            if reward:IsA("IntValue") and reward.Value > 0 then
                 if reward.Name == "Yen" then
                     table.insert(rewardParts, formatNumber(reward.Value).." 💰")
                 elseif reward.Name == "Chikara" then
@@ -263,6 +265,7 @@ local function createBoomQuestUI(questFolder)
                 end
             end
         end
+
         if #rewardParts > 0 then
             QuestsTab:CreateLabel("Rewards: "..table.concat(rewardParts, ", "))
         end
