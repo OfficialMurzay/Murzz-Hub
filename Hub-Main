@@ -228,13 +228,13 @@ local PowerMap = {
 }
 
 -- Function to create Boom quest UI
-local function createBoomQuestUI(questFolder)
-    if not questFolder then return end
-    QuestsTab:CreateSection(questFolder.Name .. " 🏹") -- Emoji next to quest name
+local function createBoomQuestUI(boomFolder)
+    if not boomFolder then return end
+    QuestsTab:CreateSection(boomFolder.Name .. " 🏹") -- emoji in section title
 
-    local progressFolder = questFolder:FindFirstChild("Progress")
-    local requirementsFolder = questFolder:FindFirstChild("Requirements")
-    local rewardsFolder = questFolder:FindFirstChild("Rewards")
+    local progressFolder = boomFolder:FindFirstChild("Progress")
+    local requirementsFolder = boomFolder:FindFirstChild("Requirements")
+    local rewardsFolder = boomFolder:FindFirstChild("Rewards")
 
     -- Progress
     if progressFolder and requirementsFolder then
@@ -252,7 +252,6 @@ local function createBoomQuestUI(questFolder)
     if rewardsFolder then
         local rewardParts = {}
 
-        -- Make sure we only check IntValue children
         for _, reward in ipairs(rewardsFolder:GetChildren() or {}) do
             if reward:IsA("IntValue") and reward.Value > 0 then
                 if reward.Name == "Yen" then
@@ -272,7 +271,7 @@ local function createBoomQuestUI(questFolder)
     end
 end
 
--- Detect current Boom quest
+-- Find current Boom quest folder dynamically
 local currentBoom
 for _, child in ipairs(QuestsFolder:GetChildren() or {}) do
     if child:IsA("Folder") and child.Name:match("Boom") then
