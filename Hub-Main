@@ -178,134 +178,170 @@ task.spawn(function()
     end
 end)
 
+-- SERVICES
 local Players = game:GetService("Players")
-local player = Players.LocalPlayer
+local RunService = game:GetService("RunService")
 
-local QuestsTab = Window:CreateTab("Quests 🏹")
+local player = Players.LocalPlayer
+local QuestTab = Window:CreateTab("Quests 📜")
+
 local QuestsFolder = player:WaitForChild("Quests")
 
--- Stat mapping
-local StatIdMap = {
+--------------------------------------------------
+-- STAT MAP + COLORS
+--------------------------------------------------
+local StatMap = {
     [1] = "Strength",
     [2] = "Durability",
     [3] = "Chakra",
     [4] = "Sword",
-    [5] = "Agility",
-    [6] = "Speed"
+    [5] = "Speed",
+    [6] = "Agility"
 }
 
-local StatEmojis = {
-    Strength = "💪",
-    Durability = "🛡️",
-    Chakra = "🌀",
-    Sword = "🗡️",
-    Agility = "☁️",
-    Speed = "💨"
+local StatColors = {
+    Strength   = Color3.fromRGB(255, 80, 80),
+    Durability = Color3.fromRGB(80, 160, 255),
+    Chakra     = Color3.fromRGB(180, 90, 255),
+    Sword      = Color3.fromRGB(80, 200, 120),
+    Speed      = Color3.fromRGB(255, 160, 80),
+    Agility    = Color3.fromRGB(255, 220, 80)
 }
 
-local PowerMap = {
-    [1] = "Rapid Punch",
-    [2] = "Kings Aura",
-    [3] = "Spiral Sphere",
-    [4] = "Water Running",
-    [5] = "Flying Slash",
-    [6] = "Flight",
-    [7] = "Rapid Slash",
-    [8] = "Fire Fist",
-    [9] = "Flame Flight",
-    [10] = "Serious Punch",
-    [11] = "Super Human",
-    [12] = "Dragon's Wrath",
-    [13] = "Energy Beam",
-    [14] = "Tornado Smash",
-    [15] = "Skeleton",
-    [17] = "Blink",
-    [18] = "Ice Smash",
-    [19] = "Armoured Colossus",
-    [20] = "Gear 4"
-}
-
--- Format number helper
-local function formatNumber(num)
-    if not num then return "0" end
-    num = tonumber(num)
-    local formats = {
-        {1e18, "Qn"},
-        {1e15, "Qd"},
-        {1e12, "T"},
-        {1e9, "B"},
-        {1e6, "M"},
-        {1e3, "K"}
+--------------------------------------------------
+-- FORMAT NUMBER
+--------------------------------------------------
+local function fmt(n)
+    local t = {
+        {1e15,"Qd"},{1e12,"T"},{1e9,"B"},
+        {1e6,"M"},{1e3,"K"}
     }
-    for _, f in ipairs(formats) do
-        if num >= f[1] then
-            return string.format("%.2f%s", num / f[1], f[2]):gsub("%.00","")
+    for _,v in ipairs(t) do
+        if n >= v[1] then
+            return string.format("%.2f%s", n/v[1], v[2]):gsub("%.00","")
         end
     end
-    return tostring(num)
+    return tostring(n)
 end
 
--- Function to display Boom quest
-local function createBoomQuestUI(boomFolder)
-    if not boomFolder then return end
-    QuestsTab:CreateSection(boomFolder.Name .. " 🏹")
-
-    local progressFolder = boomFolder:FindFirstChild("Progress")
-    local requirementsFolder = boomFolder:FindFirstChild("Requirements")
-    local rewardsFolder = boomFolder:FindFirstChild("Rewards")
-
-    -- Progress
-    if progressFolder and requirementsFolder then
-        for _, statValue in ipairs(progressFolder:GetChildren() or {}) do
-            local statID = tonumber(statValue.Name)
-            local statName = StatIdMap[statID] or "Unknown"
-            local emoji = StatEmojis[statName] or ""
-            local req = requirementsFolder:FindFirstChild(statValue.Name)
-            local requirement = req and req.Value or 0
-            QuestsTab:CreateLabel(formatNumber(statValue.Value).."/"..formatNumber(requirement).." "..statName.." "..emoji)
-        end
-    end
-
-    -- Rewards (direct access to IntValues)
-    if rewardsFolder then
-        local rewardParts = {}
-
-        local yen = rewardsFolder:FindFirstChild("Yen")
-        if yen and yen:IsA("IntValue") and yen.Value > 0 then
-            table.insert(rewardParts, formatNumber(yen.Value).." 💰")
-        end
-
-        local chikara = rewardsFolder:FindFirstChild("Chikara")
-        if chikara and chikara:IsA("IntValue") and chikara.Value > 0 then
-            table.insert(rewardParts, formatNumber(chikara.Value).." 💎")
-        end
-
-        local power = rewardsFolder:FindFirstChild("Power")
-        if power and power:IsA("IntValue") and power.Value > 0 then
-            table.insert(rewardParts, PowerMap[power.Value] or "Unknown Power")
-        end
-
-        if #rewardParts > 0 then
-            QuestsTab:CreateLabel("Rewards: "..table.concat(rewardParts,", "))
-        end
-    end
-end
-
--- Detect current Boom quest dynamically
-local currentBoom
-for _, child in ipairs(QuestsFolder:GetChildren() or {}) do
-    if child:IsA("Folder") and child.Name:match("Boom") then
-        currentBoom = child
+--------------------------------------------------
+-- FIND ACTIVE BOOM QUEST
+--------------------------------------------------
+local Boom
+for _,f in ipairs(QuestsFolder:GetChildren()) do
+    if f:IsA("Folder") and f.Name:match("^Boom%d+$") then
+        Boom = f
         break
     end
 end
 
-if currentBoom then
-    createBoomQuestUI(currentBoom)
-else
-    QuestsTab:CreateSection("No active Boom quest 🕵️‍♂️")
+if not Boom then
+    QuestTab:CreateLabel("No active Boom quest ❌")
+    return
 end
 
+local boomNumber = Boom.Name:gsub("Boom","")
+
+--------------------------------------------------
+-- COLLAPSIBLE HEADER
+--------------------------------------------------
+local Header = QuestTab:CreateButton({
+    Name = "Boom Quest No. "..boomNumber.." ▸",
+    Callback = function() end
+})
+
+--------------------------------------------------
+-- STATE
+--------------------------------------------------
+local Expanded = false
+local Bars = {}
+local Connections = {}
+
+--------------------------------------------------
+-- EXPAND
+--------------------------------------------------
+local function expand()
+    if Expanded then return end
+    Expanded = true
+    Header:Set("Boom Quest No. "..boomNumber.." ▾")
+
+    local progress = Boom:FindFirstChild("Progress")
+    local requirements = Boom:FindFirstChild("Requirements")
+    if not progress or not requirements then return end
+
+    for _,p in ipairs(progress:GetChildren()) do
+        if not p:IsA("IntValue") then continue end
+
+        local statId = tonumber(p.Name)
+        local statName = StatMap[statId]
+        local req = requirements:FindFirstChild(p.Name)
+        if not statName or not req then continue end
+
+        -- CREATE BAR
+        local bar = QuestTab:CreateSlider({
+            Name = statName,
+            Range = {0, 100},
+            Increment = 1,
+            Suffix = "%",
+            CurrentValue = 0,
+            Flag = "Quest_"..statName,
+            Callback = function() end
+        })
+
+        Bars[p] = bar
+
+        -- COLOR BAR
+        task.spawn(function()
+            task.wait()
+            local frame = bar.Container
+            if frame and frame:FindFirstChild("Fill") then
+                frame.Fill.BackgroundColor3 = StatColors[statName]
+            end
+        end)
+
+        -- LIVE UPDATE CONNECTION
+        Connections[p] = RunService.Heartbeat:Connect(function()
+            if not Expanded then return end
+            if not p or not p.Parent then return end
+
+            local percent = math.clamp(p.Value / req.Value, 0, 1)
+            bar:Set({
+                Name = statName.."  "..fmt(p.Value).."/"..fmt(req.Value),
+                CurrentValue = math.floor(percent * 100)
+            })
+        end)
+    end
+end
+
+--------------------------------------------------
+-- COLLAPSE
+--------------------------------------------------
+local function collapse()
+    if not Expanded then return end
+    Expanded = false
+    Header:Set("Boom Quest No. "..boomNumber.." ▸")
+
+    for _,c in pairs(Connections) do
+        c:Disconnect()
+    end
+    Connections = {}
+
+    for _,b in pairs(Bars) do
+        b:Destroy()
+    end
+    Bars = {}
+end
+
+--------------------------------------------------
+-- TOGGLE
+--------------------------------------------------
+Header:SetCallback(function()
+    if Expanded then
+        collapse()
+    else
+        expand()
+    end
+end)
 
 -- ========================
 -- Load Configuration
