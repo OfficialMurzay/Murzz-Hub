@@ -1,12 +1,11 @@
 -- Services
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- Load Rayfield
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
--- Window (no tab icons)
+-- Window
 local Window = Rayfield:CreateWindow({
     Name = "Murzz Hub | AFSE",
     LoadingTitle = "Murzz Hub | AFSE",
@@ -16,10 +15,41 @@ local Window = Rayfield:CreateWindow({
 })
 
 -- ========================
--- Home Tab (Stats)
+-- Home Tab
 -- ========================
-local HomeTab = Window:CreateTab("Home") -- no icon
-HomeTab:CreateSection("📊 Live Stats")
+local HomeTab = Window:CreateTab("Home")
+HomeTab:CreateSection("Info")
+
+-- Classes mapping with emojis
+local ClassMap = {
+    [1] = "Fighter 🥊",
+    [2] = "Shinobi 🥷",
+    [3] = "Pirate ☠️",
+    [4] = "Ghoul 👹",
+    [5] = "Hero 🦸",
+    [6] = "Reaper ☠️",
+    [7] = "Saiyan 💥",
+    [8] = "Sin 😈",
+    [9] = "Magi 🧙",
+    [10] = "Akuma 👿",
+    [11] = "Yonko 👑",
+    [12] = "Gorosei 👴",
+    [13] = "Overlord 🏰",
+    [14] = "Hokage 🔥",
+    [15] = "Kaioshin ✨",
+    [16] = "Sage 🍃",
+    [17] = "Espada ⚔️",
+    [18] = "Shinigami ⚰️",
+    [19] = "Hashira 🗡️",
+    [20] = "Hakaishin 💣",
+    [21] = "Otsutsuki 🌙",
+    [22] = "Pirate King 👑🏴‍☠️",
+    [23] = "Kishin 👺",
+    [24] = "Angel 😇",
+    [25] = "Demon King 👹👑",
+    [26] = "Ultra Instinct 🌀✨",
+    [27] = "Upper Moon 🌙🔝"
+}
 
 -- Number Formatter
 local function formatNumber(num)
@@ -45,125 +75,66 @@ local function formatNumber(num)
     return tostring(num)
 end
 
--- Create Stat Cards
-local StatCards = {}
-local StatNames = { "Strength", "Durability", "Chakra", "Sword", "Agility", "Speed" }
-for _, statName in ipairs(StatNames) do
-    StatCards[statName] = HomeTab:CreateParagraph({
-        Title = statName,
-        Content = "Loading..."
-    })
-end
+-- Info labels
+local ClassLabel = HomeTab:CreateLabel("Class: Loading 🏆")
+local TotalPowerLabel = HomeTab:CreateLabel("Total Power: Loading ⚡")
 
--- Stat Index Mapping
-local StatMap = {
-    Strength   = 1,
-    Durability = 2,
-    Chakra     = 3,
-    Sword      = 4,
-    Agility    = 5,
-    Speed      = 6
+-- Live Stats section
+HomeTab:CreateSection("Live Stats")
+
+-- Live stats labels with emojis on the right
+local liveStats = {
+    Strength = HomeTab:CreateLabel("Strength: Loading 💪"),
+    Durability = HomeTab:CreateLabel("Durability: Loading 🛡️"),
+    Chakra = HomeTab:CreateLabel("Chakra: Loading 🌀"),
+    Sword = HomeTab:CreateLabel("Sword: Loading ⚔️"),
+    Agility = HomeTab:CreateLabel("Agility: Loading 🕊️"),
+    Speed = HomeTab:CreateLabel("Speed: Loading 💨")
 }
 
--- Update Loop for stats
+-- Stat ID mapping
+local StatMap = {
+    Strength = "1",
+    Durability = "2",
+    Chakra = "3",
+    Sword = "4",
+    Agility = "5",
+    Speed = "6"
+}
+
+-- Update loop for live stats, total power, and class
 task.spawn(function()
     while true do
+        -- Live stats
         local statsFolder = player:FindFirstChild("Stats")
         if statsFolder then
-            for name, index in pairs(StatMap) do
-                local stat = statsFolder:FindFirstChild(tostring(index))
+            for statName, statID in pairs(StatMap) do
+                local stat = statsFolder:FindFirstChild(statID)
                 if stat and stat.Value ~= nil then
-                    StatCards[name]:Set({
-                        Title = name,
-                        Content = formatNumber(stat.Value)
-                    })
+                    liveStats[statName]:Set(statName..": "..formatNumber(stat.Value).." "..(liveStats[statName].Name:match("%S+$") or ""))
                 else
-                    StatCards[name]:Set({
-                        Title = name,
-                        Content = "Loading..."
-                    })
+                    liveStats[statName]:Set(statName..": Loading")
                 end
             end
         end
+
+        -- Total Power
+        local otherData = player:FindFirstChild("OtherData")
+        if otherData and otherData:FindFirstChild("TotalPower") then
+            TotalPowerLabel:Set("Total Power: "..formatNumber(otherData.TotalPower.Value).." ⚡")
+        else
+            TotalPowerLabel:Set("Total Power: Loading ⚡")
+        end
+
+        -- Class
+        if otherData and otherData:FindFirstChild("Class") then
+            local classID = otherData.Class.Value
+            local className = ClassMap[classID] or "Unknown ❓"
+            ClassLabel:Set("Class: "..className)
+        else
+            ClassLabel:Set("Class: Loading 🏆")
+        end
+
         task.wait(0.5)
     end
 end)
-
--- ========================
--- Auto Train Tab
--- ========================
-local mainClient = player:WaitForChild("PlayerGui"):WaitForChild("Main"):WaitForChild("MainClient")
-local StatFunctions = require(mainClient:WaitForChild("StatFunctions"))
-local CharacterModule
-repeat
-    CharacterModule = StatFunctions.characterModule
-    task.wait(0.1)
-until CharacterModule
-
-local GameData = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameData"))
-local tbl_upvr = {}
-
-local AutoTrainTab = Window:CreateTab("Auto Train") -- no icon
-AutoTrainTab:CreateSection("Enable Auto Training for Stats")
-
--- Stat toggles with compatible emojis
-local statToggles = {
-    {Name = "Auto Strength 💪",   ID = 1},
-    {Name = "Auto Durability 🛡️", ID = 2},
-    {Name = "Auto Chakra 🌀",     ID = 3},
-    {Name = "Auto Sword ⚔️",      ID = 4},
-    {Name = "Auto Agility 🕊️",    ID = 5}, -- more compatible wings
-    {Name = "Auto Speed 💨",      ID = 6},
-}
-
--- Create flags for toggles
-for _, stat in ipairs(statToggles) do
-    AutoTrainTab:CreateToggle({
-        Name = stat.Name,
-        CurrentValue = false,
-        Flag = "AutoStat"..stat.ID,
-        Callback = function() end -- loop handles it
-    })
-end
-
--- Persistent loops for auto train
-for _, stat in ipairs(statToggles) do
-    local flagName = "AutoStat"..stat.ID
-    task.spawn(function()
-        while true do
-            if Rayfield.Flags[flagName] then
-                if CharacterModule.states.Dead then
-                    task.wait(1)
-                else
-                    CharacterModule.characterStopped = false
-                    CharacterModule:ResumeCharacter()
-
-                    StatFunctions.CurrentKey = stat.ID
-                    StatFunctions[stat.ID] = false -- unblock cooldown
-
-                    local success, err = pcall(function()
-                        if not StatFunctions.CurrentKey or tbl_upvr[StatFunctions.CurrentKey] then return end
-                        local CurrentKey = StatFunctions.CurrentKey
-                        tbl_upvr[CurrentKey] = true
-                        ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train", CurrentKey)
-                        tbl_upvr[CurrentKey] = false
-                    end)
-
-                    if not success then
-                        warn("TrainStat error for statID "..stat.ID..":", err)
-                    end
-
-                    local cooldown = GameData.Stats[stat.ID].Cooldown
-                    task.wait(cooldown)
-                end
-            else
-                task.wait(0.5)
-            end
-        end
-    end)
-end
-
--- ========================
--- Load configuration
--- ========================
-Rayfield:LoadConfiguration()
