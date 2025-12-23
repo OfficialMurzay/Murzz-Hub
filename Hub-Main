@@ -181,6 +181,9 @@ end)
 -- ========================
 -- Quests Tab
 -- ========================
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
 local QuestsTab = Window:CreateTab("Quests 🏹")
 local QuestsFolder = player:WaitForChild("Quests")
 
@@ -227,16 +230,16 @@ local PowerMap = {
     [20] = "Gear 4"
 }
 
--- Function to create Boom quest UI
+-- Function to display Boom quest UI
 local function createBoomQuestUI(boomFolder)
     if not boomFolder then return end
-    QuestsTab:CreateSection(boomFolder.Name .. " 🏹")
+    QuestsTab:CreateSection(boomFolder.Name .. " 🏹") -- emoji in section
 
     local progressFolder = boomFolder:FindFirstChild("Progress")
     local requirementsFolder = boomFolder:FindFirstChild("Requirements")
     local rewardsFolder = boomFolder:FindFirstChild("Rewards")
 
-    -- Progress
+    -- Progress display
     if progressFolder and requirementsFolder then
         for _, statValue in ipairs(progressFolder:GetChildren() or {}) do
             local statID = tonumber(statValue.Name)
@@ -248,30 +251,26 @@ local function createBoomQuestUI(boomFolder)
         end
     end
 
-    -- Rewards (directly access .Yen, .Chikara, .Power)
+    -- Rewards display
     if rewardsFolder then
         local rewardParts = {}
 
-        -- Yen
         local yen = rewardsFolder:FindFirstChild("Yen")
         if yen and yen:IsA("IntValue") and yen.Value > 0 then
             table.insert(rewardParts, formatNumber(yen.Value).." 💰")
         end
 
-        -- Chikara
         local chikara = rewardsFolder:FindFirstChild("Chikara")
         if chikara and chikara:IsA("IntValue") and chikara.Value > 0 then
             table.insert(rewardParts, formatNumber(chikara.Value).." 💎")
         end
 
-        -- Power
         local power = rewardsFolder:FindFirstChild("Power")
         if power and power:IsA("IntValue") and power.Value > 0 then
             local powerName = PowerMap[power.Value] or "Unknown Power"
             table.insert(rewardParts, powerName)
         end
 
-        -- Display all rewards on one line
         if #rewardParts > 0 then
             QuestsTab:CreateLabel("Rewards: "..table.concat(rewardParts, ", "))
         end
