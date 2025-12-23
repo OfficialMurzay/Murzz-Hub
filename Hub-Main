@@ -184,7 +184,6 @@ local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
 local QuestTab = Window:CreateTab("Quests 📜")
-
 local QuestsFolder = player:WaitForChild("Quests")
 
 --------------------------------------------------
@@ -225,7 +224,7 @@ local function fmt(n)
 end
 
 --------------------------------------------------
--- FIND ACTIVE BOOM QUEST (ONLY ONE EXISTS)
+-- FIND ACTIVE BOOM QUEST
 --------------------------------------------------
 local Boom
 for _,f in ipairs(QuestsFolder:GetChildren()) do
@@ -276,7 +275,7 @@ local function expand()
 
         Bars[p] = bar
 
-        -- Color bar
+        -- Color the bar safely
         task.spawn(function()
             task.wait()
             if bar.Container and bar.Container:FindFirstChild("Fill") then
@@ -286,8 +285,7 @@ local function expand()
 
         -- LIVE UPDATE
         Connections[p] = RunService.Heartbeat:Connect(function()
-            if not Expanded then return end
-            if not p.Parent then return end
+            if not Expanded or not p.Parent then return end
 
             local percent = math.clamp(p.Value / req.Value, 0, 1)
             bar:Set({
@@ -314,18 +312,19 @@ local function collapse()
 end
 
 --------------------------------------------------
--- BUTTON (CORRECT WAY)
+-- BUTTON (SAFE & CORRECT)
 --------------------------------------------------
-QuestTab:CreateButton({
+local QuestButton
+QuestButton = QuestTab:CreateButton({
     Name = "Boom Quest No. "..boomNumber.." ▸",
-    Callback = function(btn)
+    Callback = function()
         Expanded = not Expanded
 
         if Expanded then
-            btn:Set("Boom Quest No. "..boomNumber.." ▾")
+            QuestButton:Set("Boom Quest No. "..boomNumber.." ▾")
             expand()
         else
-            btn:Set("Boom Quest No. "..boomNumber.." ▸")
+            QuestButton:Set("Boom Quest No. "..boomNumber.." ▸")
             collapse()
         end
     end
