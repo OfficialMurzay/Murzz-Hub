@@ -26,8 +26,8 @@ HomeTab:CreateSection("Player Data 👤")
 
 local ClassLabel = HomeTab:CreateLabel("Class: Loading 🏆")
 local TotalPowerLabel = HomeTab:CreateLabel("Total Power: Loading ⚡️")
-local YenLabel = HomeTab:CreateLabel("Yen: ¥1000") -- changed to put symbol in front
-local ChakraLabel = HomeTab:CreateLabel("Chakra: 1000 💎") -- static placeholder
+local YenLabel = HomeTab:CreateLabel("Yen: Loading 💰")
+local ChakiraLabel = HomeTab:CreateLabel("Chikara: Loading 💎")
 
 -- Live Stats Section
 HomeTab:CreateSection("Live Stats 📊")
@@ -141,6 +141,20 @@ task.spawn(function()
             ClassLabel:Set("Class: "..className)
         else
             ClassLabel:Set("Class: Loading 🏆")
+        end
+
+        -- Yen
+        if otherData and otherData:FindFirstChild("Yen") then
+            YenLabel:Set("Yen: "..formatNumber(otherData.Yen.Value).." 💰")
+        else
+            YenLabel:Set("Yen: Loading 💰")
+        end
+
+        -- Chakira
+        if otherData and otherData:FindFirstChild("Chakira") then
+            ChakiraLabel:Set("Chikara: "..formatNumber(otherData.Chakira.Value).." 💎")
+        else
+            ChakiraLabel:Set("Chikara: Loading 💎")
         end
 
         task.wait(0.5)
