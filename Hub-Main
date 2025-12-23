@@ -208,7 +208,7 @@ local StatColors = {
 }
 
 --------------------------------------------------
--- FORMAT NUMBER
+-- NUMBER FORMATTER
 --------------------------------------------------
 local function fmt(n)
     local units = {
@@ -224,7 +224,7 @@ local function fmt(n)
 end
 
 --------------------------------------------------
--- FIND ACTIVE BOOM QUEST
+-- FIND ACTIVE BOOM QUEST (ONLY ONE EXISTS)
 --------------------------------------------------
 local Boom
 for _,f in ipairs(QuestsFolder:GetChildren()) do
@@ -242,93 +242,64 @@ end
 local boomNumber = Boom.Name:gsub("Boom","")
 
 --------------------------------------------------
--- STATE
+-- SECTION HEADER
 --------------------------------------------------
-local Expanded = false
+QuestTab:CreateSection("Boom Quest No. "..boomNumber.." 🧨")
+
+--------------------------------------------------
+-- CREATE BARS
+--------------------------------------------------
 local Bars = {}
-local Connections = {}
 
---------------------------------------------------
--- EXPAND
---------------------------------------------------
-local function expand()
-    local progress = Boom:FindFirstChild("Progress")
-    local requirements = Boom:FindFirstChild("Requirements")
-    if not progress or not requirements then return end
+local progress = Boom:WaitForChild("Progress")
+local requirements = Boom:WaitForChild("Requirements")
 
-    for _,p in ipairs(progress:GetChildren()) do
-        if not p:IsA("IntValue") then continue end
+for _,p in ipairs(progress:GetChildren()) do
+    if not p:IsA("IntValue") then continue end
 
-        local statId = tonumber(p.Name)
-        local statName = StatMap[statId]
-        local req = requirements:FindFirstChild(p.Name)
-        if not statName or not req then continue end
+    local statId = tonumber(p.Name)
+    local statName = StatMap[statId]
+    local req = requirements:FindFirstChild(p.Name)
+    if not statName or not req then continue end
 
-        local bar = QuestTab:CreateSlider({
-            Name = statName,
-            Range = {0, 100},
-            Increment = 1,
-            Suffix = "%",
-            CurrentValue = 0,
-            Callback = function() end
-        })
+    local bar = QuestTab:CreateSlider({
+        Name = statName,
+        Range = {0, 100},
+        Increment = 1,
+        Suffix = "%",
+        CurrentValue = 0,
+        Callback = function() end
+    })
 
-        Bars[p] = bar
+    Bars[p] = {
+        Bar = bar,
+        Req = req,
+        Name = statName
+    }
 
-        -- Color the bar safely
-        task.spawn(function()
-            task.wait()
-            if bar.Container and bar.Container:FindFirstChild("Fill") then
-                bar.Container.Fill.BackgroundColor3 = StatColors[statName]
-            end
-        end)
-
-        -- LIVE UPDATE
-        Connections[p] = RunService.Heartbeat:Connect(function()
-            if not Expanded or not p.Parent then return end
-
-            local percent = math.clamp(p.Value / req.Value, 0, 1)
-            bar:Set({
-                Name = statName.."  "..fmt(p.Value).."/"..fmt(req.Value),
-                CurrentValue = math.floor(percent * 100)
-            })
-        end)
-    end
-end
-
---------------------------------------------------
--- COLLAPSE
---------------------------------------------------
-local function collapse()
-    for _,c in pairs(Connections) do
-        c:Disconnect()
-    end
-    Connections = {}
-
-    for _,b in pairs(Bars) do
-        b:Destroy()
-    end
-    Bars = {}
-end
-
---------------------------------------------------
--- BUTTON (SAFE & CORRECT)
---------------------------------------------------
-local QuestButton
-QuestButton = QuestTab:CreateButton({
-    Name = "Boom Quest No. "..boomNumber.." ▸",
-    Callback = function()
-        Expanded = not Expanded
-
-        if Expanded then
-            QuestButton:Set("Boom Quest No. "..boomNumber.." ▾")
-            expand()
-        else
-            QuestButton:Set("Boom Quest No. "..boomNumber.." ▸")
-            collapse()
+    -- Color the bar safely
+    task.spawn(function()
+        task.wait()
+        if bar.Container and bar.Container:FindFirstChild("Fill") then
+            bar.Container.Fill.BackgroundColor3 = StatColors[statName]
         end
+    end)
+end
+
+--------------------------------------------------
+-- LIVE UPDATE LOOP
+--------------------------------------------------
+RunService.Heartbeat:Connect(function()
+    for p,data in pairs(Bars) do
+        if not p.Parent then continue end
+
+        local percent = math.clamp(p.Value / data.Req.Value, 0, 1)
+        data.Bar:Set({
+            Name = data.Name.."  "..fmt(p.Value).."/"..fmt(data.Req.Value),
+            CurrentValue = math.floor(percent * 100)
+        })
     end
-})
+end)
 
 -- ========================
 -- Load Configuration
