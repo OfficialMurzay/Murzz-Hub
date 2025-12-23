@@ -5,11 +5,13 @@ local player = Players.LocalPlayer
 -- Load Rayfield
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
--- Window
+-- ========================
+-- Main Window (with loading screen)
+-- ========================
 local Window = Rayfield:CreateWindow({
-    Name = "Murzz Hub | AFSE",
-    LoadingTitle = "Murzz Hub | AFSE",
-    LoadingSubtitle = "AFSE",
+    Name = "MurzzHub v1.0",
+    LoadingTitle = "MurzzHub v1.0",         -- This appears as the mini loading section
+    LoadingSubtitle = "Auto Train • Teleports", -- Subtitle under the loading title
     ConfigurationSaving = { Enabled = false },
     KeySystem = false
 })
@@ -17,10 +19,43 @@ local Window = Rayfield:CreateWindow({
 -- ========================
 -- Home Tab
 -- ========================
-local HomeTab = Window:CreateTab("Home")
-HomeTab:CreateSection("Info")
+local HomeTab = Window:CreateTab("Home 🏠")
 
--- Classes mapping with neat emojis
+-- Player Data Section
+HomeTab:CreateSection("Player Data 👤")
+
+local ClassLabel = HomeTab:CreateLabel("Class: Loading 🏆")
+local TotalPowerLabel = HomeTab:CreateLabel("Total Power: Loading ⚡️")
+local YenLabel = HomeTab:CreateLabel("Yen: ¥1000") -- changed to put symbol in front
+local ChakraLabel = HomeTab:CreateLabel("Chakra: 1000 💎") -- static placeholder
+
+-- Live Stats Section
+HomeTab:CreateSection("Live Stats 📊")
+
+local StatEmojis = {
+    Strength = "💪",
+    Durability = "🛡️",
+    Chakra = "🌀",
+    Sword = "🗡️",
+    Agility = "☁️",
+    Speed = "💨"
+}
+
+local liveStats = {}
+for statName, emoji in pairs(StatEmojis) do
+    liveStats[statName] = HomeTab:CreateLabel(statName..": Loading "..emoji)
+end
+
+local StatMap = {
+    Strength = "1",
+    Durability = "2",
+    Chakra = "3",
+    Sword = "4",
+    Agility = "5",
+    Speed = "6"
+}
+
+-- Classes mapping
 local ClassMap = {
     [1] = "Fighter 🥊",
     [2] = "Shinobi 🥷",
@@ -75,43 +110,10 @@ local function formatNumber(num)
     return tostring(num)
 end
 
--- Info labels
-local ClassLabel = HomeTab:CreateLabel("Class: Loading 🏆")
-local TotalPowerLabel = HomeTab:CreateLabel("Total Power: Loading ⚡")
-
--- Live Stats section
-HomeTab:CreateSection("Live Stats")
-
--- Stat emojis mapping (neat)
-local StatEmojis = {
-    Strength = "💪",
-    Durability = "🛡️",
-    Chakra = "🌀",
-    Sword = "⚔️",
-    Agility = "🕊️",
-    Speed = "💨"
-}
-
--- Live stats labels
-local liveStats = {}
-for statName, emoji in pairs(StatEmojis) do
-    liveStats[statName] = HomeTab:CreateLabel(statName..": Loading "..emoji)
-end
-
--- Stat ID mapping
-local StatMap = {
-    Strength = "1",
-    Durability = "2",
-    Chakra = "3",
-    Sword = "4",
-    Agility = "5",
-    Speed = "6"
-}
-
--- Update loop
+-- Update Loop
 task.spawn(function()
     while true do
-        -- Live stats
+        -- Stats
         local statsFolder = player:FindFirstChild("Stats")
         if statsFolder then
             for statName, statID in pairs(StatMap) do
@@ -127,9 +129,9 @@ task.spawn(function()
         -- Total Power
         local otherData = player:FindFirstChild("OtherData")
         if otherData and otherData:FindFirstChild("TotalPower") then
-            TotalPowerLabel:Set("Total Power: "..formatNumber(otherData.TotalPower.Value).." ⚡")
+            TotalPowerLabel:Set("Total Power: "..formatNumber(otherData.TotalPower.Value).." ⚡️")
         else
-            TotalPowerLabel:Set("Total Power: Loading ⚡")
+            TotalPowerLabel:Set("Total Power: Loading ⚡️")
         end
 
         -- Class
@@ -144,3 +146,6 @@ task.spawn(function()
         task.wait(0.5)
     end
 end)
+
+-- Load Configuration
+Rayfield:LoadConfiguration()
