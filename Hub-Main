@@ -195,37 +195,37 @@ local StatMap = {
     [2] = "Durability",
     [3] = "Chakra",
     [4] = "Sword",
-    [5] = "Speed",
-    [6] = "Agility"
+    [5] = "Agility",
+    [6] = "Speed"
 }
 
 local StatColors = {
-    Strength   = Color3.fromRGB(255, 80, 80),
-    Durability = Color3.fromRGB(80, 160, 255),
-    Chakra     = Color3.fromRGB(180, 90, 255),
-    Sword      = Color3.fromRGB(80, 200, 120),
-    Speed      = Color3.fromRGB(255, 160, 80),
-    Agility    = Color3.fromRGB(255, 220, 80)
+    Strength   = Color3.fromRGB(255, 80, 80),   -- Red
+    Durability = Color3.fromRGB(80, 160, 255), -- Blue
+    Chakra     = Color3.fromRGB(180, 90, 255), -- Purple
+    Sword      = Color3.fromRGB(80, 200, 120), -- Green
+    Agility    = Color3.fromRGB(255, 220, 80), -- Yellow
+    Speed      = Color3.fromRGB(255, 160, 80)  -- Orange
 }
 
 --------------------------------------------------
 -- FORMAT NUMBER
 --------------------------------------------------
 local function fmt(n)
-    local t = {
+    local units = {
         {1e15,"Qd"},{1e12,"T"},{1e9,"B"},
         {1e6,"M"},{1e3,"K"}
     }
-    for _,v in ipairs(t) do
-        if n >= v[1] then
-            return string.format("%.2f%s", n/v[1], v[2]):gsub("%.00","")
+    for _,u in ipairs(units) do
+        if n >= u[1] then
+            return string.format("%.2f%s", n/u[1], u[2]):gsub("%.00","")
         end
     end
     return tostring(n)
 end
 
 --------------------------------------------------
--- FIND ACTIVE BOOM QUEST
+-- FIND ACTIVE BOOM QUEST (ONLY ONE EXISTS)
 --------------------------------------------------
 local Boom
 for _,f in ipairs(QuestsFolder:GetChildren()) do
@@ -243,14 +243,6 @@ end
 local boomNumber = Boom.Name:gsub("Boom","")
 
 --------------------------------------------------
--- COLLAPSIBLE HEADER
---------------------------------------------------
-local Header = QuestTab:CreateButton({
-    Name = "Boom Quest No. "..boomNumber.." ▸",
-    Callback = function() end
-})
-
---------------------------------------------------
 -- STATE
 --------------------------------------------------
 local Expanded = false
@@ -261,10 +253,6 @@ local Connections = {}
 -- EXPAND
 --------------------------------------------------
 local function expand()
-    if Expanded then return end
-    Expanded = true
-    Header:Set("Boom Quest No. "..boomNumber.." ▾")
-
     local progress = Boom:FindFirstChild("Progress")
     local requirements = Boom:FindFirstChild("Requirements")
     if not progress or not requirements then return end
@@ -277,32 +265,29 @@ local function expand()
         local req = requirements:FindFirstChild(p.Name)
         if not statName or not req then continue end
 
-        -- CREATE BAR
         local bar = QuestTab:CreateSlider({
             Name = statName,
             Range = {0, 100},
             Increment = 1,
             Suffix = "%",
             CurrentValue = 0,
-            Flag = "Quest_"..statName,
             Callback = function() end
         })
 
         Bars[p] = bar
 
-        -- COLOR BAR
+        -- Color bar
         task.spawn(function()
             task.wait()
-            local frame = bar.Container
-            if frame and frame:FindFirstChild("Fill") then
-                frame.Fill.BackgroundColor3 = StatColors[statName]
+            if bar.Container and bar.Container:FindFirstChild("Fill") then
+                bar.Container.Fill.BackgroundColor3 = StatColors[statName]
             end
         end)
 
-        -- LIVE UPDATE CONNECTION
+        -- LIVE UPDATE
         Connections[p] = RunService.Heartbeat:Connect(function()
             if not Expanded then return end
-            if not p or not p.Parent then return end
+            if not p.Parent then return end
 
             local percent = math.clamp(p.Value / req.Value, 0, 1)
             bar:Set({
@@ -317,10 +302,6 @@ end
 -- COLLAPSE
 --------------------------------------------------
 local function collapse()
-    if not Expanded then return end
-    Expanded = false
-    Header:Set("Boom Quest No. "..boomNumber.." ▸")
-
     for _,c in pairs(Connections) do
         c:Disconnect()
     end
@@ -333,15 +314,22 @@ local function collapse()
 end
 
 --------------------------------------------------
--- TOGGLE
+-- BUTTON (CORRECT WAY)
 --------------------------------------------------
-Header:SetCallback(function()
-    if Expanded then
-        collapse()
-    else
-        expand()
+QuestTab:CreateButton({
+    Name = "Boom Quest No. "..boomNumber.." ▸",
+    Callback = function(btn)
+        Expanded = not Expanded
+
+        if Expanded then
+            btn:Set("Boom Quest No. "..boomNumber.." ▾")
+            expand()
+        else
+            btn:Set("Boom Quest No. "..boomNumber.." ▸")
+            collapse()
+        end
     end
-end)
+})
 
 -- ========================
 -- Load Configuration
