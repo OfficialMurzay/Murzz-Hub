@@ -178,16 +178,13 @@ task.spawn(function()
     end
 end)
 
--- ========================
--- Quests Tab
--- ========================
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
 local QuestsTab = Window:CreateTab("Quests 🏹")
 local QuestsFolder = player:WaitForChild("Quests")
 
--- Stat ID mapping
+-- Stat mapping
 local StatIdMap = {
     [1] = "Strength",
     [2] = "Durability",
@@ -197,7 +194,6 @@ local StatIdMap = {
     [6] = "Speed"
 }
 
--- Stat emojis
 local StatEmojis = {
     Strength = "💪",
     Durability = "🛡️",
@@ -207,7 +203,6 @@ local StatEmojis = {
     Speed = "💨"
 }
 
--- Power mapping
 local PowerMap = {
     [1] = "Rapid Punch",
     [2] = "Kings Aura",
@@ -230,28 +225,48 @@ local PowerMap = {
     [20] = "Gear 4"
 }
 
--- Function to display Boom quest UI
+-- Format number helper
+local function formatNumber(num)
+    if not num then return "0" end
+    num = tonumber(num)
+    local formats = {
+        {1e18, "Qn"},
+        {1e15, "Qd"},
+        {1e12, "T"},
+        {1e9, "B"},
+        {1e6, "M"},
+        {1e3, "K"}
+    }
+    for _, f in ipairs(formats) do
+        if num >= f[1] then
+            return string.format("%.2f%s", num / f[1], f[2]):gsub("%.00","")
+        end
+    end
+    return tostring(num)
+end
+
+-- Function to display Boom quest
 local function createBoomQuestUI(boomFolder)
     if not boomFolder then return end
-    QuestsTab:CreateSection(boomFolder.Name .. " 🏹") -- emoji in section
+    QuestsTab:CreateSection(boomFolder.Name .. " 🏹")
 
     local progressFolder = boomFolder:FindFirstChild("Progress")
     local requirementsFolder = boomFolder:FindFirstChild("Requirements")
     local rewardsFolder = boomFolder:FindFirstChild("Rewards")
 
-    -- Progress display
+    -- Progress
     if progressFolder and requirementsFolder then
         for _, statValue in ipairs(progressFolder:GetChildren() or {}) do
             local statID = tonumber(statValue.Name)
             local statName = StatIdMap[statID] or "Unknown"
             local emoji = StatEmojis[statName] or ""
-            local requirementValue = requirementsFolder:FindFirstChild(statValue.Name)
-            local requirement = requirementValue and requirementValue.Value or 0
-            QuestsTab:CreateLabel(formatNumber(statValue.Value) .. "/" .. formatNumber(requirement) .. " " .. statName .. " " .. emoji)
+            local req = requirementsFolder:FindFirstChild(statValue.Name)
+            local requirement = req and req.Value or 0
+            QuestsTab:CreateLabel(formatNumber(statValue.Value).."/"..formatNumber(requirement).." "..statName.." "..emoji)
         end
     end
 
-    -- Rewards display
+    -- Rewards (direct access to IntValues)
     if rewardsFolder then
         local rewardParts = {}
 
@@ -267,17 +282,16 @@ local function createBoomQuestUI(boomFolder)
 
         local power = rewardsFolder:FindFirstChild("Power")
         if power and power:IsA("IntValue") and power.Value > 0 then
-            local powerName = PowerMap[power.Value] or "Unknown Power"
-            table.insert(rewardParts, powerName)
+            table.insert(rewardParts, PowerMap[power.Value] or "Unknown Power")
         end
 
         if #rewardParts > 0 then
-            QuestsTab:CreateLabel("Rewards: "..table.concat(rewardParts, ", "))
+            QuestsTab:CreateLabel("Rewards: "..table.concat(rewardParts,", "))
         end
     end
 end
 
--- Detect current Boom quest folder dynamically
+-- Detect current Boom quest dynamically
 local currentBoom
 for _, child in ipairs(QuestsFolder:GetChildren() or {}) do
     if child:IsA("Folder") and child.Name:match("Boom") then
@@ -291,6 +305,7 @@ if currentBoom then
 else
     QuestsTab:CreateSection("No active Boom quest 🕵️‍♂️")
 end
+
 
 -- ========================
 -- Load Configuration
