@@ -118,17 +118,18 @@ local function formatNumber(num)
     return tostring(num)
 end
 
--- Animate numbers
+-- Animate numbers (fixed for nil match)
 local function animateValue(labelObj, oldVal, newVal, emoji)
     local steps = 15
     local increment = (newVal - oldVal) / steps
     local current = oldVal
+    local prefix = labelObj.Text:match("^(.-):") or "Stat"
     for i = 1, steps do
         current = current + increment
-        labelObj:Set(labelObj.Text:match("^(%w+):").." "..formatNumber(current).." "..emoji)
+        labelObj:Set(prefix..": "..formatNumber(current).." "..emoji)
         RunService.RenderStepped:Wait()
     end
-    labelObj:Set(labelObj.Text:match("^(%w+):").." "..formatNumber(newVal).." "..emoji)
+    labelObj:Set(prefix..": "..formatNumber(newVal).." "..emoji)
 end
 
 -- Previous values for animation
