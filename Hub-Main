@@ -190,6 +190,7 @@ local function createBoomQuestUI(questName, questFolder)
     local progressFolder = questFolder:FindFirstChild("Progress")
     local requirementsFolder = questFolder:FindFirstChild("Requirements")
     local rewardsFolder = questFolder:FindFirstChild("Rewards")
+    
     -- Progress
     if progressFolder and requirementsFolder then
         for _, statValue in ipairs(progressFolder:GetChildren()) do
@@ -199,6 +200,7 @@ local function createBoomQuestUI(questName, questFolder)
             QuestsTab:CreateLabel(formatNumber(statValue.Value).."/"..formatNumber(requirement).." "..(StatEmojis[statID] or ""))
         end
     end
+    
     -- Rewards
     if rewardsFolder then
         local rewardParts = {}
@@ -214,13 +216,14 @@ local function createBoomQuestUI(questName, questFolder)
     end
 end
 
--- Loop through Boom1–Boom30
+-- Loop through Boom1–Boom30 explicitly
 for i = 1, 30 do
     local boomQuest = QuestsFolder:FindFirstChild("Boom"..i)
     if boomQuest then
         createBoomQuestUI("Boom Quest "..i, boomQuest)
     end
 end
+
 
 -- ========================
 -- Load Configuration
