@@ -230,7 +230,7 @@ local PowerMap = {
 -- Function to create Boom quest UI
 local function createBoomQuestUI(boomFolder)
     if not boomFolder then return end
-    QuestsTab:CreateSection(boomFolder.Name .. " 🏹") -- emoji in section title
+    QuestsTab:CreateSection(boomFolder.Name .. " 🏹")
 
     local progressFolder = boomFolder:FindFirstChild("Progress")
     local requirementsFolder = boomFolder:FindFirstChild("Requirements")
@@ -248,30 +248,37 @@ local function createBoomQuestUI(boomFolder)
         end
     end
 
-    -- Rewards
+    -- Rewards (directly access .Yen, .Chikara, .Power)
     if rewardsFolder then
         local rewardParts = {}
 
-        for _, reward in ipairs(rewardsFolder:GetChildren() or {}) do
-            if reward:IsA("IntValue") and reward.Value > 0 then
-                if reward.Name == "Yen" then
-                    table.insert(rewardParts, formatNumber(reward.Value).." 💰")
-                elseif reward.Name == "Chikara" then
-                    table.insert(rewardParts, formatNumber(reward.Value).." 💎")
-                elseif reward.Name == "Power" then
-                    local powerName = PowerMap[reward.Value] or "Unknown Power"
-                    table.insert(rewardParts, powerName)
-                end
-            end
+        -- Yen
+        local yen = rewardsFolder:FindFirstChild("Yen")
+        if yen and yen:IsA("IntValue") and yen.Value > 0 then
+            table.insert(rewardParts, formatNumber(yen.Value).." 💰")
         end
 
+        -- Chikara
+        local chikara = rewardsFolder:FindFirstChild("Chikara")
+        if chikara and chikara:IsA("IntValue") and chikara.Value > 0 then
+            table.insert(rewardParts, formatNumber(chikara.Value).." 💎")
+        end
+
+        -- Power
+        local power = rewardsFolder:FindFirstChild("Power")
+        if power and power:IsA("IntValue") and power.Value > 0 then
+            local powerName = PowerMap[power.Value] or "Unknown Power"
+            table.insert(rewardParts, powerName)
+        end
+
+        -- Display all rewards on one line
         if #rewardParts > 0 then
             QuestsTab:CreateLabel("Rewards: "..table.concat(rewardParts, ", "))
         end
     end
 end
 
--- Find current Boom quest folder dynamically
+-- Detect current Boom quest folder dynamically
 local currentBoom
 for _, child in ipairs(QuestsFolder:GetChildren() or {}) do
     if child:IsA("Folder") and child.Name:match("Boom") then
@@ -285,7 +292,6 @@ if currentBoom then
 else
     QuestsTab:CreateSection("No active Boom quest 🕵️‍♂️")
 end
-
 
 -- ========================
 -- Load Configuration
