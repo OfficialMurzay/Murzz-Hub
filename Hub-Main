@@ -29,16 +29,9 @@ HomeTab:CreateSection("Player Data 👤")
 local OtherData = player:WaitForChild("OtherData")
 
 local ClassLabel = HomeTab:CreateLabel("Class: ... 🏆")
-ClassLabel:AddTooltip("Shows your current class")
-
 local TotalPowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡️")
-TotalPowerLabel:AddTooltip("Exact Total Power")
-
 local YenLabel = HomeTab:CreateLabel("Yen: ... 💰")
-YenLabel:AddTooltip("Exact Yen")
-
 local ChakiraLabel = HomeTab:CreateLabel("Chakira: ... 💎")
-ChakiraLabel:AddTooltip("Exact Chakira")
 
 -- Live Stats Section
 HomeTab:CreateSection("Live Stats 📊")
@@ -52,14 +45,13 @@ local StatEmojis = {
     Speed = "💨"
 }
 
--- Fixed order of stats
+-- Ordered stats
 local OrderedStats = {"Strength", "Durability", "Chakra", "Sword", "Speed", "Agility"}
 
 -- Create labels for stats in fixed order
 local liveStats = {}
 for _, statName in ipairs(OrderedStats) do
     liveStats[statName] = HomeTab:CreateLabel(statName..": ... "..StatEmojis[statName])
-    liveStats[statName]:AddTooltip("Exact "..statName.." value")
 end
 
 local StatMap = {
