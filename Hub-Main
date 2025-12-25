@@ -1,4 +1,4 @@
--- MurzzHub v1.0ac Beta (Fixed Label Creation)
+-- MurzzHub v1.0ad Beta (Proper Quest Sections + Live Labels)
 -- Author: Murzay (Modified by ChatGPT)
 
 -------------------------------------------------
@@ -14,7 +14,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0ac Beta"
+local VERSION = "v1.0ad Beta"
 
 -------------------------------------------------
 -- DEBUG
@@ -101,17 +101,18 @@ local StatIdToName = {
 local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({Title="MurzzHub "..VERSION.." Update Log", Content=[[
-• Fully live updating quests with animated numbers
-• Quest sections labeled with emoji + quest name
-• Info tab fully restored
-• Nil-safe and optimized
+• Quest tab now has live-updating sections
+• Requirements display live progress with animation
+• Info tab restored with Dear @username and Discord button
+• Optimized for minimal resource use
 ]]})
 
 InfoTab:CreateSection("Discord 💬")
 InfoTab:CreateParagraph({
-    Title = "Dear "..tostring(Player.DisplayName or "Player"),
+    Title = "Dear @"..tostring(Player.DisplayName or "Player"),
     Content = [[
-Thanks for using MurzzHub! Your support means a lot. Join our Discord to see sneak peeks, events, and updates! ❤️
+Thank you for using my script! Every use really supports me and gives me motivation to continue updating this script!
+If you have any suggestions or want sneak peeks, events, and more, join the Discord Server! ❤️ - Murzay
 ]]
 })
 InfoTab:CreateButton({
@@ -144,30 +145,11 @@ HomeTab:CreateSection("Live Stats 📊")
 local LiveStats = {}
 for statId,name in pairs(StatIdToName) do
     local statName, emoji = name:match("^(.-) (.+)$")
-    LiveStats[statId] = {Label=HomeTab:CreateLabel(tostring(statName or "")..": ... "..tostring(emoji or "")), Value=0, Emoji=emoji, StatName=statName}
+    LiveStats[statId] = {Label=HomeTab:CreateLabel(statName..": ... "..emoji), Value=0, Emoji=emoji, StatName=statName}
 end
-
-HomeTab:CreateSection("Quest Overview 📜")
-local QuestOverviewLabels = {}
-local function createQuestLabel(questFolder)
-    safeRun(function()
-        if not questFolder then return end
-        local displayName = questFolder.Name
-        local name, number = displayName:match("(%a+)(%d+)")
-        if name and number then displayName = name.." No."..number end
-        if not QuestOverviewLabels[questFolder.Name] then
-            local label = HomeTab:CreateLabel(tostring(displayName).. " [0%]")
-            QuestOverviewLabels[questFolder.Name]={Label=label, Completed=false}
-        end
-    end)
-end
-for _,questFolder in ipairs(QuestsFolder:GetChildren()) do createQuestLabel(questFolder) end
-QuestsFolder.ChildAdded:Connect(function(child)
-    if child:IsA("Folder") then createQuestLabel(child) end
-end)
 
 -------------------------------------------------
--- QUESTS TAB (SECTIONS SIMULATED + LIVE LABELS)
+-- QUESTS TAB
 -------------------------------------------------
 local QuestsTab = Window:CreateTab("Quests 📜")
 local QuestSections = {}
@@ -190,9 +172,11 @@ local function updateQuestSection(questFolder)
         local name, number = displayName:match("(%a+)(%d+)")
         if name and number then displayName = name.." No."..number end
 
+        -- Create Section if it doesn't exist
         if not QuestSections[questFolder.Name] then
-            QuestSections[questFolder.Name] = true
+            QuestSections[questFolder.Name] = QuestsTab:CreateSection(emoji.." "..displayName)
         end
+        local section = QuestSections[questFolder.Name]
 
         local Requirements = questFolder:FindFirstChild("Requirements")
         if not Requirements then return end
@@ -217,8 +201,6 @@ local function updateQuestSection(questFolder)
                 if numId and StatIdToName[numId] then
                     local fullName = StatIdToName[numId]
                     statName, emojiStat = fullName:match("^(.-) (.+)$")
-                    statName = statName or fullName
-                    emojiStat = emojiStat or ""
                 else
                     statName = tostring(req.Name or "")
                     emojiStat = ""
@@ -235,13 +217,13 @@ local function updateQuestSection(questFolder)
 
                 QuestLabels[questFolder.Name] = QuestLabels[questFolder.Name] or {}
                 if not QuestLabels[questFolder.Name][req.Name] then
-                    QuestLabels[questFolder.Name][req.Name] = QuestsTab:CreateLabel(emoji.." "..displayName.." - "..labelText)
+                    QuestLabels[questFolder.Name][req.Name] = section:CreateLabel(labelText)
                 else
                     local lbl = QuestLabels[questFolder.Name][req.Name]
                     if lbl and lbl.Set then
-                        lbl:Set(emoji.." "..displayName.." - "..labelText)
+                        lbl:Set(labelText)
                     elseif lbl and lbl.Text ~= nil then
-                        lbl.Text = emoji.." "..displayName.." - "..labelText
+                        lbl.Text = labelText
                     end
                 end
             end
@@ -293,4 +275,4 @@ end)
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] v1.0ac Beta loaded successfully - Quest labels fixed and live updating")
+print("[MurzzHub] v1.0ad Beta loaded successfully - Quest sections and live labels functional")
