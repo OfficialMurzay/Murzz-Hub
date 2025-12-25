@@ -1,4 +1,4 @@
--- MurzzHub v1.0j Beta (UI + Player Data, Stats & Quest Overview with functional percentages)
+-- MurzzHub v1.0j Beta (UI + Player Data, Stats & Quest Overview + Info Tab)
 -- Author: Murzay (Modified by ChatGPT)
 -- VERSION NOTE: v1.0i -> v1.0j; next after z would be 1.01a etc.
 
@@ -33,6 +33,44 @@ local Window = Rayfield:CreateWindow({
         FileName = "AFSE_UI"
     },
     KeySystem = false
+})
+
+-------------------------------------------------
+-- INFO TAB
+-------------------------------------------------
+local InfoTab = Window:CreateTab("Info 🛠️")
+
+-- Update Log Section
+InfoTab:CreateSection("Update Log 📝")
+InfoTab:CreateLabel("Update Log v1.0: Release ✅")
+InfoTab:CreateLabel("Test") -- placeholder description
+
+-- Discord Section
+InfoTab:CreateSection("Discord 💬")
+
+-- Dynamic DisplayName
+local discordTitle = string.format("Dear @%s,", Player.DisplayName)
+InfoTab:CreateLabel(discordTitle)
+
+InfoTab:CreateLabel(
+[[Thank you for using my script! Every use really supports me, and gives me motivation to continue updating this script! 
+If you have any suggestions, or just want to see the sneak peaks, events and more then join the Discord Server! ❤️ - Murzay (Scripter)]]
+)
+
+InfoTab:CreateButton({
+    Name = "Join The Discord Server!",
+    Callback = function()
+        -- Replace this with your actual Discord link
+        local discordLink = "https://discord.gg/afse"
+        if discordLink and discordLink ~= "" then
+            -- Attempt to open URL
+            if syn and syn.request then
+                syn.request({Url = discordLink}) -- for synapse users
+            else
+                setclipboard(discordLink) -- fallback copies link
+            end
+        end
+    end
 })
 
 -------------------------------------------------
