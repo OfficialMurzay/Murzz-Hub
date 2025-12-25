@@ -1,202 +1,42 @@
--- MurzzHub v1.0c Beta
--- Rayfield UI for Anime Fighting Simulator: Endless
+-- MurzzHub v1.0d Beta UI Only
 -- Author: Murzay
-
---[[ 
-📝 Features:
-- Animated loading (stats count up from 0)
-- Live player stats
-- Live quests overview with percentage
-- Abbreviated numbers (K, M, B, T, Qd, Qn, Sx)
-- Class detection with emoji
-- Modern, lively UI
-- Automatic updates
-- Debugging messages
-- Reliable label creation directly on the tab (fixes CreateLabel errors)
-]]
-
---// Services
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
 
 --// Rayfield Library
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-print("[MurzzHub] Rayfield loaded")
-
---// Class Table with Emojis
-local Classes = {
-    [1]="Fighter 🥊",[2]="Shinobi 🌀",[3]="Pirate ☠️",[4]="Ghoul 👻",[5]="Hero 🦸",
-    [6]="Reaper ☠️",[7]="Saiyan 💥",[8]="Sin 😈",[9]="Magi 🧙",[10]="Akuma 😡",
-    [11]="Yonko 🏴‍☠️",[12]="Gorosei 🧓",[13]="Overlord 👑",[14]="Hokage 🦊",
-    [15]="Kaioshin 👼",[16]="Sage 🕊️",[17]="Espada ⚔️",[18]="Shinigami 👹",
-    [19]="Hashira ⚔️",[20]="Hakaishin 💀",[21]="Otsutsuki 🌌",
-    [22]="Pirate King 🏴‍☠️👑",[23]="Kishin 👿",[24]="Angel 😇",
-    [25]="Demon King 👹",[26]="Ultra Instinct ✨",[27]="Upper Moon 🌙"
-}
-
---// Utility: Format numbers
-local function abbreviateNumber(num)
-    local absNum = math.abs(num)
-    if absNum >= 1e21 then return string.format("%.2fSx", num / 1e21)
-    elseif absNum >= 1e18 then return string.format("%.2fQn", num / 1e18)
-    elseif absNum >= 1e15 then return string.format("%.2fQd", num / 1e15)
-    elseif absNum >= 1e12 then return string.format("%.2fT", num / 1e12)
-    elseif absNum >= 1e9 then return string.format("%.2fB", num / 1e9)
-    elseif absNum >= 1e6 then return string.format("%.2fM", num / 1e6)
-    elseif absNum >= 1e3 then return string.format("%.2fK", num / 1e3)
-    else return tostring(num)
-    end
-end
-
---// Animated increment function
-local function animateValue(label, startVal, endVal, duration)
-    local step = (endVal - startVal) / (duration * 30)
-    local current = startVal
-    local connection
-    connection = RunService.RenderStepped:Connect(function()
-        current = current + step
-        if (step > 0 and current >= endVal) or (step < 0 and current <= endVal) then
-            current = endVal
-            connection:Disconnect()
-        end
-        if label and label.Set then
-            label:Set(abbreviateNumber(math.floor(current)))
-        end
-    end)
-end
-
---// Loading Screen
-Rayfield:LoadConfiguration({
-    Name = "MurzzHub Scripts",
-    LoadingTitle = "MurzzHub Scripts",
-    LoadingSubtitle = "v1.0c Beta",
-    ConfigurationSaving = { Enabled = true, FolderName = nil, FileName = "MurzzHub" }
-})
-print("[MurzzHub] Configuration loaded")
 
 --// Main Window
 local Window = Rayfield:CreateWindow({
     Name = "Murzzhub | AFSE",
     LoadingTitle = "MurzzHub Scripts",
-    LoadingSubtitle = "v1.0c Beta",
+    LoadingSubtitle = "v1.0d Beta",
     ConfigurationSaving = { Enabled = true, FolderName = nil, FileName = "MurzzHub" }
 })
-print("[MurzzHub] Window created")
 
 --// Home Tab
 local HomeTab = Window:CreateTab("Home 🏠", nil)
 
--- Optional visual sections (not required for CreateLabel)
+--// Sections (visual only)
 local PlayerSection = HomeTab:CreateSection("Player Data 🧑‍💻")
 local StatsSection  = HomeTab:CreateSection("Live Stats ⚡")
 local QuestSection  = HomeTab:CreateSection("Quests Overview 🗂️")
 
---// Player Data Labels (created directly on tab)
+--// Labels (placeholders)
 local ClassLabel      = HomeTab:CreateLabel({ Name = "Class: ..." })
 local TotalPowerLabel = HomeTab:CreateLabel({ Name = "Total Power: ..." })
 local YenLabel        = HomeTab:CreateLabel({ Name = "Yen: ..." })
 local ChikaraLabel    = HomeTab:CreateLabel({ Name = "Chikara: ..." })
 
---// Stats Labels
-local StatLabels = {}
+-- Stats labels
 local StatNames = {"Strength", "Durability", "Chakra", "Sword", "Speed", "Agility"}
+local StatLabels = {}
 for _, statName in ipairs(StatNames) do
     StatLabels[statName] = HomeTab:CreateLabel({ Name = statName.." : ..." })
 end
 
---// Quest Labels
+-- Placeholder Quest labels
 local QuestLabels = {}
-
---// Wait for child safely
-local function waitForChildSafe(parent, name, timeout)
-    local t0 = tick()
-    while tick() - t0 < (timeout or 5) do
-        local child = parent:FindFirstChild(name)
-        if child then return child end
-        task.wait(0.1)
-    end
-    warn("[MurzzHub] Child not found:", name)
-    return nil
+for i = 1, 3 do
+    QuestLabels["Quest"..i] = HomeTab:CreateLabel({ Name = "Quest "..i.." : 0%" })
 end
 
---// Update UI
-local function updateUI()
-    local OtherData = waitForChildSafe(LocalPlayer, "OtherData")
-    local Stats = waitForChildSafe(LocalPlayer, "Stats")
-    local Quests = waitForChildSafe(LocalPlayer, "Quests")
-    if not OtherData or not Stats or not Quests then return end
-
-    -- Player Data
-    if ClassLabel then
-        local classId = waitForChildSafe(OtherData, "Class") and OtherData.Class.Value or 0
-        ClassLabel:Set("Class: "..(Classes[classId] or "Unknown ❓"))
-    end
-    if TotalPowerLabel and waitForChildSafe(OtherData, "TotalPower") then
-        animateValue(TotalPowerLabel, 0, OtherData.TotalPower.Value, 0.5)
-    end
-    if YenLabel and waitForChildSafe(OtherData, "Yen") then
-        animateValue(YenLabel, 0, OtherData.Yen.Value, 0.5)
-    end
-    if ChikaraLabel and waitForChildSafe(OtherData, "Chikara") then
-        animateValue(ChikaraLabel, 0, OtherData.Chikara.Value, 0.5)
-    end
-
-    -- Stats
-    for i, statName in ipairs(StatNames) do
-        if StatLabels[statName] and Stats[tostring(i)] then
-            animateValue(StatLabels[statName], 0, Stats[tostring(i)].Value, 0.5)
-        end
-    end
-
-    -- Quests
-    for _, questFolder in ipairs(Quests:GetChildren()) do
-        if not QuestLabels[questFolder.Name] then
-            QuestLabels[questFolder.Name] = HomeTab:CreateLabel({ Name = questFolder.Name.." : 0%" })
-        end
-
-        local progressSum, requirementSum = 0, 0
-        local Progress = questFolder:FindFirstChild("Progress")
-        local Requirements = questFolder:FindFirstChild("Requirements")
-        if Progress and Requirements then
-            for i=1,6 do
-                local progVal = Progress:FindFirstChild(tostring(i))
-                local reqVal = Requirements:FindFirstChild(tostring(i))
-                if progVal and reqVal then
-                    progressSum = progressSum + progVal.Value
-                    requirementSum = requirementSum + reqVal.Value
-                end
-            end
-        end
-        local percent = 0
-        if requirementSum > 0 then
-            percent = math.floor(progressSum / requirementSum * 100)
-        end
-        if QuestLabels[questFolder.Name] then
-            QuestLabels[questFolder.Name]:Set(questFolder.Name.." : "..percent.."%")
-        end
-    end
-end
-
--- Initial animated load
-local function initialLoad()
-    local OtherData = waitForChildSafe(LocalPlayer, "OtherData")
-    local Stats = waitForChildSafe(LocalPlayer, "Stats")
-    if not OtherData or not Stats then return end
-    if TotalPowerLabel then animateValue(TotalPowerLabel, 0, OtherData.TotalPower.Value, 1) end
-    if YenLabel then animateValue(YenLabel, 0, OtherData.Yen.Value, 1) end
-    if ChikaraLabel then animateValue(ChikaraLabel, 0, OtherData.Chikara.Value, 1) end
-    for i, statName in ipairs(StatNames) do
-        if StatLabels[statName] then
-            animateValue(StatLabels[statName], 0, Stats[tostring(i)].Value, 1)
-        end
-    end
-end
-initialLoad()
-
--- Update every frame
-RunService.RenderStepped:Connect(updateUI)
-
--- Save/load Rayfield configuration
-Rayfield:LoadConfiguration()
-print("[MurzzHub] Script v1.0c Beta loaded successfully")
+print("[MurzzHub] UI loaded successfully")
