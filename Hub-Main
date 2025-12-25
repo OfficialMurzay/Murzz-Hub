@@ -1,6 +1,6 @@
--- MurzzHub v1.0r Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
+-- MurzzHub v1.0s Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0q -> v1.0r (True Live Quest Updates, Lightweight, Notifications Removed)
+-- VERSION NOTE: v1.0r -> v1.0s (Nil-safe, true live quest updates)
 
 -------------------------------------------------
 -- SERVICES
@@ -15,7 +15,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0r Beta"
+local VERSION = "v1.0s Beta"
 
 -------------------------------------------------
 -- DEBUG SYSTEM
@@ -63,7 +63,7 @@ local function abbreviateNumber(num)
 end
 
 local function animateValue(label, startVal, endVal, prefix, emoji, duration)
-    if startVal == endVal then return end
+    if startVal == endVal or not label or not label.Set then return end
     local step = (endVal - startVal)/(duration*30)
     local current = startVal
     local connection
@@ -73,7 +73,9 @@ local function animateValue(label, startVal, endVal, prefix, emoji, duration)
             current = endVal
             connection:Disconnect()
         end
-        if label and label.Set then label:Set(prefix..abbreviateNumber(math.floor(current)).." "..emoji) end
+        if label and label.Set then
+            label:Set(prefix..abbreviateNumber(math.floor(current)).." "..(emoji or ""))
+        end
     end)
 end
 
@@ -103,12 +105,12 @@ local StatIdToName = {
 local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
-    Title = "Update Log "..VERSION..": Lightweight True Live Quest Updates",
+    Title = "Update Log "..VERSION,
     Content = [[
-- Quests now read actual progress values every Heartbeat
-- Updates display instantly (no slow animation)
-- Minimal resource usage
-- Works for direct IntValues like 'Kill'
+- Nil-safe labels and paragraphs
+- True live quest updates
+- Minimal resources
+- Works for IntValues like 'Kill'
 - Quest completion notifications removed
 ]]
 })
@@ -223,7 +225,7 @@ local function updateQuestParagraph(questFolder)
 
                 local complete = progVal >= req.Value
                 if not complete then allComplete = false end
-                table.insert(descLines, string.format("%s/%s %s %s%s", abbreviateNumber(progVal), abbreviateNumber(req.Value), statName, emoji, complete and " ✅" or ""))
+                table.insert(descLines, string.format("%s/%s %s %s%s", abbreviateNumber(progVal), abbreviateNumber(req.Value), statName or "", emoji or "", complete and " ✅" or ""))
             end
         end
 
@@ -234,8 +236,8 @@ local function updateQuestParagraph(questFolder)
             paragraph = QuestsTab:CreateParagraph({Title=titleText, Content=descText})
             QuestParagraphs[questFolder.Name] = paragraph
         else
-            if paragraph and paragraph.Set then paragraph:Set(descText) end
-            if paragraph then paragraph.Title = titleText end
+            if paragraph and paragraph.Set then paragraph:Set(descText or "") end
+            if paragraph then paragraph.Title = titleText or displayName end
         end
     end)
 end
