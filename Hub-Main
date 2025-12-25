@@ -1,4 +1,4 @@
--- MurzzHub v1.0g Beta (UI + Player Data & Live Stats Animated)
+-- MurzzHub v1.0h Beta (UI + Player Data & Live Stats Emoji Fixed)
 -- Author: Murzay
 
 -------------------------------------------------
@@ -8,8 +8,8 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
 local Player = Players.LocalPlayer
-local OtherData = Player:WaitForChild("OtherData") -- Wait for OtherData folder
-local StatsFolder = Player:WaitForChild("Stats")    -- Wait for Stats folder
+local OtherData = Player:WaitForChild("OtherData")
+local StatsFolder = Player:WaitForChild("Stats")
 
 -------------------------------------------------
 -- RAYFIELD
@@ -17,8 +17,8 @@ local StatsFolder = Player:WaitForChild("Stats")    -- Wait for Stats folder
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "MurzzHub v1.0g Beta",
-    LoadingTitle = "MurzzHub v1.0g Beta",
+    Name = "MurzzHub v1.0h Beta",
+    LoadingTitle = "MurzzHub v1.0h Beta",
     LoadingSubtitle = "Player Data & Stats Live",
     ConfigurationSaving = {
         Enabled = true,
@@ -69,7 +69,7 @@ local function abbreviateNumber(num)
     else return tostring(num) end
 end
 
-local function animateValue(label, startVal, endVal, prefix, duration)
+local function animateValue(label, startVal, endVal, prefix, emoji, duration)
     if startVal == endVal then return end
     local step = (endVal - startVal) / (duration * 30)
     local current = startVal
@@ -81,7 +81,7 @@ local function animateValue(label, startVal, endVal, prefix, duration)
             connection:Disconnect()
         end
         if label and label.Set then
-            label:Set(prefix..abbreviateNumber(math.floor(current)))
+            label:Set(prefix..abbreviateNumber(math.floor(current)).." "..emoji)
         end
     end)
 end
@@ -104,9 +104,13 @@ local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 HomeTab:CreateSection("Live Stats 📊")
 local LiveStats = {}
 for statId, name in pairs(StatIdToName) do
+    -- Split name and emoji
+    local statName, emoji = name:match("^(.-) (.+)$")
     LiveStats[statId] = {
-        Label = HomeTab:CreateLabel(name..": ..."),
-        Value = 0
+        Label = HomeTab:CreateLabel(statName..": ... "..emoji),
+        Value = 0,
+        Emoji = emoji,
+        StatName = statName
     }
 end
 
@@ -132,21 +136,21 @@ RunService.Heartbeat:Connect(function()
     -- Total Power
     if OtherData:FindFirstChild("TotalPower") then
         local target = OtherData.TotalPower.Value
-        animateValue(PowerLabel, currentPower, target, "Total Power: ⚡ ", 0.5)
+        animateValue(PowerLabel, currentPower, target, "Total Power: ", "⚡", 0.5)
         currentPower = target
     end
 
     -- Yen
     if OtherData:FindFirstChild("Yen") then
         local target = OtherData.Yen.Value
-        animateValue(YenLabel, currentYen, target, "Money: 💰 ", 0.5)
+        animateValue(YenLabel, currentYen, target, "Money: ", "💰", 0.5)
         currentYen = target
     end
 
     -- Chikara
     if OtherData:FindFirstChild("Chikara") then
         local target = OtherData.Chikara.Value
-        animateValue(ChikaraLabel, currentChikara, target, "Chikara: 💎 ", 0.5)
+        animateValue(ChikaraLabel, currentChikara, target, "Chikara: ", "💎", 0.5)
         currentChikara = target
     end
 
@@ -154,7 +158,7 @@ RunService.Heartbeat:Connect(function()
     for statId, data in pairs(LiveStats) do
         local statObj = StatsFolder:FindFirstChild(tostring(statId))
         if statObj and statObj.Value ~= data.Value then
-            animateValue(data.Label, data.Value, statObj.Value, StatIdToName[statId]..": ", 0.5)
+            animateValue(data.Label, data.Value, statObj.Value, data.StatName..": ", data.Emoji, 0.5)
             data.Value = statObj.Value
         end
     end
@@ -164,4 +168,4 @@ end)
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] UI + Player Data & Live Stats functionality v1.0g Beta loaded successfully")
+print("[MurzzHub] UI + Player Data & Live Stats functionality v1.0h Beta loaded successfully")
