@@ -197,14 +197,10 @@ local function updateQuestParagraph(questFolder)
                 if not statComplete then allComplete = false end
 
                 local fullName = StatIdToName[tonumber(req.Name)] or req.Name
-                local statName, emoji = fullName:match("^(.-) (.+)$") or {fullName,""}
+                local statName, emoji = fullName:match("^(.-) (.+)$")
+                statName = statName or fullName
+                emoji = emoji or ""
                 local line = string.format("%s/%s %s %s%s", abbreviateNumber(progVal), abbreviateNumber(req.Value), statName, emoji, statComplete and " ✅" or "")
-                table.insert(descLines, line)
-
-            elseif req:IsA("StringValue") then
-                local statComplete = prog and prog.Value == req.Value
-                if not statComplete then allComplete = false end
-                local line = string.format("%s/%s %s%s", prog and prog.Value or 0, req.Value, req.Name, statComplete and " ✅" or "")
                 table.insert(descLines, line)
             end
         end
