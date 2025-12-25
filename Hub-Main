@@ -1,4 +1,4 @@
--- MurzzHub v1.0s Beta
+-- MurzzHub v1.0r Beta
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train)
 -- Author: Murzay | Animated Numbers + Auto Train Logic
 
@@ -127,7 +127,7 @@ InfoTab:CreateParagraph({
 • Event-based (zero loops)
 • UI locked & stable
 • Home + Live Stats + Quest Progress animate incrementally with easing
-• Auto Train UI + functional toggles that trigger on cooldown
+• Auto Train UI + functional toggles that trigger on exact cooldown
 ]]
 })
 
@@ -291,7 +291,7 @@ for _,q in ipairs(QuestsFolder:GetChildren()) do
 end
 
 -------------------------------------------------
--- AUTO FARMS TAB (IMPROVED COOLDOWN)
+-- AUTO FARMS TAB (TRIGGER EXACT COOLDOWN)
 -------------------------------------------------
 local AutoTab = Window:CreateTab("Auto Farms ⚙️")
 AutoTab:CreateSection("Auto Train 🏋️")
@@ -317,6 +317,7 @@ local AutoStats = {
 
 local AutoToggles = {}
 local ActiveTrains = {}
+local LastFire = {}
 
 for _,stat in ipairs(AutoStats) do
     local statID, name, emoji = unpack(stat)
@@ -328,6 +329,7 @@ for _,stat in ipairs(AutoStats) do
             if val then
                 if ActiveTrains[statID] then return end
                 ActiveTrains[statID] = true
+                LastFire[statID] = 0
                 task.spawn(function()
                     while ActiveTrains[statID] do
                         if CharacterModule.states.Dead then
@@ -339,21 +341,19 @@ for _,stat in ipairs(AutoStats) do
                             StatFunctions[statID] = false
 
                             local cooldown = GameData.Stats[statID].Cooldown or 0.1
-                            local fired = false
-                            local start = tick()
-
-                            while tick() - start < cooldown do
-                                task.wait(0.05) -- small interval to check
+                            local now = tick()
+                            if now - LastFire[statID] >= cooldown then
+                                local success, err = pcall(function()
+                                    ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train", statID)
+                                end)
+                                if success then
+                                    log("TrainStat fired for "..name)
+                                else
+                                    log("TrainStat error: "..tostring(err))
+                                end
+                                LastFire[statID] = tick()
                             end
-
-                            local success, err = pcall(function()
-                                ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train", statID)
-                            end)
-                            if success then
-                                log("TrainStat fired for "..name)
-                            else
-                                log("TrainStat error: "..tostring(err))
-                            end
+                            task.wait(0.05) -- check frequently
                         end
                     end
                     ActiveTrains[statID] = nil
