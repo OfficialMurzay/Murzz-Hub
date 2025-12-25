@@ -1,6 +1,6 @@
 -- MurzzHub v1.0r Beta
 -- Full Stable Build (Home + Live Stats + Quests with Smooth Animations)
--- Author: Murzay | Animated + Easing Numbers
+-- Author: Murzay | Animated Numbers (Incremental)
 
 -------------------------------------------------
 -- SERVICES
@@ -66,7 +66,7 @@ local function abbreviate(n)
     end
 end
 
--- Smooth easing animation function
+-- Smooth easing animation
 local function easeOutQuad(t) -- t = 0..1
     return 1 - (1 - t)^2
 end
@@ -122,7 +122,7 @@ InfoTab:CreateParagraph({
 • Kill quests fully supported
 • Event-based (zero loops)
 • UI locked & stable
-• Home + Live Stats + Quest Progress now animate smoothly
+• Home + Live Stats + Quest Progress now animate smoothly (number -> new number)
 ]]
 })
 
@@ -156,6 +156,7 @@ local PowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡")
 local YenLabel = HomeTab:CreateLabel("Money: ... 💰")
 local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
+-- Bind animated value
 local function bindValue(obj, label, prefix, emoji)
     if not obj then return end
     local current = obj.Value
@@ -224,6 +225,7 @@ local function setupQuest(quest)
             if req:IsA("IntValue") or req:IsA("NumberValue") then
                 local label = QuestsTab:CreateLabel("...")
 
+                local current = 0
                 local function update()
                     local progress = 0
                     if quest:FindFirstChild(req.Name) then
@@ -240,8 +242,9 @@ local function setupQuest(quest)
 
                     local done = progress >= req.Value
                     task.spawn(function()
-                        animateNumber(label, 0, progress, "", "", 0.7)
+                        animateNumber(label, current, progress, "", "", 0.7)
                         label:Set(abbreviate(progress).."/"..abbreviate(req.Value).." "..name.." "..emoji..(done and " ✅" or ""))
+                        current = progress
                     end)
                 end
 
