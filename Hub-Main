@@ -1,6 +1,6 @@
 -- MurzzHub v1.0r Beta
--- Full Stable Build (Home + Live Stats + Quests with Smooth Incremental Animations)
--- Author: Murzay | Animated Numbers Fixed for Quest Labels
+-- Full Stable Build (Home + Live Stats + Quests + Auto Train UI)
+-- Author: Murzay | Animated Numbers + Auto Train UI
 
 -------------------------------------------------
 -- SERVICES
@@ -123,6 +123,7 @@ InfoTab:CreateParagraph({
 • Event-based (zero loops)
 • UI locked & stable
 • Home + Live Stats + Quest Progress animate incrementally with easing
+• Auto Train UI added
 ]]
 })
 
@@ -242,7 +243,7 @@ local function setupQuest(quest)
 
                     local done = progress >= req.Value
 
-                    -- Animate only the numeric part, keep rest of label static
+                    -- Animate only numeric part, keep rest of label
                     task.spawn(function()
                         local steps = 30
                         local duration = 0.7
@@ -291,10 +292,32 @@ end
 -- AUTO FARMS TAB
 -------------------------------------------------
 local AutoTab = Window:CreateTab("Auto Farms ⚙️")
-AutoTab:CreateSection("Coming Soon 🚧")
-AutoTab:CreateLabel("• Auto Train")
-AutoTab:CreateLabel("• Auto Quest")
-AutoTab:CreateLabel("• Smart Zone Detection")
+AutoTab:CreateSection("Auto Train 🏋️")
+
+-- Table of stats with emojis
+local AutoStats = {
+    {"Strength", "💪"},
+    {"Durability", "🛡️"},
+    {"Chakra", "🌀"},
+    {"Sword", "🗡️"},
+    {"Speed", "💨"},
+    {"Agility", "☁️"},
+}
+
+-- Create a switch for each stat
+local AutoToggles = {} -- store toggle references
+for _,stat in ipairs(AutoStats) do
+    local name, emoji = unpack(stat)
+    local toggle = AutoTab:CreateToggle({
+        Name = name.." "..emoji,
+        CurrentValue = false,
+        Flag = name.."Toggle", -- optional, for Rayfield config
+        Callback = function(val)
+            print(name.." Auto Train: "..tostring(val))
+        end
+    })
+    table.insert(AutoToggles, toggle)
+end
 
 -------------------------------------------------
 -- DONE
