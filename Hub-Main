@@ -4,10 +4,9 @@
 
 --[[ 
 📝 Features:
-- Animated loading
+- Animated loading (stats count up from 0)
 - Live player stats
 - Live quests overview with percentage
-- Animated stat increment
 - Abbreviated numbers (K, M, B, T, Qd, Qn, Sx)
 - Class detection with emoji
 - Modern, lively UI
@@ -83,17 +82,31 @@ local HomeTab = Window:CreateTab("Home 🏠", nil)
 
 -- Player Data Section
 local PlayerSection = HomeTab:CreateSection("Player Data 🧑‍💻")
-local ClassLabel = PlayerSection:CreateLabel({ Name = "Class: ..." })
-local TotalPowerLabel = PlayerSection:CreateLabel({ Name = "Total Power: ..." })
-local YenLabel = PlayerSection:CreateLabel({ Name = "Yen: ..." })
-local ChikaraLabel = PlayerSection:CreateLabel({ Name = "Chikara: ..." })
+local ClassLabel
+local TotalPowerLabel
+local YenLabel
+local ChikaraLabel
+
+if PlayerSection then
+    ClassLabel = PlayerSection:CreateLabel({ Name = "Class: ..." })
+    TotalPowerLabel = PlayerSection:CreateLabel({ Name = "Total Power: ..." })
+    YenLabel = PlayerSection:CreateLabel({ Name = "Yen: ..." })
+    ChikaraLabel = PlayerSection:CreateLabel({ Name = "Chikara: ..." })
+else
+    warn("PlayerSection not created! Labels missing.")
+end
 
 -- Live Stats Section
 local StatsSection = HomeTab:CreateSection("Live Stats ⚡")
 local StatLabels = {}
 local StatNames = {"Strength", "Durability", "Chakra", "Sword", "Speed", "Agility"}
-for i, stat in ipairs(StatNames) do
-    StatLabels[stat] = StatsSection:CreateLabel({ Name = stat.." : ..." })
+
+if StatsSection then
+    for i, stat in ipairs(StatNames) do
+        StatLabels[stat] = StatsSection:CreateLabel({ Name = stat.." : ..." })
+    end
+else
+    warn("StatsSection not created! Stat labels missing.")
 end
 
 -- Quests Overview Section
@@ -121,7 +134,7 @@ local function updateUI()
 
     -- Quests
     for _, questFolder in ipairs(Quests:GetChildren()) do
-        if not QuestLabels[questFolder.Name] then
+        if not QuestLabels[questFolder.Name] and QuestSection then
             QuestLabels[questFolder.Name] = QuestSection:CreateLabel({ Name = questFolder.Name.." : 0%" })
         end
 
@@ -143,11 +156,28 @@ local function updateUI()
         if requirementSum > 0 then
             percent = math.floor(progressSum / requirementSum * 100)
         end
-        QuestLabels[questFolder.Name]:Set(questFolder.Name.." : "..percent.."%")
+        if QuestLabels[questFolder.Name] then
+            QuestLabels[questFolder.Name]:Set(questFolder.Name.." : "..percent.."%")
+        end
     end
 end
+
+--// Initial animated load for all numeric stats
+local function initialLoad()
+    local OtherData = LocalPlayer:WaitForChild("OtherData")
+    local Stats = LocalPlayer:WaitForChild("Stats")
+    animateValue(TotalPowerLabel, 0, OtherData.TotalPower.Value, 1)
+    animateValue(YenLabel, 0, OtherData.Yen.Value, 1)
+    animateValue(ChikaraLabel, 0, OtherData.Chikara.Value, 1)
+    for i, statName in ipairs(StatNames) do
+        animateValue(StatLabels[statName], 0, Stats[tostring(i)].Value, 1)
+    end
+end
+
+-- Run initial load once
+initialLoad()
 
 --// Update every frame
 RunService.RenderStepped:Connect(updateUI)
 
- Rayfield:LoadConfiguration()
+Rayfield:LoadConfiguration()
