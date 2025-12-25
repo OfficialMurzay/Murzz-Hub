@@ -1,4 +1,4 @@
--- MurzzHub v1.0f Beta (UI + Player Data Animated & Live)
+-- MurzzHub v1.0f Beta (UI + Player Data Fully Fixed Animation)
 -- Author: Murzay
 
 -------------------------------------------------
@@ -56,7 +56,9 @@ local function abbreviateNumber(num)
     else return tostring(num) end
 end
 
+-- Animate only once per change
 local function animateValue(label, startVal, endVal, prefix, emoji, duration)
+    if startVal == endVal then return end
     local step = (endVal - startVal) / (duration * 30)
     local current = startVal
     local connection
@@ -81,10 +83,10 @@ local HomeTab = Window:CreateTab("Home 🏠")
 HomeTab:CreateSection("Player Data 👤")
 
 -- Player Data Labels
-local ClassLabel      = HomeTab:CreateLabel("Class: ...")
-local PowerLabel      = HomeTab:CreateLabel("Total Power: ... ⚡")
-local YenLabel        = HomeTab:CreateLabel("Money: ... 💰")
-local ChikaraLabel    = HomeTab:CreateLabel("Chikara: ... 💎")
+local ClassLabel   = HomeTab:CreateLabel("Class: ...")
+local PowerLabel   = HomeTab:CreateLabel("Total Power: ... ⚡")
+local YenLabel     = HomeTab:CreateLabel("Money: ... 💰")
+local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
 -- Live Stats placeholders
 HomeTab:CreateSection("Live Stats 📊")
