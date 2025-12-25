@@ -1,6 +1,6 @@
 -- MurzzHub v1.0j Beta (UI + Player Data, Stats & Quest Overview with functional percentages)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0i -> v1.0j; next after z would be 1.01a, etc.
+-- VERSION NOTE: v1.0i -> v1.0j; next after z would be 1.01a etc.
 
 -------------------------------------------------
 -- SERVICES
@@ -14,14 +14,19 @@ local StatsFolder = Player:WaitForChild("Stats")
 local QuestsFolder = Player:WaitForChild("Quests")
 
 -------------------------------------------------
+-- VERSION
+-------------------------------------------------
+local VERSION = "v1.0j Beta"
+
+-------------------------------------------------
 -- RAYFIELD
 -------------------------------------------------
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "MurzzHub v1.0j Beta",
-    LoadingTitle = "MurzzHub v1.0j Beta",
-    LoadingSubtitle = "UI Live Player Data, Stats & Quests",
+    Name = "MurzzHub "..VERSION,
+    LoadingTitle = "MurzzHub "..VERSION,
+    LoadingSubtitle = VERSION.." - UI Live Player Data, Stats & Quests",
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "MurzzHub",
@@ -129,7 +134,7 @@ local function createQuestLabels()
             if name and number then
                 displayName = name.." No."..number
             end
-            QuestOverviewLabels[questFolder.Name] = HomeTab:CreateLabel("Quest: "..displayName.." 0%")
+            QuestOverviewLabels[questFolder.Name] = HomeTab:CreateLabel(displayName.." [0%]")
         end
     end
 end
@@ -207,7 +212,7 @@ RunService.Heartbeat:Connect(function()
                     displayName = name.." No."..number
                 end
 
-                label:Set(string.format("Quest: %s %d%% (%d/%d)", displayName, percent, totalProg, totalReq))
+                label:Set(string.format("%s [%d%%]", displayName, percent))
             end
         end
     end
@@ -217,4 +222,4 @@ end)
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] UI + Player Data, Live Stats & Quest Overview v1.0j Beta loaded successfully")
+print("[MurzzHub] UI + Player Data, Live Stats & Quest Overview "..VERSION.." loaded successfully")
