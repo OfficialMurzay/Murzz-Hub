@@ -1,5 +1,5 @@
--- MurzzHub v1.0i Beta (UI + Player Data, Live Stats & Quest Overview placeholder)
--- Author: Murzay
+-- MurzzHub v1.0j Beta (UI + Player Data, Live Stats & Quest Overview with functional percentages)
+-- Author: Murzay (Modified by ChatGPT)
 
 -------------------------------------------------
 -- SERVICES
@@ -122,12 +122,10 @@ local QuestOverviewLabels = {}
 for _, questFolder in ipairs(QuestsFolder:GetChildren()) do
     if questFolder:IsA("Folder") then
         local questName = questFolder.Name
-        -- Convert Ghoul1 -> Ghoul No.1
         local name, number = questName:match("(%a+)(%d+)")
         if name and number then
             questName = name.." No."..number
         end
-        -- Create label with 0% for now
         QuestOverviewLabels[questFolder.Name] = HomeTab:CreateLabel("Quest: "..questName.." 0%")
     end
 end
@@ -170,6 +168,40 @@ RunService.Heartbeat:Connect(function()
         if statObj and statObj.Value ~= data.Value then
             animateValue(data.Label, data.Value, statObj.Value, data.StatName..": ", data.Emoji, 0.5)
             data.Value = statObj.Value
+        end
+    end
+
+    -- Quest Overview Percentages
+    for questName, label in pairs(QuestOverviewLabels) do
+        local questFolder = QuestsFolder:FindFirstChild(questName)
+        if questFolder and questFolder:FindFirstChild("Requirements") and questFolder:FindFirstChild("Progress") then
+            local requirements = questFolder.Requirements:GetChildren()
+            local progress = questFolder.Progress:GetChildren()
+
+            local totalReq, totalProg = 0, 0
+            for _, req in ipairs(requirements) do
+                if req:IsA("IntValue") or req:IsA("NumberValue") then
+                    totalReq = totalReq + req.Value
+                end
+            end
+            for _, prog in ipairs(progress) do
+                if prog:IsA("IntValue") or prog:IsA("NumberValue") then
+                    totalProg = totalProg + prog.Value
+                end
+            end
+
+            local percent = 0
+            if totalReq > 0 then
+                percent = math.floor((totalProg / totalReq) * 100)
+            end
+
+            -- Update label text
+            local displayName = questFolder.Name
+            local name, number = displayName:match("(%a+)(%d+)")
+            if name and number then
+                displayName = name.." No."..number
+            end
+            label:Set(string.format("Quest: %s %d%% (%d/%d)", displayName, percent, totalProg, totalReq))
         end
     end
 end)
