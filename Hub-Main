@@ -18,7 +18,7 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 --// Rayfield Library
-local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/GreenDeno/Venyx-UI-Library/main/Rayfield.lua"))()
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 --// Utility: Format numbers
 local function abbreviateNumber(num)
