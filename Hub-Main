@@ -1,4 +1,4 @@
--- MurzzHub v1.0ad Beta (Proper Quest Sections + Live Labels)
+-- MurzzHub v1.0ae Beta (Fixed Label Creation Per Section)
 -- Author: Murzay (Modified by ChatGPT)
 
 -------------------------------------------------
@@ -14,7 +14,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0ad Beta"
+local VERSION = "v1.0ae Beta"
 
 -------------------------------------------------
 -- DEBUG
@@ -101,10 +101,11 @@ local StatIdToName = {
 local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({Title="MurzzHub "..VERSION.." Update Log", Content=[[
-• Quest tab now has live-updating sections
-• Requirements display live progress with animation
-• Info tab restored with Dear @username and Discord button
-• Optimized for minimal resource use
+• Quest tab now uses proper sections
+• Requirements displayed as child labels under each section
+• Progress updates live with animation
+• Info tab restored with Dear @username & Discord button
+• Optimized and nil-safe
 ]]})
 
 InfoTab:CreateSection("Discord 💬")
@@ -164,7 +165,7 @@ local function getAnimatedValue(questFolder, reqName)
     return AnimatedQuestValues[questFolder][reqName]
 end
 
-local function updateQuestSection(questFolder)
+local function createOrUpdateQuestSection(questFolder)
     safeRun(function()
         if not questFolder then return end
         local displayName = questFolder.Name
@@ -172,9 +173,10 @@ local function updateQuestSection(questFolder)
         local name, number = displayName:match("(%a+)(%d+)")
         if name and number then displayName = name.." No."..number end
 
-        -- Create Section if it doesn't exist
+        -- Create section only once
         if not QuestSections[questFolder.Name] then
             QuestSections[questFolder.Name] = QuestsTab:CreateSection(emoji.." "..displayName)
+            QuestLabels[questFolder.Name] = {}
         end
         local section = QuestSections[questFolder.Name]
 
@@ -215,7 +217,6 @@ local function updateQuestSection(questFolder)
                     complete and " ✅" or ""
                 )
 
-                QuestLabels[questFolder.Name] = QuestLabels[questFolder.Name] or {}
                 if not QuestLabels[questFolder.Name][req.Name] then
                     QuestLabels[questFolder.Name][req.Name] = section:CreateLabel(labelText)
                 else
@@ -231,9 +232,9 @@ local function updateQuestSection(questFolder)
     end)
 end
 
-for _, questFolder in ipairs(QuestsFolder:GetChildren()) do updateQuestSection(questFolder) end
+for _, q in ipairs(QuestsFolder:GetChildren()) do createOrUpdateQuestSection(q) end
 QuestsFolder.ChildAdded:Connect(function(child)
-    if child:IsA("Folder") then updateQuestSection(child) end
+    if child:IsA("Folder") then createOrUpdateQuestSection(child) end
 end)
 
 -------------------------------------------------
@@ -265,9 +266,7 @@ RunService.Heartbeat:Connect(function()
         end
 
         -- Live Quests
-        for _, questFolder in ipairs(QuestsFolder:GetChildren()) do
-            updateQuestSection(questFolder)
-        end
+        for _, q in ipairs(QuestsFolder:GetChildren()) do createOrUpdateQuestSection(q) end
     end)
 end)
 
@@ -275,4 +274,4 @@ end)
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] v1.0ad Beta loaded successfully - Quest sections and live labels functional")
+print("[MurzzHub] v1.0ae Beta loaded successfully - Quest sections and live labels functional")
