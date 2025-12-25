@@ -9,7 +9,7 @@ local OtherData = Player:WaitForChild("OtherData")
 local QuestsFolder = Player:WaitForChild("Quests")
 
 -------------------------------------------------
--- RAYFIELD LOAD (NO CREATELOADER)
+-- RAYFIELD
 -------------------------------------------------
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
@@ -30,31 +30,44 @@ local Window = Rayfield:CreateWindow({
 -------------------------------------------------
 local function formatNumber(num)
     if not num then return "0" end
-    local t = {
+    local formats = {
         {1e15,"Qd"},
         {1e12,"T"},
         {1e9,"B"},
         {1e6,"M"},
         {1e3,"K"}
     }
-    for _,v in ipairs(t) do
-        if num >= v[1] then
-            return string.format("%.2f%s", num/v[1], v[2])
+    for _,f in ipairs(formats) do
+        if num >= f[1] then
+            return string.format("%.2f%s", num/f[1], f[2])
         end
     end
     return tostring(num)
 end
 
 -------------------------------------------------
--- STAT MAPS
+-- CLASS MAP
+-------------------------------------------------
+local ClassMap = {
+    [1]="Fighter",[2]="Shinobi",[3]="Pirate",[4]="Ghoul",[5]="Hero",
+    [6]="Reaper",[7]="Saiyan",[8]="Sin",[9]="Magi",[10]="Akuma",
+    [11]="Yonko",[12]="Gorosei",[13]="Overlord",[14]="Hokage",
+    [15]="Kaioshin",[16]="Sage",[17]="Espada",[18]="Shinigami",
+    [19]="Hashira",[20]="Hakaishin",[21]="Otsutsuki",
+    [22]="Pirate King",[23]="Kishin",[24]="Angel",
+    [25]="Demon King",[26]="Ultra Instinct",[27]="Upper Moon"
+}
+
+-------------------------------------------------
+-- STAT MAP
 -------------------------------------------------
 local StatIdToName = {
-    [1] = "Strength",
-    [2] = "Durability",
-    [3] = "Chakra",
-    [4] = "Sword",
-    [5] = "Speed",
-    [6] = "Agility"
+    [1]="Strength",
+    [2]="Durability",
+    [3]="Chakra",
+    [4]="Sword",
+    [5]="Speed",
+    [6]="Agility"
 }
 
 -------------------------------------------------
@@ -64,10 +77,10 @@ local HomeTab = Window:CreateTab("Home 🏠")
 
 HomeTab:CreateSection("Player Data 👤")
 
-local ClassLabel    = HomeTab:CreateLabel("Class: ...")
-local PowerLabel    = HomeTab:CreateLabel("Total Power: ... ⚡")
-local YenLabel      = HomeTab:CreateLabel("Money: ... 💰")
-local ChikaraLabel  = HomeTab:CreateLabel("Chikara: ... 💎")
+local ClassLabel   = HomeTab:CreateLabel("Class: ...")
+local PowerLabel   = HomeTab:CreateLabel("Total Power: ... ⚡")
+local YenLabel     = HomeTab:CreateLabel("Money: ... 💰")
+local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
 HomeTab:CreateSection("Live Stats 📊")
 
@@ -80,45 +93,37 @@ local LiveStats = {
     Agility    = HomeTab:CreateLabel("Agility: ... ☁️"),
 }
 
-HomeTab:CreateSection("Active Quest Preview 📜")
-local QuestPreview = HomeTab:CreateLabel("No active quest")
-
 -------------------------------------------------
 -- QUEST TAB
 -------------------------------------------------
 local QuestTab = Window:CreateTab("Quests 📜")
-QuestTab:CreateSection("Current Quest")
+QuestTab:CreateSection("Active Quest")
 
-local QuestTitle = QuestTab:CreateLabel("Waiting for quest...")
-local QuestBars = {}
+local QuestTitle = QuestTab:CreateLabel("")
+local QuestLines = {}
 
 -------------------------------------------------
--- CREATE PROGRESS BAR (SAFE)
+-- CLEAR QUEST TEXT (SAFE)
 -------------------------------------------------
-local function createQuestBar(statName)
-    return QuestTab:CreateSlider({
-        Name = statName,
-        Range = {0, 100},
-        Increment = 1,
-        CurrentValue = 0,
-        Callback = function() end
-    })
+local function clearQuestLines()
+    for _,label in ipairs(QuestLines) do
+        label:Set("")
+    end
+    QuestLines = {}
 end
 
 -------------------------------------------------
--- BUILD QUEST UI
+-- BUILD QUEST TEXT UI
 -------------------------------------------------
 local function buildQuestUI(quest)
-    QuestBars = {}
+    clearQuestLines()
 
     if not quest then
-        QuestTitle:Set("No active quest ❌")
-        QuestPreview:Set("No active quest")
+        QuestTitle:Set("")
         return
     end
 
     QuestTitle:Set("Quest: "..quest.Name.." 📜")
-    QuestPreview:Set("Active: "..quest.Name)
 
     local progress = quest:FindFirstChild("Progress")
     local requirements = quest:FindFirstChild("Requirements")
@@ -132,35 +137,34 @@ local function buildQuestUI(quest)
         local req = requirements:FindFirstChild(p.Name)
 
         if statName and req then
-            QuestBars[p] = {
-                Bar = createQuestBar(statName),
+            local label = QuestTab:CreateLabel("")
+            table.insert(QuestLines, {
+                Label = label,
                 Progress = p,
                 Requirement = req,
                 Name = statName
-            }
+            })
         end
     end
 end
 
 -------------------------------------------------
--- LIVE QUEST UPDATE
+-- QUEST LIVE UPDATE
 -------------------------------------------------
 RunService.Heartbeat:Connect(function()
-    for _,data in pairs(QuestBars) do
+    for _,data in ipairs(QuestLines) do
         local p = data.Progress
         local r = data.Requirement
         if p and r then
-            local percent = math.clamp(p.Value / r.Value, 0, 1)
-            data.Bar:Set({
-                Name = data.Name.." "..formatNumber(p.Value).."/"..formatNumber(r.Value),
-                CurrentValue = math.floor(percent * 100)
-            })
+            data.Label:Set(
+                formatNumber(p.Value).." / "..formatNumber(r.Value).." "..data.Name
+            )
         end
     end
 end)
 
 -------------------------------------------------
--- QUEST DETECTION (BOOM / GIOVANNI / SWORD MASTER)
+-- QUEST DETECTION (ANY QUEST)
 -------------------------------------------------
 task.spawn(function()
     local lastQuest
@@ -184,9 +188,12 @@ task.spawn(function()
 end)
 
 -------------------------------------------------
--- HOME LIVE UPDATES
+-- HOME LIVE UPDATE
 -------------------------------------------------
 RunService.Heartbeat:Connect(function()
+    if OtherData:FindFirstChild("Class") then
+        ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown"))
+    end
     if OtherData:FindFirstChild("TotalPower") then
         PowerLabel:Set("Total Power: "..formatNumber(OtherData.TotalPower.Value).." ⚡")
     end
