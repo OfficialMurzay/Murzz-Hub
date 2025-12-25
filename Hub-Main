@@ -1,77 +1,60 @@
+-------------------------------------------------
 -- SERVICES
+-------------------------------------------------
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
 
 local Player = Players.LocalPlayer
 local OtherData = Player:WaitForChild("OtherData")
 local QuestsFolder = Player:WaitForChild("Quests")
 
 -------------------------------------------------
--- RAYFIELD LOAD
+-- RAYFIELD LOAD (NO CREATELOADER)
 -------------------------------------------------
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
-Rayfield:CreateLoader({
-    Name = "MurzzHub v1.0",
-    Subtitle = "Auto Train • Teleports",
-    Steps = {
-        {Name="Loading UI", Duration=0.4},
-        {Name="Fetching Player Data", Duration=0.4},
-        {Name="Binding Live Stats", Duration=0.4},
-    }
-})
-
 local Window = Rayfield:CreateWindow({
     Name = "MurzzHub v1.0",
-    LoadingTitle = "MurzzHub",
-    LoadingSubtitle = "AFSE",
+    LoadingTitle = "MurzzHub v1.0",
+    LoadingSubtitle = "Auto Train • Teleports",
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "MurzzHub",
         FileName = "AFSE"
-    }
+    },
+    KeySystem = false
 })
 
 -------------------------------------------------
 -- UTILITIES
 -------------------------------------------------
-local function formatNumber(n)
-    if not n then return "0" end
-    local abbrev = {
+local function formatNumber(num)
+    if not num then return "0" end
+    local t = {
         {1e15,"Qd"},
         {1e12,"T"},
         {1e9,"B"},
         {1e6,"M"},
         {1e3,"K"}
     }
-    for _,v in ipairs(abbrev) do
-        if n >= v[1] then
-            return string.format("%.2f%s", n/v[1], v[2])
+    for _,v in ipairs(t) do
+        if num >= v[1] then
+            return string.format("%.2f%s", num/v[1], v[2])
         end
     end
-    return tostring(n)
+    return tostring(num)
 end
 
 -------------------------------------------------
 -- STAT MAPS
 -------------------------------------------------
-local StatMap = {
+local StatIdToName = {
     [1] = "Strength",
     [2] = "Durability",
     [3] = "Chakra",
     [4] = "Sword",
     [5] = "Speed",
     [6] = "Agility"
-}
-
-local StatColors = {
-    Strength = Color3.fromRGB(220,60,60),
-    Durability = Color3.fromRGB(70,120,255),
-    Chakra = Color3.fromRGB(170,80,255),
-    Sword = Color3.fromRGB(80,200,120),
-    Speed = Color3.fromRGB(255,160,60),
-    Agility = Color3.fromRGB(255,220,90)
 }
 
 -------------------------------------------------
@@ -81,20 +64,20 @@ local HomeTab = Window:CreateTab("Home 🏠")
 
 HomeTab:CreateSection("Player Data 👤")
 
-local ClassLabel = HomeTab:CreateLabel("Class: ...")
-local PowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡")
-local YenLabel = HomeTab:CreateLabel("Money: ... 💰")
-local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
+local ClassLabel    = HomeTab:CreateLabel("Class: ...")
+local PowerLabel    = HomeTab:CreateLabel("Total Power: ... ⚡")
+local YenLabel      = HomeTab:CreateLabel("Money: ... 💰")
+local ChikaraLabel  = HomeTab:CreateLabel("Chikara: ... 💎")
 
 HomeTab:CreateSection("Live Stats 📊")
 
-local LiveStatLabels = {
-    Strength = HomeTab:CreateLabel("Strength: ... 💪"),
+local LiveStats = {
+    Strength   = HomeTab:CreateLabel("Strength: ... 💪"),
     Durability = HomeTab:CreateLabel("Durability: ... 🛡️"),
-    Chakra = HomeTab:CreateLabel("Chakra: ... 🌀"),
-    Sword = HomeTab:CreateLabel("Sword: ... 🗡️"),
-    Speed = HomeTab:CreateLabel("Speed: ... 💨"),
-    Agility = HomeTab:CreateLabel("Agility: ... ☁️"),
+    Chakra     = HomeTab:CreateLabel("Chakra: ... 🌀"),
+    Sword      = HomeTab:CreateLabel("Sword: ... 🗡️"),
+    Speed      = HomeTab:CreateLabel("Speed: ... 💨"),
+    Agility    = HomeTab:CreateLabel("Agility: ... ☁️"),
 }
 
 HomeTab:CreateSection("Active Quest Preview 📜")
@@ -104,35 +87,26 @@ local QuestPreview = HomeTab:CreateLabel("No active quest")
 -- QUEST TAB
 -------------------------------------------------
 local QuestTab = Window:CreateTab("Quests 📜")
-QuestTab:CreateSection("Active Quest")
+QuestTab:CreateSection("Current Quest")
 
 local QuestTitle = QuestTab:CreateLabel("Waiting for quest...")
 local QuestBars = {}
 
 -------------------------------------------------
--- BAR CREATOR (ONCE PER STAT)
+-- CREATE PROGRESS BAR (SAFE)
 -------------------------------------------------
 local function createQuestBar(statName)
-    local bar = QuestTab:CreateSlider({
+    return QuestTab:CreateSlider({
         Name = statName,
-        Range = {0,100},
+        Range = {0, 100},
         Increment = 1,
         CurrentValue = 0,
         Callback = function() end
     })
-
-    task.spawn(function()
-        task.wait()
-        if bar.Container and bar.Container:FindFirstChild("Fill") then
-            bar.Container.Fill.BackgroundColor3 = StatColors[statName]
-        end
-    end)
-
-    return bar
 end
 
 -------------------------------------------------
--- QUEST UI BUILDER
+-- BUILD QUEST UI
 -------------------------------------------------
 local function buildQuestUI(quest)
     QuestBars = {}
@@ -144,7 +118,7 @@ local function buildQuestUI(quest)
     end
 
     QuestTitle:Set("Quest: "..quest.Name.." 📜")
-    QuestPreview:Set("Active: "..quest.Name.." 📜")
+    QuestPreview:Set("Active: "..quest.Name)
 
     local progress = quest:FindFirstChild("Progress")
     local requirements = quest:FindFirstChild("Requirements")
@@ -152,22 +126,24 @@ local function buildQuestUI(quest)
 
     for _,p in ipairs(progress:GetChildren()) do
         if not p:IsA("IntValue") then continue end
-        local statId = tonumber(p.Name)
-        local statName = StatMap[statId]
-        local req = requirements:FindFirstChild(p.Name)
-        if not statName or not req then continue end
 
-        QuestBars[p] = {
-            Bar = createQuestBar(statName),
-            Progress = p,
-            Requirement = req,
-            Name = statName
-        }
+        local statId = tonumber(p.Name)
+        local statName = StatIdToName[statId]
+        local req = requirements:FindFirstChild(p.Name)
+
+        if statName and req then
+            QuestBars[p] = {
+                Bar = createQuestBar(statName),
+                Progress = p,
+                Requirement = req,
+                Name = statName
+            }
+        end
     end
 end
 
 -------------------------------------------------
--- LIVE QUEST UPDATE (TWEENED)
+-- LIVE QUEST UPDATE
 -------------------------------------------------
 RunService.Heartbeat:Connect(function()
     for _,data in pairs(QuestBars) do
@@ -175,9 +151,8 @@ RunService.Heartbeat:Connect(function()
         local r = data.Requirement
         if p and r then
             local percent = math.clamp(p.Value / r.Value, 0, 1)
-            local display = data.Name.." "..formatNumber(p.Value).."/"..formatNumber(r.Value)
             data.Bar:Set({
-                Name = display,
+                Name = data.Name.." "..formatNumber(p.Value).."/"..formatNumber(r.Value),
                 CurrentValue = math.floor(percent * 100)
             })
         end
@@ -185,22 +160,23 @@ RunService.Heartbeat:Connect(function()
 end)
 
 -------------------------------------------------
--- QUEST DETECTOR (AUTO SWITCH)
+-- QUEST DETECTION (BOOM / GIOVANNI / SWORD MASTER)
 -------------------------------------------------
 task.spawn(function()
-    local lastQuest = nil
+    local lastQuest
     while true do
-        local currentQuest = nil
+        local foundQuest
+
         for _,q in ipairs(QuestsFolder:GetChildren()) do
             if q:IsA("Folder") and q:FindFirstChild("Progress") then
-                currentQuest = q
+                foundQuest = q
                 break
             end
         end
 
-        if currentQuest ~= lastQuest then
-            buildQuestUI(currentQuest)
-            lastQuest = currentQuest
+        if foundQuest ~= lastQuest then
+            buildQuestUI(foundQuest)
+            lastQuest = foundQuest
         end
 
         task.wait(0.5)
@@ -221,10 +197,10 @@ RunService.Heartbeat:Connect(function()
         ChikaraLabel:Set("Chikara: "..formatNumber(OtherData.Chikara.Value).." 💎")
     end
 
-    for stat, label in pairs(LiveStatLabels) do
-        local statObj = OtherData:FindFirstChild(stat)
-        if statObj then
-            label:Set(stat..": "..formatNumber(statObj.Value))
+    for stat,label in pairs(LiveStats) do
+        local obj = OtherData:FindFirstChild(stat)
+        if obj then
+            label:Set(stat..": "..formatNumber(obj.Value))
         end
     end
 end)
