@@ -1,6 +1,6 @@
--- MurzzHub v1.0l Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
+-- MurzzHub v1.0m Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0k -> v1.0l
+-- VERSION NOTE: v1.0l -> v1.0m
 
 -------------------------------------------------
 -- SERVICES
@@ -15,7 +15,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0l Beta"
+local VERSION = "v1.0m Beta"
 
 -------------------------------------------------
 -- RAYFIELD
@@ -35,13 +35,44 @@ local Window = Rayfield:CreateWindow({
 })
 
 -------------------------------------------------
+-- UTILITIES
+-------------------------------------------------
+local function abbreviateNumber(num)
+    if not num then return "0" end
+    local absNum = math.abs(num)
+    if absNum >= 1e21 then return string.format("%.2fSx", num/1e21)
+    elseif absNum >= 1e18 then return string.format("%.2fQn", num/1e18)
+    elseif absNum >= 1e15 then return string.format("%.2fQd", num/1e15)
+    elseif absNum >= 1e12 then return string.format("%.2fT", num/1e12)
+    elseif absNum >= 1e9 then return string.format("%.2fB", num/1e9)
+    elseif absNum >= 1e6 then return string.format("%.2fM", num/1e6)
+    elseif absNum >= 1e3 then return string.format("%.2fK", num/1e3)
+    else return tostring(num) end
+end
+
+local function animateValue(label, startVal, endVal, prefix, emoji, duration)
+    if startVal == endVal then return end
+    local step = (endVal - startVal)/(duration*30)
+    local current = startVal
+    local connection
+    connection = RunService.RenderStepped:Connect(function()
+        current = current+step
+        if (step>0 and current>=endVal) or (step<0 and current<=endVal) then
+            current=endVal
+            connection:Disconnect()
+        end
+        if label and label.Set then label:Set(prefix..abbreviateNumber(math.floor(current)).." "..emoji) end
+    end)
+end
+
+-------------------------------------------------
 -- INFO TAB
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
     Title = "Update Log "..VERSION..": Quests Tab 📝",
-    Content = "Added dedicated Quests tab with live stat progress and completion notifications!"
+    Content = "Added dedicated Quests tab with live stat progress, abbreviated numbers, and completion notifications!"
 })
 
 InfoTab:CreateSection("Discord 💬")
@@ -54,7 +85,6 @@ Thank you for using my script! Every use really supports me, and gives me motiva
 If you have any suggestions, or just want to see the sneak peaks, events and more then join the Discord Server! ❤️ - Murzay (Scripter)
 ]]
 })
--- FIXED BUTTON
 InfoTab:CreateButton({
     Name = "Join The Discord Server!",
     Callback = function()
@@ -88,37 +118,6 @@ local ClassMap = {
 local StatIdToName = {
     [1]="Strength 💪",[2]="Durability 🛡️",[3]="Chakra 🌀",[4]="Sword 🗡️",[5]="Speed 💨",[6]="Agility ☁️"
 }
-
--------------------------------------------------
--- UTILITIES
--------------------------------------------------
-local function abbreviateNumber(num)
-    if not num then return "0" end
-    local absNum = math.abs(num)
-    if absNum >= 1e21 then return string.format("%.2fSx", num/1e21)
-    elseif absNum >= 1e18 then return string.format("%.2fQn", num/1e18)
-    elseif absNum >= 1e15 then return string.format("%.2fQd", num/1e15)
-    elseif absNum >= 1e12 then return string.format("%.2fT", num/1e12)
-    elseif absNum >= 1e9 then return string.format("%.2fB", num/1e9)
-    elseif absNum >= 1e6 then return string.format("%.2fM", num/1e6)
-    elseif absNum >= 1e3 then return string.format("%.2fK", num/1e3)
-    else return tostring(num) end
-end
-
-local function animateValue(label, startVal, endVal, prefix, emoji, duration)
-    if startVal == endVal then return end
-    local step = (endVal - startVal)/(duration*30)
-    local current = startVal
-    local connection
-    connection = RunService.RenderStepped:Connect(function()
-        current = current+step
-        if (step>0 and current>=endVal) or (step<0 and current<=endVal) then
-            current=endVal
-            connection:Disconnect()
-        end
-        if label and label.Set then label:Set(prefix..abbreviateNumber(math.floor(current)).." "..emoji) end
-    end)
-end
 
 -------------------------------------------------
 -- HOME TAB
@@ -161,6 +160,7 @@ QuestsTab:CreateSection("Current Quests 📌")
 local QuestParagraphs = {}
 
 local function updateQuestParagraph(questFolder)
+    if not questFolder then return end
     local displayName = questFolder.Name
     local name, number = displayName:match("(%a+)(%d+)")
     if name and number then displayName = name.." No."..number end
@@ -178,7 +178,7 @@ local function updateQuestParagraph(questFolder)
             if prog and (prog:IsA("IntValue") or prog:IsA("NumberValue")) then progVal = prog.Value end
             local statComplete = progVal >= req.Value
             if not statComplete then allComplete=false end
-            local line = string.format("%d/%d %s%s", progVal, req.Value, req.Name, statComplete and " ✅" or "")
+            local line = string.format("%s/%s %s%s", abbreviateNumber(progVal), abbreviateNumber(req.Value), req.Name, statComplete and " ✅" or "")
             table.insert(descLines,line)
         end
     end
@@ -186,23 +186,27 @@ local function updateQuestParagraph(questFolder)
     local titleText = displayName..(allComplete and " ✅" or "")
 
     if not QuestParagraphs[questFolder.Name] then
-        QuestParagraphs[questFolder.Name] = QuestsTab:CreateParagraph({
-            Title=titleText,
-            Content=descText
-        })
+        local paragraph = QuestsTab:CreateParagraph({Title=titleText, Content=descText})
+        QuestParagraphs[questFolder.Name] = paragraph
+        paragraph.Completed = allComplete
     else
-        QuestParagraphs[questFolder.Name]:Set(descText)
-        QuestParagraphs[questFolder.Name].Title = titleText
+        local paragraph = QuestParagraphs[questFolder.Name]
+        if paragraph and paragraph.Set then paragraph:Set(descText) end
+        if paragraph then paragraph.Title = titleText end
+        paragraph.Completed = allComplete
     end
 
-    if allComplete and not QuestParagraphs[questFolder.Name].Completed then
-        QuestParagraphs[questFolder.Name].Completed=true
-        Rayfield:Notify({
-            Title="✅ You completed a quest!",
-            Content="You completed "..displayName.."! Stay on that grinding streak!",
-            Duration=5,
-            Image=1580567251
-        })
+    if allComplete then
+        local paragraph = QuestParagraphs[questFolder.Name]
+        if paragraph and not paragraph.Notified then
+            paragraph.Notified = true
+            Rayfield:Notify({
+                Title="✅ You completed a quest!",
+                Content="You completed "..displayName.."! Stay on that grinding streak!",
+                Duration=5,
+                Image=1580567251
+            })
+        end
     end
 end
 
