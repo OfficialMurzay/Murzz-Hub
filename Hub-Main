@@ -1,6 +1,6 @@
--- MurzzHub v1.0k Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Auto Quest Detection & Completion)
+-- MurzzHub v1.0l Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0j -> v1.0k; next after z would be 1.01a etc.
+-- VERSION NOTE: v1.0k -> v1.0l
 
 -------------------------------------------------
 -- SERVICES
@@ -15,7 +15,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0k Beta"
+local VERSION = "v1.0l Beta"
 
 -------------------------------------------------
 -- RAYFIELD
@@ -38,24 +38,15 @@ local Window = Rayfield:CreateWindow({
 -- INFO TAB
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
-
--- Update Log Section
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
-    Title = "Update Log v1.0k: Auto Quest + Completion ✅",
-    Content = "Added auto-detect for new quests and completion highlights!"
+    Title = "Update Log "..VERSION..": Quests Tab 📝",
+    Content = "Added dedicated Quests tab with live stat progress and completion notifications!"
 })
 
--- Discord Section
 InfoTab:CreateSection("Discord 💬")
-
--- Username as gold-colored label
 local usernameLabel = InfoTab:CreateLabel("Dear @"..Player.DisplayName..",")
-if usernameLabel.SetColor then
-    usernameLabel:SetColor(Color3.fromRGB(255, 215, 0)) -- Gold
-end
-
--- Paragraph with message
+if usernameLabel.SetColor then usernameLabel:SetColor(Color3.fromRGB(255,215,0)) end
 InfoTab:CreateParagraph({
     Title = "Message",
     Content = [[
@@ -63,21 +54,15 @@ Thank you for using my script! Every use really supports me, and gives me motiva
 If you have any suggestions, or just want to see the sneak peaks, events and more then join the Discord Server! ❤️ - Murzay (Scripter)
 ]]
 })
-
--- Discord button with purple gradient
 InfoTab:CreateButton({
     Name = {
         Text = "Join The Discord Server!",
-        Color = {Color3.fromRGB(128, 0, 128), Color3.fromRGB(255, 0, 255)} -- purple gradient
+        Color = {Color3.fromRGB(128,0,128), Color3.fromRGB(255,0,255)}
     },
     Callback = function()
         local discordLink = "DISCORD_LINK_HERE"
         if discordLink and discordLink ~= "" then
-            if syn and syn.request then
-                syn.request({Url = discordLink})
-            else
-                setclipboard(discordLink)
-            end
+            if syn and syn.request then syn.request({Url=discordLink}) else setclipboard(discordLink) end
         end
     end
 })
@@ -99,12 +84,7 @@ local ClassMap = {
 -- STAT MAP
 -------------------------------------------------
 local StatIdToName = {
-    [1]="Strength 💪",
-    [2]="Durability 🛡️",
-    [3]="Chakra 🌀",
-    [4]="Sword 🗡️",
-    [5]="Speed 💨",
-    [6]="Agility ☁️"
+    [1]="Strength 💪",[2]="Durability 🛡️",[3]="Chakra 🌀",[4]="Sword 🗡️",[5]="Speed 💨",[6]="Agility ☁️"
 }
 
 -------------------------------------------------
@@ -125,18 +105,16 @@ end
 
 local function animateValue(label, startVal, endVal, prefix, emoji, duration)
     if startVal == endVal then return end
-    local step = (endVal - startVal) / (duration * 30)
+    local step = (endVal - startVal)/(duration*30)
     local current = startVal
     local connection
     connection = RunService.RenderStepped:Connect(function()
-        current = current + step
-        if (step > 0 and current >= endVal) or (step < 0 and current <= endVal) then
-            current = endVal
+        current = current+step
+        if (step>0 and current>=endVal) or (step<0 and current<=endVal) then
+            current=endVal
             connection:Disconnect()
         end
-        if label and label.Set then
-            label:Set(prefix..abbreviateNumber(math.floor(current)).." "..emoji)
-        end
+        if label and label.Set then label:Set(prefix..abbreviateNumber(math.floor(current)).." "..emoji) end
     end)
 end
 
@@ -144,146 +122,155 @@ end
 -- HOME TAB
 -------------------------------------------------
 local HomeTab = Window:CreateTab("Home 🏠")
-
--- Player Data
 HomeTab:CreateSection("Player Data 👤")
 local ClassLabel = HomeTab:CreateLabel("Class: ...")
 local PowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡")
 local YenLabel = HomeTab:CreateLabel("Money: ... 💰")
 local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
--- Live Stats
 HomeTab:CreateSection("Live Stats 📊")
 local LiveStats = {}
-for statId, name in pairs(StatIdToName) do
+for statId,name in pairs(StatIdToName) do
     local statName, emoji = name:match("^(.-) (.+)$")
-    LiveStats[statId] = {
-        Label = HomeTab:CreateLabel(statName..": ... "..emoji),
-        Value = 0,
-        Emoji = emoji,
-        StatName = statName
-    }
+    LiveStats[statId] = {Label=HomeTab:CreateLabel(statName..": ... "..emoji), Value=0, Emoji=emoji, StatName=statName}
 end
 
--- Quest Overview
 HomeTab:CreateSection("Quest Overview 📜")
 local QuestOverviewLabels = {}
-
 local function createQuestLabel(questFolder)
     local displayName = questFolder.Name
     local name, number = displayName:match("(%a+)(%d+)")
-    if name and number then
-        displayName = name.." No."..number
-    end
+    if name and number then displayName = name.." No."..number end
     local label = HomeTab:CreateLabel(displayName.." [0%]")
-    QuestOverviewLabels[questFolder.Name] = {Label = label, Completed = false}
+    QuestOverviewLabels[questFolder.Name]={Label=label, Completed=false}
 end
+for _,questFolder in ipairs(QuestsFolder:GetChildren()) do
+    if questFolder:IsA("Folder") then createQuestLabel(questFolder) end
+end
+QuestsFolder.ChildAdded:Connect(function(child)
+    if child:IsA("Folder") and not QuestOverviewLabels[child.Name] then createQuestLabel(child) end
+end)
 
--- Initial quests
-for _, questFolder in ipairs(QuestsFolder:GetChildren()) do
-    if questFolder:IsA("Folder") then
-        createQuestLabel(questFolder)
+-------------------------------------------------
+-- QUESTS TAB
+-------------------------------------------------
+local QuestsTab = Window:CreateTab("Quests 📜")
+QuestsTab:CreateSection("Current Quests 📌")
+local QuestParagraphs = {}
+
+local function updateQuestParagraph(questFolder)
+    local displayName = questFolder.Name
+    local name, number = displayName:match("(%a+)(%d+)")
+    if name and number then displayName = name.." No."..number end
+
+    local Requirements = questFolder:FindFirstChild("Requirements")
+    local Progress = questFolder:FindFirstChild("Progress")
+    if not Requirements or not Progress then return end
+
+    local descLines = {}
+    local allComplete = true
+    for _, req in ipairs(Requirements:GetChildren()) do
+        if req:IsA("IntValue") or req:IsA("NumberValue") then
+            local prog = Progress:FindFirstChild(req.Name)
+            local progVal = 0
+            if prog and (prog:IsA("IntValue") or prog:IsA("NumberValue")) then progVal = prog.Value end
+            local statComplete = progVal >= req.Value
+            if not statComplete then allComplete=false end
+            local line = string.format("%d/%d %s%s", progVal, req.Value, req.Name, statComplete and " ✅" or "")
+            table.insert(descLines,line)
+        end
+    end
+    local descText = table.concat(descLines,"\n")
+    local titleText = displayName..(allComplete and " ✅" or "")
+
+    if not QuestParagraphs[questFolder.Name] then
+        QuestParagraphs[questFolder.Name] = QuestsTab:CreateParagraph({
+            Title=titleText,
+            Content=descText
+        })
+    else
+        QuestParagraphs[questFolder.Name]:Set(descText)
+        -- Update title if completed
+        QuestParagraphs[questFolder.Name].Title = titleText
+    end
+
+    -- Notification if fully completed
+    if allComplete and not QuestParagraphs[questFolder.Name].Completed then
+        QuestParagraphs[questFolder.Name].Completed=true
+        Rayfield:Notify({
+            Title="✅ You completed a quest!",
+            Content="You completed "..displayName.."! Stay on that grinding streak!",
+            Duration=5,
+            Image=1580567251
+        })
     end
 end
 
--- Detect new quests dynamically
-QuestsFolder.ChildAdded:Connect(function(child)
-    if child:IsA("Folder") and not QuestOverviewLabels[child.Name] then
-        createQuestLabel(child)
+for _,questFolder in ipairs(QuestsFolder:GetChildren()) do updateQuestParagraph(questFolder) end
+QuestsFolder.ChildAdded:Connect(function(child) if child:IsA("Folder") then updateQuestParagraph(child) end end)
+RunService.Heartbeat:Connect(function()
+    for questName, paragraph in pairs(QuestParagraphs) do
+        local questFolder = QuestsFolder:FindFirstChild(questName)
+        if questFolder then updateQuestParagraph(questFolder) end
     end
 end)
 
 -------------------------------------------------
 -- PLAYER DATA & STATS LIVE UPDATE
 -------------------------------------------------
-local currentPower, currentYen, currentChikara = 0, 0, 0
-
+local currentPower,currentYen,currentChikara = 0,0,0
 RunService.Heartbeat:Connect(function()
-    -- Class
     if OtherData:FindFirstChild("Class") then
         ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓"))
     end
-
-    -- Total Power
     if OtherData:FindFirstChild("TotalPower") then
         local target = OtherData.TotalPower.Value
-        animateValue(PowerLabel, currentPower, target, "Total Power: ", "⚡", 0.5)
-        currentPower = target
+        animateValue(PowerLabel,currentPower,target,"Total Power: ","⚡",0.5)
+        currentPower=target
     end
-
-    -- Yen
     if OtherData:FindFirstChild("Yen") then
         local target = OtherData.Yen.Value
-        animateValue(YenLabel, currentYen, target, "Money: ", "💰", 0.5)
-        currentYen = target
+        animateValue(YenLabel,currentYen,target,"Money: ","💰",0.5)
+        currentYen=target
     end
-
-    -- Chikara
     if OtherData:FindFirstChild("Chikara") then
         local target = OtherData.Chikara.Value
-        animateValue(ChikaraLabel, currentChikara, target, "Chikara: ", "💎", 0.5)
-        currentChikara = target
+        animateValue(ChikaraLabel,currentChikara,target,"Chikara: ","💎",0.5)
+        currentChikara=target
     end
-
-    -- Live Stats
-    for statId, data in pairs(LiveStats) do
-        local statObj = StatsFolder:FindFirstChild(tostring(statId))
-        if statObj and statObj.Value ~= data.Value then
-            animateValue(data.Label, data.Value, statObj.Value, data.StatName..": ", data.Emoji, 0.5)
-            data.Value = statObj.Value
+    for statId,data in pairs(LiveStats) do
+        local statObj=StatsFolder:FindFirstChild(tostring(statId))
+        if statObj and statObj.Value~=data.Value then
+            animateValue(data.Label,data.Value,statObj.Value,data.StatName..": ",data.Emoji,0.5)
+            data.Value=statObj.Value
         end
     end
-
-    -- Quest Percentages
-    for questName, data in pairs(QuestOverviewLabels) do
-        local questFolder = QuestsFolder:FindFirstChild(questName)
+    for questName,data in pairs(QuestOverviewLabels) do
+        local questFolder=QuestsFolder:FindFirstChild(questName)
         if questFolder then
             local requirementsFolder = questFolder:FindFirstChild("Requirements")
             local progressFolder = questFolder:FindFirstChild("Progress")
             if requirementsFolder and progressFolder then
-                local totalReq, totalProg = 0, 0
-                for _, req in ipairs(requirementsFolder:GetChildren()) do
-                    if req:IsA("IntValue") or req:IsA("NumberValue") then
-                        totalReq = totalReq + req.Value
-                    end
+                local totalReq,totalProg=0,0
+                for _,req in ipairs(requirementsFolder:GetChildren()) do
+                    if req:IsA("IntValue") or req:IsA("NumberValue") then totalReq=totalReq+req.Value end
                 end
-                for _, prog in ipairs(progressFolder:GetChildren()) do
-                    if prog:IsA("IntValue") or prog:IsA("NumberValue") then
-                        totalProg = totalProg + prog.Value
-                    end
+                for _,prog in ipairs(progressFolder:GetChildren()) do
+                    if prog:IsA("IntValue") or prog:IsA("NumberValue") then totalProg=totalProg+prog.Value end
                 end
-
-                local percent = 0
-                if totalReq > 0 then
-                    percent = math.floor((totalProg / totalReq) * 100)
-                end
-
-                local displayName = questFolder.Name
-                local name, number = displayName:match("(%a+)(%d+)")
-                if name and number then
-                    displayName = name.." No."..number
-                end
-
-                local labelText = string.format("%s [%d%%]", displayName, percent)
-                local labelObj = data.Label
-
-                -- Completion highlight
-                if percent >= 100 and not data.Completed then
-                    data.Completed = true
+                local percent=0
+                if totalReq>0 then percent=math.floor((totalProg/totalReq)*100) end
+                local displayName=questFolder.Name
+                local name,number=displayName:match("(%a+)(%d+)")
+                if name and number then displayName=name.." No."..number end
+                local labelText=string.format("%s [%d%%]",displayName,percent)
+                local labelObj=data.Label
+                if percent>=100 and not data.Completed then
+                    data.Completed=true
                     labelObj:Set(labelText.." ✅")
-                    if labelObj.SetColor then
-                        labelObj:SetColor(Color3.fromRGB(144, 238, 144)) -- light green
-                    end
-                    -- Notification
-                    Rayfield:Notify({
-                        Title = "✅ You completed a quest!",
-                        Content = "You completed "..displayName.."! Stay on that grinding streak!",
-                        Duration = 5,
-                        Image = 1580567251 -- Rayfield built-in tick icon
-                    })
-                else
-                    labelObj:Set(labelText)
-                end
+                    if labelObj.SetColor then labelObj:SetColor(Color3.fromRGB(144,238,144)) end
+                    Rayfield:Notify({Title="✅ You completed a quest!",Content="You completed "..displayName.."! Stay on that grinding streak!",Duration=5,Image=1580567251})
+                else labelObj:Set(labelText) end
             end
         end
     end
@@ -293,4 +280,4 @@ end)
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] UI + Player Data, Live Stats & Quest Overview "..VERSION.." loaded successfully")
+print("[MurzzHub] UI + Player Data, Stats & Quest Overview + Quests Tab "..VERSION.." loaded successfully")
