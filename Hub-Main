@@ -1,5 +1,5 @@
 -- MurzzHub v1.0j Beta
--- Info tab + Home tab (Player Data functionality only)
+-- Info + Home tabs, Player Data live (AFSE-safe)
 -- Author: Murzay
 
 -------------------------------------------------
@@ -10,7 +10,7 @@ local RunService = game:GetService("RunService")
 local Player = Players.LocalPlayer
 
 -------------------------------------------------
--- WAIT FOR FOLDERS
+-- WAIT FOR DATA
 -------------------------------------------------
 local OtherData   = Player:WaitForChild("OtherData")
 local StatsFolder = Player:WaitForChild("Stats")
@@ -25,7 +25,7 @@ local VERSION = "v1.0j Beta"
 local Window = Rayfield:CreateWindow({
     Name = "MurzzHub "..VERSION,
     LoadingTitle = "MurzzHub "..VERSION,
-    LoadingSubtitle = VERSION.." - Player Data + Stats",
+    LoadingSubtitle = VERSION.." - Player Data + Live Stats",
     ConfigurationSaving = { Enabled = false },
     KeySystem = false
 })
@@ -59,13 +59,11 @@ end
 -- INFO TAB (UNCHANGED)
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
-
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
     Title = "Update Log "..VERSION,
     Content = "Quest Overview percentages fixed.\nAll existing systems preserved."
 })
-
 InfoTab:CreateSection("Discord 💬")
 InfoTab:CreateParagraph({
     Title = "Dear @"..Player.DisplayName,
@@ -75,7 +73,6 @@ InfoTab:CreateParagraph({
         "Join the Discord for sneak peeks, events and more!\n\n"..
         "❤️ - Murzay (Scripter)"
 })
-
 InfoTab:CreateButton({
     Name = "Join The Discord Server!",
     Callback = function()
@@ -88,7 +85,7 @@ InfoTab:CreateButton({
 -------------------------------------------------
 local HomeTab = Window:CreateTab("Home 🏠")
 
--- Player Data Section (labels only)
+-- Player Data Section
 HomeTab:CreateSection("Player Data 👤")
 local ClassLabel   = HomeTab:CreateLabel("Class: ...")
 local PowerLabel   = HomeTab:CreateLabel("Total Power: ... ⚡")
@@ -106,31 +103,21 @@ StatLabels["5"] = HomeTab:CreateLabel("Agility ☁️: ...")
 StatLabels["6"] = HomeTab:CreateLabel("Speed 💨: ...")
 
 -------------------------------------------------
--- HOME TAB FUNCTIONALITY (PLAYER DATA ONLY)
+-- HOME TAB FUNCTIONALITY (PLAYER DATA)
 -------------------------------------------------
 RunService.Heartbeat:Connect(function()
-    -- Class
-    local classVal = OtherData:FindFirstChild("Class")
-    if classVal then
-        ClassLabel.Text = "Class: "..(ClassMap[classVal.Value] or "Unknown ❓")
+    -- AFSE-safe reading
+    if OtherData:FindFirstChild("Class") then
+        ClassLabel.Text = "Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓")
     end
-
-    -- Total Power
-    local tp = OtherData:FindFirstChild("TotalPower")
-    if tp then
-        PowerLabel.Text = "Total Power: "..abbreviateNumber(tp.Value).." ⚡"
+    if OtherData:FindFirstChild("TotalPower") then
+        PowerLabel.Text = "Total Power: "..abbreviateNumber(OtherData.TotalPower.Value).." ⚡"
     end
-
-    -- Money
-    local yen = OtherData:FindFirstChild("Yen")
-    if yen then
-        YenLabel.Text = "Money: "..abbreviateNumber(yen.Value).." 💰"
+    if OtherData:FindFirstChild("Yen") then
+        YenLabel.Text = "Money: "..abbreviateNumber(OtherData.Yen.Value).." 💰"
     end
-
-    -- Chikara
-    local chi = OtherData:FindFirstChild("Chikara")
-    if chi then
-        ChikaraLabel.Text = "Chikara: "..abbreviateNumber(chi.Value).." 💎"
+    if OtherData:FindFirstChild("Chikara") then
+        ChikaraLabel.Text = "Chikara: "..abbreviateNumber(OtherData.Chikara.Value).." 💎"
     end
 end)
 
