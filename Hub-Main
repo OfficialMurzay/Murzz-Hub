@@ -1,6 +1,6 @@
--- MurzzHub v1.0q Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
+-- MurzzHub v1.0r Beta (UI + Player Data, Live Stats, Quest Overview, Info Tab, Quests Tab)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0p -> v1.0q
+-- VERSION NOTE: v1.0q -> v1.0r
 
 -------------------------------------------------
 -- SERVICES
@@ -14,7 +14,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0q Beta"
+local VERSION = "v1.0r Beta"
 
 -------------------------------------------------
 -- DEBUG SYSTEM
@@ -82,15 +82,15 @@ local StatIdToName = {
 local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
-    Title = "Update Log "..VERSION..": Quests Tab 📝",
-    Content = "Added efficient event-based Home tab Quest Overview, live stat progress, completion ticks, notifications, and Info tab layout fixes."
+    Title = "Update Log "..VERSION,
+    Content = "Added event-based Home tab Quest Overview, completion ticks, live stats, and Info tab layout fixes."
 })
 InfoTab:CreateSection("Discord 💬")
 InfoTab:CreateParagraph({
     Title = "Dear @"..Player.DisplayName,
     Content = [[
 Thank you for using my script! Every use really supports me, and gives me motivation to continue updating this script!
-If you have any suggestions, or just want to see sneak peaks, events and more then join the Discord Server! ❤️ - Murzay (Scripter)
+If you have any suggestions, or want sneak peaks, events, and more, join the Discord Server! ❤️ - Murzay (Scripter)
 ]]
 })
 InfoTab:CreateButton({
@@ -99,11 +99,7 @@ InfoTab:CreateButton({
         safeRun(function()
             local discordLink = "DISCORD_LINK_HERE"
             if discordLink and discordLink ~= "" then
-                if syn and syn.request then
-                    syn.request({Url=discordLink})
-                else
-                    setclipboard(discordLink)
-                end
+                setclipboard(discordLink)
             end
         end)
     end
@@ -134,16 +130,9 @@ local QuestOverviewLabels = {}
 local function updateQuestOverview(questFolder)
     safeRun(function()
         if not questFolder then return end
-        local labelData = QuestOverviewLabels[questFolder.Name]
-        if not labelData then
-            -- Create label
-            local displayName = questFolder.Name
-            local name, number = displayName:match("(%a+)(%d+)")
-            if name and number then displayName = name.." No."..number end
-            local label = HomeTab:CreateLabel(displayName.." [0%]")
-            QuestOverviewLabels[questFolder.Name] = {Label=label}
-            labelData = QuestOverviewLabels[questFolder.Name]
-        end
+        local displayName = questFolder.Name
+        local name, number = displayName:match("(%a+)(%d+)")
+        if name and number then displayName = name.." No."..number end
 
         local Requirements = questFolder:FindFirstChild("Requirements")
         local Progress = questFolder:FindFirstChild("Progress")
@@ -152,20 +141,23 @@ local function updateQuestOverview(questFolder)
         local totalReq, totalProg = 0, 0
         local allComplete = true
         for _, req in ipairs(Requirements:GetChildren()) do
-            if req:IsA("IntValue") or req:IsA("NumberValue") then
+            if req:IsA("IntValue") then
                 totalReq = totalReq + req.Value
                 local progObj = Progress:FindFirstChild(req.Name)
                 local progVal = 0
-                if progObj and (progObj:IsA("IntValue") or progObj:IsA("NumberValue")) then
-                    progVal = progObj.Value
-                end
+                if progObj and progObj:IsA("IntValue") then progVal = progObj.Value end
                 totalProg = totalProg + progVal
                 if progVal < req.Value then allComplete = false end
             end
         end
         local percent = totalReq>0 and math.floor((totalProg/totalReq)*100) or 0
-        if labelData.Label and labelData.Label.Set then
-            labelData.Label:Set(displayName.." ["..percent.."%]"..(allComplete and " ✅" or ""))
+
+        if not QuestOverviewLabels[questFolder.Name] then
+            local label = HomeTab:CreateLabel(displayName.." ["..percent.."%]"..(allComplete and " ✅" or ""))
+            QuestOverviewLabels[questFolder.Name] = label
+        else
+            local label = QuestOverviewLabels[questFolder.Name]
+            if label then label.Text = displayName.." ["..percent.."%]"..(allComplete and " ✅" or "") end
         end
     end)
 end
@@ -208,10 +200,10 @@ local function updateQuestParagraph(questFolder)
         local descLines = {}
         local allComplete = true
         for _, req in ipairs(Requirements:GetChildren()) do
-            if req:IsA("IntValue") or req:IsA("NumberValue") then
+            if req:IsA("IntValue") then
                 local prog = Progress:FindFirstChild(req.Name)
                 local progVal = 0
-                if prog and (prog:IsA("IntValue") or prog:IsA("NumberValue")) then progVal = prog.Value end
+                if prog and prog:IsA("IntValue") then progVal = prog.Value end
                 local statComplete = progVal >= req.Value
                 if not statComplete then allComplete=false end
                 table.insert(descLines,string.format("%s/%s %s%s",abbreviateNumber(progVal),abbreviateNumber(req.Value),req.Name, statComplete and " ✅" or ""))
@@ -219,69 +211,4 @@ local function updateQuestParagraph(questFolder)
         end
         local descText = table.concat(descLines,"\n")
         local titleText = displayName..(allComplete and " ✅" or "")
-        if not QuestParagraphs[questFolder.Name] then
-            local paragraph = QuestsTab:CreateParagraph({Title=titleText, Content=descText})
-            QuestParagraphs[questFolder.Name] = paragraph
-            paragraph.Completed = allComplete
-        else
-            local paragraph = QuestParagraphs[questFolder.Name]
-            if paragraph and paragraph.Set then paragraph:Set(descText) end
-            if paragraph then paragraph.Title = titleText end
-            paragraph.Completed = allComplete
-        end
-        if allComplete then
-            local paragraph = QuestParagraphs[questFolder.Name]
-            if paragraph and not paragraph.Notified then
-                paragraph.Notified = true
-                Rayfield:Notify({
-                    Title="✅ You completed a quest!",
-                    Content="You completed "..displayName.."! Stay on that grinding streak!",
-                    Duration=5,
-                    Image=1580567251
-                })
-            end
-        end
-    end)
-end
-
-for _, q in ipairs(QuestsFolder:GetChildren()) do updateQuestParagraph(q) end
-QuestsFolder.ChildAdded:Connect(function(child) if child:IsA("Folder") then updateQuestParagraph(child) end end)
-
--------------------------------------------------
--- PLAYER DATA LIVE UPDATE
--------------------------------------------------
-local function updatePlayerStats()
-    safeRun(function()
-        if OtherData:FindFirstChild("Class") then
-            ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓"))
-        end
-        if OtherData:FindFirstChild("TotalPower") then
-            PowerLabel:Set("Total Power: "..abbreviateNumber(OtherData.TotalPower.Value).." ⚡")
-        end
-        if OtherData:FindFirstChild("Yen") then
-            YenLabel:Set("Money: "..abbreviateNumber(OtherData.Yen.Value).." 💰")
-        end
-        if OtherData:FindFirstChild("Chikara") then
-            ChikaraLabel:Set("Chikara: "..abbreviateNumber(OtherData.Chikara.Value).." 💎")
-        end
-        for statId,data in pairs(LiveStats) do
-            local statObj = StatsFolder:FindFirstChild(tostring(statId))
-            if statObj then
-                data.Label:Set(data.StatName..": "..abbreviateNumber(statObj.Value).." "..data.Emoji)
-                data.Value = statObj.Value
-            end
-        end
-    end)
-end
-
-OtherData.ChildChanged:Connect(updatePlayerStats)
-StatsFolder.ChildChanged:Connect(updatePlayerStats)
-
--- INITIAL CALLS
-updatePlayerStats()
-
--------------------------------------------------
--- DONE
--------------------------------------------------
-Rayfield:LoadConfiguration()
-print("[MurzzHub] Fully loaded "..VERSION.." with Home tab fixed, event-based Quest Overview, and Quests tab.")
+        if not QuestParagraphs[ques]()
