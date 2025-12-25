@@ -1,6 +1,6 @@
 -- MurzzHub v1.0r Beta
--- Full Stable Build (Info + Home + Live Quests + Overview)
--- Author: Murzay | SAFE PATCH (NO RESTRUCTURE)
+-- Full Stable Build (Info + Home + Live Stats + Quests + Overview)
+-- Author: Murzay | OVERVIEW FIX ONLY (NO REMOVALS)
 
 -------------------------------------------------
 -- SERVICES
@@ -46,7 +46,7 @@ local Window = Rayfield:CreateWindow({
 })
 
 -------------------------------------------------
--- UTIL (ABBREVIATION FIX ✅)
+-- UTIL (FIXED ABBREVIATION)
 -------------------------------------------------
 local function abbreviate(n)
     if n >= 1e18 then
@@ -90,7 +90,7 @@ local StatMap = {
 }
 
 -------------------------------------------------
--- INFO TAB
+-- INFO TAB (UNCHANGED)
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
 
@@ -179,7 +179,7 @@ for id,data in pairs(StatMap) do
 end
 
 -------------------------------------------------
--- QUEST OVERVIEW
+-- QUEST OVERVIEW (FIXED)
 -------------------------------------------------
 HomeTab:CreateSection("Quests Overview 📌")
 
@@ -188,29 +188,36 @@ local function bindOverview(quest)
     local label = HomeTab:CreateLabel(display.." (0%)")
 
     local function recalc()
-        local reqs = quest:FindFirstChild("Requirements")
-        if not reqs then return end
         local totalReq, totalProg = 0, 0
+        local reqs = quest:FindFirstChild("Requirements")
 
-        for _,req in ipairs(reqs:GetChildren()) do
-            if req:IsA("IntValue") or req:IsA("NumberValue") then
-                totalReq += req.Value
-                local prog = 0
-                if quest:FindFirstChild(req.Name) then
-                    prog = quest[req.Name].Value
-                elseif quest:FindFirstChild("Progress")
-                    and quest.Progress:FindFirstChild(req.Name) then
-                    prog = quest.Progress[req.Name].Value
+        if reqs then
+            for _,req in ipairs(reqs:GetChildren()) do
+                if req:IsA("IntValue") or req:IsA("NumberValue") then
+                    totalReq += req.Value
+                    local prog = 0
+
+                    if quest:FindFirstChild(req.Name) then
+                        prog = quest[req.Name].Value
+                    elseif quest:FindFirstChild("Progress")
+                        and quest.Progress:FindFirstChild(req.Name) then
+                        prog = quest.Progress[req.Name].Value
+                    end
+
+                    totalProg += math.clamp(prog, 0, req.Value)
                 end
-                totalProg += math.clamp(prog,0,req.Value)
             end
         end
 
-        local percent = totalReq > 0 and math.floor((totalProg/totalReq)*100) or 0
+        local percent = totalReq > 0
+            and math.floor((totalProg / totalReq) * 100)
+            or 0
+
         label:Set(display.." ("..percent.."%)")
     end
 
     recalc()
+
     for _,obj in ipairs(quest:GetDescendants()) do
         if obj:IsA("IntValue") or obj:IsA("NumberValue") then
             obj:GetPropertyChangedSignal("Value"):Connect(recalc)
@@ -255,8 +262,9 @@ local function setupQuest(quest)
 
                     local done = progress >= req.Value
                     label:Set(
-                        abbreviate(progress).."/"..abbreviate(req.Value)..
-                        " "..name.." "..emoji..(done and " ✅" or "")
+                        abbreviate(progress).."/"..abbreviate(req.Value)
+                        .." "..name.." "..emoji
+                        ..(done and " ✅" or "")
                     )
                 end
 
