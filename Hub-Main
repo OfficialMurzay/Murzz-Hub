@@ -188,19 +188,23 @@ local function updateQuestParagraph(questFolder)
         local descLines = {}
         local allComplete = true
         for _, req in ipairs(Requirements:GetChildren()) do
+            local progVal = 0
+            local prog = Progress:FindFirstChild(req.Name)
+
             if req:IsA("IntValue") or req:IsA("NumberValue") then
-                local prog = Progress:FindFirstChild(req.Name)
-                local progVal = 0
-                if prog and (prog:IsA("IntValue") or prog:IsA("NumberValue")) then
-                    progVal = prog.Value
-                end
+                if prog then progVal = prog.Value end
                 local statComplete = progVal >= req.Value
                 if not statComplete then allComplete = false end
 
-                -- Format as: current/required StatName Emoji
                 local fullName = StatIdToName[tonumber(req.Name)] or req.Name
-                local statName, emoji = fullName:match("^(.-) (.+)$")
+                local statName, emoji = fullName:match("^(.-) (.+)$") or {fullName,""}
                 local line = string.format("%s/%s %s %s%s", abbreviateNumber(progVal), abbreviateNumber(req.Value), statName, emoji, statComplete and " ✅" or "")
+                table.insert(descLines, line)
+
+            elseif req:IsA("StringValue") then
+                local statComplete = prog and prog.Value == req.Value
+                if not statComplete then allComplete = false end
+                local line = string.format("%s/%s %s%s", prog and prog.Value or 0, req.Value, req.Name, statComplete and " ✅" or "")
                 table.insert(descLines, line)
             end
         end
