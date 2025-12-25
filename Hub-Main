@@ -1,6 +1,6 @@
--- MurzzHub v1.0p Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
+-- MurzzHub v1.0q Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0o -> v1.0p
+-- VERSION NOTE: v1.0p -> v1.0q
 
 -------------------------------------------------
 -- SERVICES
@@ -14,7 +14,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0p Beta"
+local VERSION = "v1.0q Beta"
 
 -------------------------------------------------
 -- DEBUG SYSTEM
@@ -83,7 +83,7 @@ local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
     Title = "Update Log "..VERSION..": Quests Tab 📝",
-    Content = "Added efficient event-based Home tab Quest Overview, live stat progress, abbreviated numbers, completion notifications, and fixed Info tab layout."
+    Content = "Added efficient event-based Home tab Quest Overview, live stat progress, completion ticks, notifications, and Info tab layout fixes."
 })
 InfoTab:CreateSection("Discord 💬")
 InfoTab:CreateParagraph({
@@ -119,6 +119,7 @@ local PowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡")
 local YenLabel = HomeTab:CreateLabel("Money: ... 💰")
 local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
+-- Live Stats
 HomeTab:CreateSection("Live Stats 📊")
 local LiveStats = {}
 for statId,name in pairs(StatIdToName) do
@@ -126,7 +127,7 @@ for statId,name in pairs(StatIdToName) do
     LiveStats[statId] = {Label=HomeTab:CreateLabel(statName..": ... "..emoji), Value=0, Emoji=emoji, StatName=statName}
 end
 
--- HOME TAB QUEST OVERVIEW
+-- Quest Overview
 HomeTab:CreateSection("Quest Overview 📜")
 local QuestOverviewLabels = {}
 
@@ -135,7 +136,7 @@ local function updateQuestOverview(questFolder)
         if not questFolder then return end
         local labelData = QuestOverviewLabels[questFolder.Name]
         if not labelData then
-            -- Create new label if missing
+            -- Create label
             local displayName = questFolder.Name
             local name, number = displayName:match("(%a+)(%d+)")
             if name and number then displayName = name.." No."..number end
@@ -149,24 +150,27 @@ local function updateQuestOverview(questFolder)
         if not Requirements or not Progress then return end
 
         local totalReq, totalProg = 0, 0
+        local allComplete = true
         for _, req in ipairs(Requirements:GetChildren()) do
             if req:IsA("IntValue") or req:IsA("NumberValue") then
                 totalReq = totalReq + req.Value
                 local progObj = Progress:FindFirstChild(req.Name)
+                local progVal = 0
                 if progObj and (progObj:IsA("IntValue") or progObj:IsA("NumberValue")) then
-                    totalProg = totalProg + progObj.Value
+                    progVal = progObj.Value
                 end
+                totalProg = totalProg + progVal
+                if progVal < req.Value then allComplete = false end
             end
         end
-        local percentage = totalReq > 0 and math.floor((totalProg / totalReq)*100) or 0
+        local percent = totalReq>0 and math.floor((totalProg/totalReq)*100) or 0
         if labelData.Label and labelData.Label.Set then
-            labelData.Label:Set(displayName.." ["..percentage.."%]")
+            labelData.Label:Set(displayName.." ["..percent.."%]"..(allComplete and " ✅" or ""))
         end
     end)
 end
 
--- Setup event-based updates for Home Quest Overview
-local function hookQuestFolderEvents(questFolder)
+local function hookQuestEvents(questFolder)
     updateQuestOverview(questFolder)
     local Requirements = questFolder:FindFirstChild("Requirements")
     local Progress = questFolder:FindFirstChild("Progress")
@@ -180,13 +184,8 @@ local function hookQuestFolderEvents(questFolder)
     end
 end
 
-for _, questFolder in ipairs(QuestsFolder:GetChildren()) do
-    if questFolder:IsA("Folder") then hookQuestFolderEvents(questFolder) end
-end
-
-QuestsFolder.ChildAdded:Connect(function(child)
-    if child:IsA("Folder") then hookQuestFolderEvents(child) end
-end)
+for _, q in ipairs(QuestsFolder:GetChildren()) do if q:IsA("Folder") then hookQuestEvents(q) end end
+QuestsFolder.ChildAdded:Connect(function(child) if child:IsA("Folder") then hookQuestEvents(child) end end)
 
 -------------------------------------------------
 -- QUESTS TAB
@@ -215,13 +214,11 @@ local function updateQuestParagraph(questFolder)
                 if prog and (prog:IsA("IntValue") or prog:IsA("NumberValue")) then progVal = prog.Value end
                 local statComplete = progVal >= req.Value
                 if not statComplete then allComplete=false end
-                local line = string.format("%s/%s %s%s", abbreviateNumber(progVal), abbreviateNumber(req.Value), req.Name, statComplete and " ✅" or "")
-                table.insert(descLines,line)
+                table.insert(descLines,string.format("%s/%s %s%s",abbreviateNumber(progVal),abbreviateNumber(req.Value),req.Name, statComplete and " ✅" or ""))
             end
         end
         local descText = table.concat(descLines,"\n")
         local titleText = displayName..(allComplete and " ✅" or "")
-
         if not QuestParagraphs[questFolder.Name] then
             local paragraph = QuestsTab:CreateParagraph({Title=titleText, Content=descText})
             QuestParagraphs[questFolder.Name] = paragraph
@@ -232,7 +229,6 @@ local function updateQuestParagraph(questFolder)
             if paragraph then paragraph.Title = titleText end
             paragraph.Completed = allComplete
         end
-
         if allComplete then
             local paragraph = QuestParagraphs[questFolder.Name]
             if paragraph and not paragraph.Notified then
@@ -248,37 +244,29 @@ local function updateQuestParagraph(questFolder)
     end)
 end
 
-for _,questFolder in ipairs(QuestsFolder:GetChildren()) do updateQuestParagraph(questFolder) end
+for _, q in ipairs(QuestsFolder:GetChildren()) do updateQuestParagraph(q) end
 QuestsFolder.ChildAdded:Connect(function(child) if child:IsA("Folder") then updateQuestParagraph(child) end end)
 
 -------------------------------------------------
--- PLAYER DATA & STATS LIVE UPDATE
+-- PLAYER DATA LIVE UPDATE
 -------------------------------------------------
-local currentPower,currentYen,currentChikara = 0,0,0
 local function updatePlayerStats()
     safeRun(function()
         if OtherData:FindFirstChild("Class") then
             ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓"))
         end
         if OtherData:FindFirstChild("TotalPower") then
-            local target = OtherData.TotalPower.Value
-            PowerLabel:Set("Total Power: "..abbreviateNumber(target).." ⚡")
-            currentPower = target
+            PowerLabel:Set("Total Power: "..abbreviateNumber(OtherData.TotalPower.Value).." ⚡")
         end
         if OtherData:FindFirstChild("Yen") then
-            local target = OtherData.Yen.Value
-            YenLabel:Set("Money: "..abbreviateNumber(target).." 💰")
-            currentYen = target
+            YenLabel:Set("Money: "..abbreviateNumber(OtherData.Yen.Value).." 💰")
         end
         if OtherData:FindFirstChild("Chikara") then
-            local target = OtherData.Chikara.Value
-            ChikaraLabel:Set("Chikara: "..abbreviateNumber(target).." 💎")
-            currentChikara = target
+            ChikaraLabel:Set("Chikara: "..abbreviateNumber(OtherData.Chikara.Value).." 💎")
         end
-
         for statId,data in pairs(LiveStats) do
             local statObj = StatsFolder:FindFirstChild(tostring(statId))
-            if statObj and statObj.Value ~= data.Value then
+            if statObj then
                 data.Label:Set(data.StatName..": "..abbreviateNumber(statObj.Value).." "..data.Emoji)
                 data.Value = statObj.Value
             end
@@ -286,13 +274,14 @@ local function updatePlayerStats()
     end)
 end
 
--- Event-based updates for player stats
 OtherData.ChildChanged:Connect(updatePlayerStats)
 StatsFolder.ChildChanged:Connect(updatePlayerStats)
+
+-- INITIAL CALLS
+updatePlayerStats()
 
 -------------------------------------------------
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-updatePlayerStats()
-print("[MurzzHub] Fully loaded "..VERSION.." with Home tab Quest Overview and event-based updates")
+print("[MurzzHub] Fully loaded "..VERSION.." with Home tab fixed, event-based Quest Overview, and Quests tab.")
