@@ -12,6 +12,7 @@
 - Modern, lively UI
 - Automatic updates
 - Safe section handling to prevent CreateLabel errors
+- Versioning: v1.0a Beta (next minor update -> v1.0b, ... z -> 1.1)
 ]]
 
 --// Services
@@ -93,30 +94,35 @@ local function createSectionSafe(tab, title)
     return nil
 end
 
--- Sections
+-- Safe label creation
+local function createLabelSafe(section, props)
+    if section and type(section.CreateLabel) == "function" then
+        return section:CreateLabel(props)
+    else
+        warn("Section invalid or missing CreateLabel:", section)
+        return nil
+    end
+end
+
+--// Sections
 local PlayerSection = createSectionSafe(HomeTab, "Player Data 🧑‍💻")
 local StatsSection = createSectionSafe(HomeTab, "Live Stats ⚡")
 local QuestSection = createSectionSafe(HomeTab, "Quests Overview 🗂️")
 
--- Player Data Labels
-local ClassLabel, TotalPowerLabel, YenLabel, ChikaraLabel
-if PlayerSection then
-    ClassLabel = PlayerSection:CreateLabel({ Name = "Class: ..." })
-    TotalPowerLabel = PlayerSection:CreateLabel({ Name = "Total Power: ..." })
-    YenLabel = PlayerSection:CreateLabel({ Name = "Yen: ..." })
-    ChikaraLabel = PlayerSection:CreateLabel({ Name = "Chikara: ..." })
-end
+--// Player Data Labels
+local ClassLabel = createLabelSafe(PlayerSection, { Name = "Class: ..." })
+local TotalPowerLabel = createLabelSafe(PlayerSection, { Name = "Total Power: ..." })
+local YenLabel = createLabelSafe(PlayerSection, { Name = "Yen: ..." })
+local ChikaraLabel = createLabelSafe(PlayerSection, { Name = "Chikara: ..." })
 
--- Stats Labels
+--// Stats Labels
 local StatLabels = {}
 local StatNames = {"Strength", "Durability", "Chakra", "Sword", "Speed", "Agility"}
-if StatsSection then
-    for _, stat in ipairs(StatNames) do
-        StatLabels[stat] = StatsSection:CreateLabel({ Name = stat.." : ..." })
-    end
+for _, statName in ipairs(StatNames) do
+    StatLabels[statName] = createLabelSafe(StatsSection, { Name = statName.." : ..." })
 end
 
--- Quests Labels
+--// Quest Labels
 local QuestLabels = {}
 
 --// Update UI
@@ -151,7 +157,7 @@ local function updateUI()
     -- Quests
     for _, questFolder in ipairs(Quests:GetChildren()) do
         if QuestSection and not QuestLabels[questFolder.Name] then
-            QuestLabels[questFolder.Name] = QuestSection:CreateLabel({ Name = questFolder.Name.." : 0%" })
+            QuestLabels[questFolder.Name] = createLabelSafe(QuestSection, { Name = questFolder.Name.." : 0%" })
         end
 
         local progressSum, requirementSum = 0, 0
@@ -177,7 +183,7 @@ local function updateUI()
     end
 end
 
--- Initial animated load
+--// Initial animated load
 local function initialLoad()
     local OtherData = LocalPlayer:WaitForChild("OtherData")
     local Stats = LocalPlayer:WaitForChild("Stats")
