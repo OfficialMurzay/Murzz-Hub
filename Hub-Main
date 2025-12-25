@@ -1,6 +1,6 @@
 -- MurzzHub v1.0p Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0o -> v1.0p (Live Animated & Abbreviated Quest Progress)
+-- VERSION NOTE: v1.0o -> v1.0p (Live Animated & Abbreviated Quest Progress, Notifications Removed)
 
 -------------------------------------------------
 -- SERVICES
@@ -104,7 +104,7 @@ local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
     Title = "Update Log "..VERSION..": Live Animated & Abbreviated Quests 📝",
-    Content = "Quests now smoothly live-update with animated and abbreviated numbers. Supports numeric stats and custom-named requirements like 'Kill'."
+    Content = "Quests now smoothly live-update with animated and abbreviated numbers. Supports numeric stats and custom-named requirements like 'Kill'. Notifications removed."
 })
 
 InfoTab:CreateSection("Discord 💬")
@@ -183,8 +183,7 @@ local function updateQuestParagraph(questFolder)
         if name and number then displayName = name.." No."..number end
 
         local Requirements = questFolder:FindFirstChild("Requirements")
-        local Progress = questFolder:FindFirstChild("Progress")
-        if not Requirements or not Progress then return end
+        if not Requirements then return end
 
         QuestValues[questFolder.Name] = QuestValues[questFolder.Name] or {}
         local descLines = {}
@@ -192,17 +191,28 @@ local function updateQuestParagraph(questFolder)
 
         for _, req in ipairs(Requirements:GetChildren()) do
             if req:IsA("IntValue") or req:IsA("NumberValue") then
-                local prog = Progress:FindFirstChild(req.Name)
-                local targetVal = prog and prog.Value or 0
-                QuestValues[questFolder.Name][req.Name] = QuestValues[questFolder.Name][req.Name] or targetVal
+                local progVal = 0
+                local progFolder = questFolder:FindFirstChild("Progress")
+                if progFolder then
+                    local prog = progFolder:FindFirstChild(req.Name)
+                    if prog and (prog:IsA("IntValue") or prog:IsA("NumberValue")) then
+                        progVal = prog.Value
+                    end
+                else
+                    local prog = questFolder:FindFirstChild(req.Name)
+                    if prog and (prog:IsA("IntValue") or prog:IsA("NumberValue")) then
+                        progVal = prog.Value
+                    end
+                end
+
+                QuestValues[questFolder.Name][req.Name] = QuestValues[questFolder.Name][req.Name] or progVal
                 local currentVal = QuestValues[questFolder.Name][req.Name]
 
-                -- Smooth increment
-                local step = (targetVal - currentVal)/5
+                local step = (progVal - currentVal)/5
                 if step ~= 0 then
                     currentVal = currentVal + step
-                    if (step > 0 and currentVal > targetVal) or (step < 0 and currentVal < targetVal) then
-                        currentVal = targetVal
+                    if (step > 0 and currentVal > progVal) or (step < 0 and currentVal < progVal) then
+                        currentVal = progVal
                     end
                     QuestValues[questFolder.Name][req.Name] = currentVal
                 end
@@ -219,7 +229,7 @@ local function updateQuestParagraph(questFolder)
                     emoji = ""
                 end
 
-                local complete = targetVal >= req.Value
+                local complete = progVal >= req.Value
                 if not complete then allComplete = false end
                 table.insert(descLines, string.format("%s/%s %s %s%s", abbreviateNumber(math.floor(currentVal)), abbreviateNumber(req.Value), statName, emoji, complete and " ✅" or ""))
             end
@@ -233,24 +243,17 @@ local function updateQuestParagraph(questFolder)
             paragraph = QuestsTab:CreateParagraph({Title=titleText, Content=descText})
             QuestParagraphs[questFolder.Name] = paragraph
         else
-            if paragraph and paragraph.Set then
-                paragraph:Set(descText)
-            end
-            if paragraph then
-                paragraph.Title = titleText
-            end
+            if paragraph and paragraph.Set then paragraph:Set(descText) end
+            if paragraph then paragraph.Title = titleText end
         end
     end)
 end
 
--- Initial paragraphs
 for _, questFolder in ipairs(QuestsFolder:GetChildren()) do updateQuestParagraph(questFolder) end
 QuestsFolder.ChildAdded:Connect(function(child) if child:IsA("Folder") then updateQuestParagraph(child) end end)
 
--- LIVE UPDATE LOOP
 RunService.Heartbeat:Connect(function()
     safeRun(function()
-        -- PLAYER DATA LIVE
         if OtherData:FindFirstChild("Class") then
             ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓"))
         end
@@ -264,7 +267,6 @@ RunService.Heartbeat:Connect(function()
             animateValue(ChikaraLabel,ChikaraLabel.Value or 0,OtherData.Chikara.Value,"Chikara: ","💎",0.5)
         end
 
-        -- LIVE STATS
         for statId,data in pairs(LiveStats) do
             local statObj = StatsFolder:FindFirstChild(tostring(statId))
             if statObj and statObj.Value ~= data.Value then
@@ -273,7 +275,6 @@ RunService.Heartbeat:Connect(function()
             end
         end
 
-        -- LIVE QUESTS UPDATE
         for questName, paragraph in pairs(QuestParagraphs) do
             local questFolder = QuestsFolder:FindFirstChild(questName)
             if questFolder then updateQuestParagraph(questFolder) end
