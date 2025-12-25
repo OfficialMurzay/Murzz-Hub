@@ -319,6 +319,7 @@ local AutoStats = {
 }
 
 local AutoToggles = {}
+local ActiveTrains = {}
 
 for _,stat in ipairs(AutoStats) do
     local statID, name, emoji = unpack(stat)
@@ -328,16 +329,17 @@ for _,stat in ipairs(AutoStats) do
         Flag = name.."Toggle",
         Callback = function(val)
             if val then
-                -- Start auto train loop
+                if ActiveTrains[statID] then return end
+                ActiveTrains[statID] = true
                 task.spawn(function()
-                    while toggle.CurrentValue do
+                    while ActiveTrains[statID] do
                         if CharacterModule.states.Dead then
                             task.wait(1)
                         else
                             CharacterModule.characterStopped = false
                             CharacterModule:ResumeCharacter()
                             StatFunctions.CurrentKey = statID
-                            StatFunctions[statID] = false -- unblock stat
+                            StatFunctions[statID] = false
                             local cooldown = GameData.Stats[statID].Cooldown
                             local success, err = pcall(function()
                                 ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train", statID)
@@ -350,7 +352,10 @@ for _,stat in ipairs(AutoStats) do
                             task.wait(cooldown)
                         end
                     end
+                    ActiveTrains[statID] = nil
                 end)
+            else
+                ActiveTrains[statID] = false
             end
         end
     })
