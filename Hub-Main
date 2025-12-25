@@ -1,4 +1,4 @@
--- MurzzHub v1.0aa Beta (Info Tab Fixed + Quest Sections Live)
+-- MurzzHub v1.0ab Beta (Quest Sections with Emojis + Live Labels)
 -- Author: Murzay (Modified by ChatGPT)
 
 -------------------------------------------------
@@ -14,7 +14,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0aa Beta"
+local VERSION = "v1.0ab Beta"
 
 -------------------------------------------------
 -- DEBUG
@@ -102,8 +102,8 @@ local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({Title="MurzzHub "..VERSION.." Update Log", Content=[[
 • Fully live updating quests with animated numbers
-• Quest sections labeled with quest name
-• Info tab and Discord button fixed
+• Quest sections labeled with emoji + quest name
+• Info tab fully restored
 • Nil-safe and optimized
 ]]})
 
@@ -167,7 +167,7 @@ QuestsFolder.ChildAdded:Connect(function(child)
 end)
 
 -------------------------------------------------
--- QUESTS TAB (ONE SECTION PER QUEST)
+-- QUESTS TAB (SECTIONS WITH EMOJIS + LIVE LABELS)
 -------------------------------------------------
 local QuestsTab = Window:CreateTab("Quests 📜")
 local QuestSections = {}
@@ -186,17 +186,18 @@ local function updateQuestSection(questFolder)
     safeRun(function()
         if not questFolder then return end
         local displayName = questFolder.Name
+        local emoji = "📌"
         local name, number = displayName:match("(%a+)(%d+)")
         if name and number then displayName = name.." No."..number end
 
         if not QuestSections[questFolder.Name] then
-            QuestSections[questFolder.Name] = QuestsTab:CreateSection(displayName)
+            QuestSections[questFolder.Name] = QuestsTab:CreateSection(emoji.." "..displayName)
         end
+        local section = QuestSections[questFolder.Name]
 
         local Requirements = questFolder:FindFirstChild("Requirements")
         if not Requirements then return end
         local ProgressFolder = questFolder:FindFirstChild("Progress")
-        local allComplete = true
 
         for _, req in ipairs(Requirements:GetChildren()) do
             if req:IsA("IntValue") or req:IsA("NumberValue") then
@@ -212,35 +213,32 @@ local function updateQuestSection(questFolder)
                 local animVal = getAnimatedValue(questFolder, req.Name)
                 animateValue({Set=function(v) AnimatedQuestValues[questFolder][req.Name]=v end}, animVal, progVal, 0, "", 0.5)
 
-                local statName, emoji
+                local statName, emojiStat
                 local numId = tonumber(req.Name)
                 if numId and StatIdToName[numId] then
                     local fullName = StatIdToName[numId]
-                    statName, emoji = fullName:match("^(.-) (.+)$")
+                    statName, emojiStat = fullName:match("^(.-) (.+)$")
                     statName = statName or fullName
-                    emoji = emoji or ""
+                    emojiStat = emojiStat or ""
                 else
                     statName = tostring(req.Name or "")
-                    emoji = ""
+                    emojiStat = ""
                 end
 
                 local complete = progVal >= req.Value
-                if not complete then allComplete = false end
-
                 local labelText = string.format("%s/%s %s %s%s",
                     abbreviateNumber(progVal),
                     abbreviateNumber(req.Value),
                     tostring(statName),
-                    tostring(emoji),
+                    tostring(emojiStat),
                     complete and " ✅" or ""
                 )
 
                 if not QuestLabels[questFolder.Name] then
                     QuestLabels[questFolder.Name] = {}
                 end
-
                 if not QuestLabels[questFolder.Name][req.Name] then
-                    local lbl = QuestSections[questFolder.Name]:CreateLabel(labelText)
+                    local lbl = section:CreateLabel(labelText)
                     QuestLabels[questFolder.Name][req.Name] = lbl
                 else
                     local lbl = QuestLabels[questFolder.Name][req.Name]
@@ -299,4 +297,4 @@ end)
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] v1.0aa Beta loaded successfully - Quest sections live-update properly")
+print("[MurzzHub] v1.0ab Beta loaded successfully - Quest sections with live labels and emojis")
