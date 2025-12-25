@@ -1,6 +1,5 @@
 -- MurzzHub v1.0j Beta
--- UI + Player Data + Live Stats + Info + Quests
--- FULL FIXED VERSION (No nil errors)
+-- AFSE Safe / Nil-Safe / Event-Based
 -- Author: Murzay
 
 -------------------------------------------------
@@ -10,9 +9,22 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
 local Player = Players.LocalPlayer
-local OtherData = Player:WaitForChild("OtherData")
-local StatsFolder = Player:WaitForChild("Stats")
-local QuestsFolder = Player:WaitForChild("Quests")
+
+-------------------------------------------------
+-- SAFE WAIT
+-------------------------------------------------
+local function waitFor(parent, name)
+    local obj = parent:FindFirstChild(name)
+    while not obj do
+        parent.ChildAdded:Wait()
+        obj = parent:FindFirstChild(name)
+    end
+    return obj
+end
+
+local OtherData    = waitFor(Player, "OtherData")
+local StatsFolder  = waitFor(Player, "Stats")
+local QuestsFolder = waitFor(Player, "Quests")
 
 -------------------------------------------------
 -- RAYFIELD
@@ -23,48 +35,43 @@ local VERSION = "v1.0j Beta"
 
 local Window = Rayfield:CreateWindow({
     Name = "MurzzHub "..VERSION,
-    LoadingTitle = "MurzzHub "..VERSION,
-    LoadingSubtitle = VERSION.." - UI Live Player Data, Stats & Quests",
+    LoadingTitle = "MurzzHub",
+    LoadingSubtitle = "AFSE Live UI",
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "MurzzHub",
         FileName = "AFSE_UI"
-    },
-    KeySystem = false
+    }
 })
 
 -------------------------------------------------
--- CLASS MAP
+-- MAPS
 -------------------------------------------------
 local ClassMap = {
-    [1]="Fighter 🥊",[2]="Shinobi 🌀",[3]="Pirate ☠️",[4]="Ghoul 👻",[5]="Hero 🦸",
-    [6]="Reaper ☠️",[7]="Saiyan 💥",[8]="Sin 😈",[9]="Magi 🧙",[10]="Akuma 😡",
-    [11]="Yonko 🏴‍☠️",[12]="Gorosei 🧓",[13]="Overlord 👑",[14]="Hokage 🦊",
-    [15]="Kaioshin 👼",[16]="Sage 🕊️",[17]="Espada ⚔️",[18]="Shinigami 👹",
-    [19]="Hashira ⚔️",[20]="Hakaishin 💀",[21]="Otsutsuki 🌌",
-    [22]="Pirate King 🏴‍☠️👑",[23]="Kishin 👿",[24]="Angel 😇",
-    [25]="Demon King 👹",[26]="Ultra Instinct ✨",[27]="Upper Moon 🌙"
+    [1]="Fighter 🥊",[2]="Shinobi 🌀",[3]="Pirate ☠️",[4]="Ghoul 👻",
+    [5]="Hero 🦸",[6]="Reaper ☠️",[7]="Saiyan 💥",[8]="Sin 😈",
+    [9]="Magi 🧙",[10]="Akuma 😡"
 }
 
--------------------------------------------------
--- STAT MAP
--------------------------------------------------
-local StatIdToName = {
-    [1]="Strength 💪",[2]="Durability 🛡️",[3]="Chakra 🌀",
-    [4]="Sword 🗡️",[5]="Speed 💨",[6]="Agility ☁️"
+local StatNames = {
+    ["1"]="Strength 💪",
+    ["2"]="Durability 🛡️",
+    ["3"]="Chakra 🌀",
+    ["4"]="Sword 🗡️",
+    ["5"]="Speed 💨",
+    ["6"]="Agility ☁️"
 }
 
 -------------------------------------------------
 -- UTIL
 -------------------------------------------------
-local function abbreviateNumber(num)
-    if not num then return "0" end
-    local abs = math.abs(num)
-    if abs >= 1e12 then return string.format("%.2fT", num/1e12)
-    elseif abs >= 1e9 then return string.format("%.2fB", num/1e9)
-    elseif abs >= 1e6 then return string.format("%.2fM", num/1e6)
-    elseif abs >= 1e3 then return string.format("%.2fK", num/1e3)
-    else return tostring(num) end
+local function abbr(n)
+    n = tonumber(n) or 0
+    if n >= 1e12 then return string.format("%.2fT", n/1e12)
+    elseif n >= 1e9 then return string.format("%.2fB", n/1e9)
+    elseif n >= 1e6 then return string.format("%.2fM", n/1e6)
+    elseif n >= 1e3 then return string.format("%.2fK", n/1e3)
+    else return tostring(n) end
 end
 
 -------------------------------------------------
@@ -72,26 +79,9 @@ end
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
 
-InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
-    Title = "Update Log "..VERSION,
-    Content = "Quest overview fixed.\nNil indexing eliminated.\nLive AFSE-safe UI."
-})
-
-InfoTab:CreateSection("Discord 💬")
-InfoTab:CreateParagraph({
-    Title = "Dear @"..Player.DisplayName,
-    Content =
-        "Thank you for using MurzzHub!\n\n"..
-        "Join the Discord for updates, previews and events.\n\n"..
-        "❤️ - Murzay"
-})
-
-InfoTab:CreateButton({
-    Name = "Copy Discord Invite",
-    Callback = function()
-        setclipboard("DISCORD_LINK_HERE")
-    end
+    Title = "MurzzHub "..VERSION,
+    Content = "Stable AFSE UI\nEvent-based updates\nNil-safe"
 })
 
 -------------------------------------------------
@@ -99,29 +89,25 @@ InfoTab:CreateButton({
 -------------------------------------------------
 local HomeTab = Window:CreateTab("Home 🏠")
 
-HomeTab:CreateSection("Player Data 👤")
+HomeTab:CreateSection("Player Info")
+
 local ClassLabel   = HomeTab:CreateLabel("Class: ...")
-local PowerLabel   = HomeTab:CreateLabel("Total Power: ... ⚡")
-local YenLabel     = HomeTab:CreateLabel("Money: ... 💰")
-local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
+local PowerLabel   = HomeTab:CreateLabel("Total Power: ...")
+local YenLabel     = HomeTab:CreateLabel("Money: ...")
+local ChikaraLabel = HomeTab:CreateLabel("Chikara: ...")
 
 -------------------------------------------------
 -- LIVE STATS
 -------------------------------------------------
-HomeTab:CreateSection("Live Stats 📊")
-local LiveStats = {}
+HomeTab:CreateSection("Stats 📊")
+local StatLabels = {}
 
-for id, name in pairs(StatIdToName) do
-    local stat, emoji = name:match("^(.-) (.+)$")
-    LiveStats[id] = {
-        Label = HomeTab:CreateLabel(stat..": ... "..emoji),
-        StatName = stat,
-        Emoji = emoji
-    }
+for id,name in pairs(StatNames) do
+    StatLabels[id] = HomeTab:CreateLabel(name..": ...")
 end
 
 -------------------------------------------------
--- QUEST OVERVIEW (FULLY SAFE)
+-- QUEST OVERVIEW
 -------------------------------------------------
 HomeTab:CreateSection("Quest Overview 📜")
 local QuestLabels = {}
@@ -131,30 +117,30 @@ local function formatQuestName(name)
     return a and b and (a.." No."..b) or name
 end
 
-local function computeQuestPercent(q)
+local function calculateQuest(q)
     local req = q:FindFirstChild("Requirements")
     local prog = q:FindFirstChild("Progress")
     if not req or not prog then return 0,false end
 
     local totalReq,totalProg = 0,0
-    local done = true
+    local complete = true
 
     for _,r in ipairs(req:GetChildren()) do
         if r:IsA("IntValue") then
             totalReq += r.Value
             local p = prog:FindFirstChild(r.Name)
-            local pv = (p and p:IsA("IntValue")) and p.Value or 0
+            local pv = p and p.Value or 0
             totalProg += pv
-            if pv < r.Value then done = false end
+            if pv < r.Value then complete = false end
         end
     end
 
     local percent = totalReq > 0 and math.floor((totalProg/totalReq)*100) or 0
-    return percent,done
+    return percent,complete
 end
 
 local function updateQuest(q)
-    local percent,done = computeQuestPercent(q)
+    local percent,done = calculateQuest(q)
     local text = formatQuestName(q.Name).." ["..percent.."%]"..(done and " ✅" or "")
 
     if not QuestLabels[q] then
@@ -169,9 +155,7 @@ local function hookQuest(q)
     updateQuest(q)
 
     task.spawn(function()
-        local prog = q:WaitForChild("Progress",10)
-        if not prog then return end
-
+        local prog = waitFor(q, "Progress")
         prog.ChildAdded:Connect(function() updateQuest(q) end)
         prog.ChildRemoved:Connect(function() updateQuest(q) end)
 
@@ -192,61 +176,66 @@ end
 QuestsFolder.ChildAdded:Connect(hookQuest)
 
 -------------------------------------------------
--- QUESTS TAB (STATIC DETAILS)
+-- QUEST TAB
 -------------------------------------------------
 local QuestsTab = Window:CreateTab("Quests 📜")
-QuestsTab:CreateSection("Current Quests 📌")
+QuestsTab:CreateSection("Details")
 
-for _,q in ipairs(QuestsFolder:GetChildren()) do
+local function buildQuestDetails(q)
     local req = q:FindFirstChild("Requirements")
     local prog = q:FindFirstChild("Progress")
-    local lines = {}
+    if not req or not prog then return "" end
 
-    if req and prog then
-        for _,r in ipairs(req:GetChildren()) do
-            if r:IsA("IntValue") then
-                local p = prog:FindFirstChild(r.Name)
-                local pv = p and p.Value or 0
-                table.insert(lines,
-                    abbreviateNumber(pv).."/"..abbreviateNumber(r.Value).." "..r.Name
-                )
-            end
+    local lines = {}
+    for _,r in ipairs(req:GetChildren()) do
+        if r:IsA("IntValue") then
+            local p = prog:FindFirstChild(r.Name)
+            table.insert(lines,
+                abbr(p and p.Value or 0).."/"..abbr(r.Value).." "..r.Name
+            )
         end
     end
+    return table.concat(lines,"\n")
+end
 
+for _,q in ipairs(QuestsFolder:GetChildren()) do
     QuestsTab:CreateParagraph({
         Title = q.Name,
-        Content = table.concat(lines,"\n")
+        Content = buildQuestDetails(q)
     })
 end
 
 -------------------------------------------------
--- LIVE UPDATES
+-- LIVE DATA UPDATES
 -------------------------------------------------
-RunService.Heartbeat:Connect(function()
-    if OtherData:FindFirstChild("Class") then
-        ClassLabel.Text = "Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓")
-    end
-    if OtherData:FindFirstChild("TotalPower") then
-        PowerLabel.Text = "Total Power: "..abbreviateNumber(OtherData.TotalPower.Value).." ⚡"
-    end
-    if OtherData:FindFirstChild("Yen") then
-        YenLabel.Text = "Money: "..abbreviateNumber(OtherData.Yen.Value).." 💰"
-    end
-    if OtherData:FindFirstChild("Chikara") then
-        ChikaraLabel.Text = "Chikara: "..abbreviateNumber(OtherData.Chikara.Value).." 💎"
-    end
+local function bindValue(folder, name, label, prefix)
+    local v = waitFor(folder, name)
+    label.Text = prefix..abbr(v.Value)
+    v.Changed:Connect(function()
+        label.Text = prefix..abbr(v.Value)
+    end)
+end
 
-    for id,data in pairs(LiveStats) do
-        local stat = StatsFolder:FindFirstChild(tostring(id))
-        if stat then
-            data.Label.Text = data.StatName..": "..abbreviateNumber(stat.Value).." "..data.Emoji
-        end
-    end
+bindValue(OtherData,"TotalPower",PowerLabel,"Total Power: ")
+bindValue(OtherData,"Yen",YenLabel,"Money: ")
+bindValue(OtherData,"Chikara",ChikaraLabel,"Chikara: ")
+
+local ClassValue = waitFor(OtherData,"Class")
+ClassLabel.Text = "Class: "..(ClassMap[ClassValue.Value] or "Unknown")
+ClassValue.Changed:Connect(function()
+    ClassLabel.Text = "Class: "..(ClassMap[ClassValue.Value] or "Unknown")
 end)
+
+for id,label in pairs(StatLabels) do
+    local stat = waitFor(StatsFolder,id)
+    label.Text = StatNames[id]..": "..abbr(stat.Value)
+    stat.Changed:Connect(function()
+        label.Text = StatNames[id]..": "..abbr(stat.Value)
+    end)
+end
 
 -------------------------------------------------
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] "..VERSION.." loaded successfully")
+print("[MurzzHub] Loaded successfully")
