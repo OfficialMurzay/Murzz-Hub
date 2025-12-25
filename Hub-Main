@@ -1,4 +1,4 @@
--- MurzzHub v1.0x Beta (UI + Player Data + Stats + Live Quest Updates)
+-- MurzzHub v1.0y Beta (Fully Live Quest Updates, Nil-Safe)
 -- Author: Murzay (Modified by ChatGPT)
 
 -------------------------------------------------
@@ -14,7 +14,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0x Beta"
+local VERSION = "v1.0y Beta"
 
 -------------------------------------------------
 -- DEBUG
@@ -57,7 +57,7 @@ local function abbreviateNumber(num)
 end
 
 local function animateValue(label, startVal, endVal, prefix, emoji, duration)
-    if startVal == endVal or not label or not label.Set then return end
+    if startVal == endVal or not label then return end
     local step = (endVal - startVal)/(duration*30)
     local current = startVal
     local connection
@@ -69,6 +69,8 @@ local function animateValue(label, startVal, endVal, prefix, emoji, duration)
         end
         if label and label.Set then
             label:Set(tostring(prefix or "")..abbreviateNumber(math.floor(current)).." "..tostring(emoji or ""))
+        elseif label and label.Text ~= nil then
+            label.Text = tostring(prefix or "")..abbreviateNumber(math.floor(current)).." "..tostring(emoji or "")
         end
     end)
 end
@@ -99,16 +101,17 @@ local StatIdToName = {
 local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({Title="Update Log "..VERSION, Content=[[
-- Quests now truly live-update like stats
+- Fully live updating quests
 - Nil-safe
-- Minimal resource use
+- Animated numbers
+- Info tab + Discord button preserved
 ]]})
 
 InfoTab:CreateSection("Discord 💬")
 InfoTab:CreateParagraph({
     Title = "Dear "..tostring(Player.DisplayName or "Player"),
     Content = [[
-Thanks for using MurzzHub! Your support keeps updates coming. Join our Discord for sneak peeks & events! ❤️
+Thanks for using MurzzHub! Join our Discord for sneak peeks & events! ❤️
 ]]
 })
 InfoTab:CreateButton({
@@ -169,7 +172,7 @@ end)
 local QuestsTab = Window:CreateTab("Quests 📜")
 QuestsTab:CreateSection("Current Quests 📌")
 local QuestParagraphs = {}
-local AnimatedQuestValues = {} -- external table for animation
+local AnimatedQuestValues = {}
 
 local function getAnimatedValue(questFolder, reqName)
     AnimatedQuestValues[questFolder] = AnimatedQuestValues[questFolder] or {}
@@ -197,17 +200,14 @@ local function updateQuestParagraph(questFolder)
                 local progVal = 0
                 if ProgressFolder then
                     local prog = ProgressFolder:FindFirstChild(req.Name)
-                    if prog and (prog:IsA("IntValue") or prog:IsA("NumberValue")) then
-                        progVal = prog.Value
-                        local animVal = getAnimatedValue(questFolder, req.Name)
-                        animateValue({Set=function(v) AnimatedQuestValues[questFolder][req.Name]=v end}, animVal, progVal, "", "", 0.5)
-                    end
+                    if prog then progVal = prog.Value end
                 else
                     local prog = questFolder:FindFirstChild(req.Name)
-                    if prog and (prog:IsA("IntValue") or prog:IsA("NumberValue")) then
-                        progVal = prog.Value
-                    end
+                    if prog then progVal = prog.Value end
                 end
+
+                local animVal = getAnimatedValue(questFolder, req.Name)
+                animateValue({Set=function(v) AnimatedQuestValues[questFolder][req.Name]=v end}, animVal, progVal, "", "", 0.5)
 
                 local statName, emoji
                 local numId = tonumber(req.Name)
@@ -241,7 +241,7 @@ local function updateQuestParagraph(questFolder)
             QuestParagraphs[questFolder.Name] = paragraph
         else
             if paragraph and paragraph.Set then paragraph:Set(tostring(descText) or "") end
-            if paragraph then paragraph.Title = titleText end
+            if paragraph and paragraph.Title ~= nil then paragraph.Title = titleText end
         end
     end)
 end
@@ -256,9 +256,9 @@ end)
 -------------------------------------------------
 RunService.Heartbeat:Connect(function()
     safeRun(function()
-        -- Player Data Live
+        -- Player Data
         if OtherData:FindFirstChild("Class") then
-            ClassLabel:Set(tostring("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓")))
+            ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓"))
         end
         if OtherData:FindFirstChild("TotalPower") then
             animateValue(PowerLabel,PowerLabel.Value or 0,OtherData.TotalPower.Value,"Total Power: ","⚡",0.5)
@@ -291,4 +291,4 @@ end)
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] v1.0x Beta loaded successfully - Quests truly live-update now")
+print("[MurzzHub] v1.0y Beta loaded successfully - Quests truly live-update without nil errors")
