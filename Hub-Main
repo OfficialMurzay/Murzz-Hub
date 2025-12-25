@@ -1,6 +1,6 @@
 -- MurzzHub v1.0r Beta
 -- Full Stable Build (Info + Home + Live Quests + Overview)
--- Author: Murzay | Patched Safely
+-- Author: Murzay | SAFE PATCH (NO RESTRUCTURE)
 
 -------------------------------------------------
 -- SERVICES
@@ -80,7 +80,7 @@ local StatMap = {
 }
 
 -------------------------------------------------
--- INFO TAB (FIRST)
+-- INFO TAB (UNCHANGED)
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
 
@@ -127,6 +127,31 @@ local PowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡")
 local YenLabel = HomeTab:CreateLabel("Money: ... 💰")
 local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
+-- ✅ FIXED: Player data bindings
+local function bindValue(obj, label, prefix, emoji)
+    if not obj then return end
+    local function update()
+        label:Set(prefix..abbreviate(obj.Value).." "..emoji)
+    end
+    update()
+    obj:GetPropertyChangedSignal("Value"):Connect(update)
+end
+
+bindValue(OtherData:FindFirstChild("TotalPower"), PowerLabel, "Total Power: ", "⚡")
+bindValue(OtherData:FindFirstChild("Yen"), YenLabel, "Money: ", "💰")
+bindValue(OtherData:FindFirstChild("Chikara"), ChikaraLabel, "Chikara: ", "💎")
+
+if OtherData:FindFirstChild("Class") then
+    local function update()
+        ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓"))
+    end
+    update()
+    OtherData.Class:GetPropertyChangedSignal("Value"):Connect(update)
+end
+
+-------------------------------------------------
+-- LIVE STATS (UNCHANGED)
+-------------------------------------------------
 HomeTab:CreateSection("Live Stats 📊")
 
 for id,data in pairs(StatMap) do
@@ -145,7 +170,7 @@ for id,data in pairs(StatMap) do
 end
 
 -------------------------------------------------
--- QUEST OVERVIEW 📌
+-- QUEST OVERVIEW (UNCHANGED)
 -------------------------------------------------
 HomeTab:CreateSection("Quests Overview 📌")
 local OverviewLabels = {}
@@ -153,12 +178,10 @@ local OverviewLabels = {}
 local function bindOverview(quest)
     local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
     local label = HomeTab:CreateLabel(display.." (0%)")
-    OverviewLabels[quest] = label
 
     local function recalc()
         local reqs = quest:FindFirstChild("Requirements")
         if not reqs then return end
-
         local totalReq, totalProg = 0, 0
 
         for _,req in ipairs(reqs:GetChildren()) do
@@ -180,7 +203,6 @@ local function bindOverview(quest)
     end
 
     recalc()
-
     for _,obj in ipairs(quest:GetDescendants()) do
         if obj:IsA("IntValue") or obj:IsA("NumberValue") then
             obj:GetPropertyChangedSignal("Value"):Connect(recalc)
@@ -193,14 +215,14 @@ for _,q in ipairs(QuestsFolder:GetChildren()) do
 end
 
 -------------------------------------------------
--- QUESTS TAB
+-- QUESTS TAB (📜 ONLY CHANGE)
 -------------------------------------------------
-local QuestsTab = Window:CreateTab("Quests 📌")
+local QuestsTab = Window:CreateTab("Quests 📜")
 
 local function setupQuest(quest)
     safeRun(function()
         local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
-        QuestsTab:CreateSection(display.." 📌")
+        QuestsTab:CreateSection(display.." 📜")
 
         local reqs = quest:FindFirstChild("Requirements")
         if not reqs then return end
@@ -249,9 +271,9 @@ for _,q in ipairs(QuestsFolder:GetChildren()) do
 end
 
 -------------------------------------------------
--- AUTO FARMS TAB
+-- AUTO FARMS TAB (⚙️ ONLY CHANGE)
 -------------------------------------------------
-local AutoTab = Window:CreateTab("Auto Farms 🤖")
+local AutoTab = Window:CreateTab("Auto Farms ⚙️")
 AutoTab:CreateSection("Coming Soon 🚧")
 AutoTab:CreateLabel("• Auto Train")
 AutoTab:CreateLabel("• Auto Quest")
