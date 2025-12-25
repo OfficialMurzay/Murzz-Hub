@@ -1,4 +1,4 @@
--- MurzzHub v1.0s Beta
+-- MurzzHub v1.0r Beta
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara)
 -- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara
 
@@ -128,7 +128,7 @@ InfoTab:CreateParagraph({
 • UI locked & stable
 • Home + Live Stats + Quest Progress animate incrementally with easing
 • Auto Train UI + functional toggles that trigger on exact cooldown
-• Auto Chikara toggle added
+• Auto Chikara toggle added (teleport + click + 10s wait)
 ]]
 })
 
@@ -356,7 +356,7 @@ for _,stat in ipairs(AutoStats) do
                                 end
                                 LastFire[statID] = tick()
                             end
-                            task.wait(0.05) -- check frequently
+                            task.wait(0.05)
                         end
                     end
                     ActiveTrains[statID] = nil
@@ -381,10 +381,27 @@ AutoTab:CreateToggle({
             log("Auto Chikara ON")
             task.spawn(function()
                 while Rayfield.Flags["AutoChikaraToggle"] do
-                    -- Replace this with actual game Chikara collection logic
-                    -- Example:
-                    -- ReplicatedStorage.Remotes.RemoteEvent:FireServer("CollectChikara")
-                    task.wait(0.5)
+                    local crates = workspace:WaitForChild("Scriptable"):WaitForChild("ChikaraBoxes"):GetChildren()
+                    for i = 1, #crates do
+                        if not Rayfield.Flags["AutoChikaraToggle"] then break end
+                        local crate = crates[i]
+                        if crate and crate:IsA("BasePart") then
+                            -- Teleport player slightly above crate
+                            Player.Character:SetPrimaryPartCFrame(crate.CFrame + Vector3.new(0, 3, 0))
+                            task.wait(0.1)
+
+                            -- Fire server to collect
+                            local success, err = pcall(function()
+                                ReplicatedStorage.Remotes.RemoteEvent:FireServer("CollectChikara", crate)
+                            end)
+                            if not success then
+                                warn("[AutoChikara] Failed to collect: "..tostring(err))
+                            end
+
+                            -- Wait 10 seconds before next
+                            task.wait(10)
+                        end
+                    end
                 end
             end)
         else
