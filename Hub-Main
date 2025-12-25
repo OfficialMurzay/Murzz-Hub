@@ -1,6 +1,6 @@
 -- MurzzHub v1.0r Beta
--- Full Stable Build (Info + Home + Live Stats + Quests + Overview)
--- Author: Murzay | OVERVIEW FIX ONLY (NO REMOVALS)
+-- Full Stable Build (Info + Home + Live Stats + Quests)
+-- Author: Murzay | OVERVIEW REMOVED
 
 -------------------------------------------------
 -- SERVICES
@@ -98,7 +98,7 @@ InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
     Title = VERSION,
     Content = [[
-• Quests Overview added to Home
+• Quests Tab added
 • Live % tracking per quest
 • Emojis standardized (right-side)
 • Kill quests fully supported
@@ -176,55 +176,6 @@ for id,data in pairs(StatMap) do
             stat:GetPropertyChangedSignal("Value"):Connect(update)
         end
     end
-end
-
--------------------------------------------------
--- QUEST OVERVIEW (FIXED)
--------------------------------------------------
-HomeTab:CreateSection("Quests Overview 📌")
-
-local function bindOverview(quest)
-    local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
-    local label = HomeTab:CreateLabel(display.." (0%)")
-
-    local function recalc()
-        local totalReq, totalProg = 0, 0
-        local reqs = quest:FindFirstChild("Requirements")
-
-        if reqs then
-            for _,req in ipairs(reqs:GetChildren()) do
-                if req:IsA("IntValue") or req:IsA("NumberValue") then
-                    totalReq += req.Value
-                    local prog = 0
-
-                    -- Check direct value first, then inside Progress folder
-                    if quest:FindFirstChild(req.Name) and (quest[req.Name]:IsA("IntValue") or quest[req.Name]:IsA("NumberValue")) then
-                        prog = quest[req.Name].Value
-                    elseif quest:FindFirstChild("Progress") and quest.Progress:FindFirstChild(req.Name) and (quest.Progress[req.Name]:IsA("IntValue") or quest.Progress[req.Name]:IsA("NumberValue")) then
-                        prog = quest.Progress[req.Name].Value
-                    end
-
-                    totalProg += math.clamp(prog, 0, req.Value)
-                end
-            end
-        end
-
-        local percent = totalReq > 0 and math.floor((totalProg / totalReq) * 100) or 0
-        label:Set(display.." ("..percent.."%)")
-    end
-
-    recalc()
-
-    -- Live updates
-    for _,obj in ipairs(quest:GetDescendants()) do
-        if obj:IsA("IntValue") or obj:IsA("NumberValue") then
-            obj:GetPropertyChangedSignal("Value"):Connect(recalc)
-        end
-    end
-end
-
-for _,q in ipairs(QuestsFolder:GetChildren()) do
-    if q:IsA("Folder") then bindOverview(q) end
 end
 
 -------------------------------------------------
