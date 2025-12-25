@@ -1,6 +1,5 @@
--- MurzzHub v1.0s Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
+-- MurzzHub v1.0t Beta (Nil-safe, Live Quest Updates)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0r -> v1.0s (Nil-safe, true live quest updates)
 
 -------------------------------------------------
 -- SERVICES
@@ -15,17 +14,17 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0s Beta"
+local VERSION = "v1.0t Beta"
 
 -------------------------------------------------
--- DEBUG SYSTEM
+-- DEBUG
 -------------------------------------------------
 local debugErrorShown = false
 local function safeRun(func)
     local ok, err = pcall(func)
     if not ok and not debugErrorShown then
         debugErrorShown = true
-        warn("[MurzzHub Debug] An error occurred:\n"..err)
+        warn("[MurzzHub Debug] An error occurred:\n"..tostring(err))
     end
 end
 
@@ -33,16 +32,11 @@ end
 -- RAYFIELD
 -------------------------------------------------
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-
 local Window = Rayfield:CreateWindow({
     Name = "MurzzHub "..VERSION,
     LoadingTitle = "MurzzHub "..VERSION,
     LoadingSubtitle = VERSION.." - UI Live Player Data, Stats & Quests",
-    ConfigurationSaving = {
-        Enabled = true,
-        FolderName = "MurzzHub",
-        FileName = "AFSE_UI"
-    },
+    ConfigurationSaving = {Enabled=true, FolderName="MurzzHub", FileName="AFSE_UI"},
     KeySystem = false
 })
 
@@ -74,7 +68,7 @@ local function animateValue(label, startVal, endVal, prefix, emoji, duration)
             connection:Disconnect()
         end
         if label and label.Set then
-            label:Set(prefix..abbreviateNumber(math.floor(current)).." "..(emoji or ""))
+            label:Set(tostring(prefix or "")..abbreviateNumber(math.floor(current)).." "..tostring(emoji or ""))
         end
     end)
 end
@@ -104,40 +98,13 @@ local StatIdToName = {
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
-InfoTab:CreateParagraph({
-    Title = "Update Log "..VERSION,
-    Content = [[
-- Nil-safe labels and paragraphs
+InfoTab:CreateParagraph({Title="Update Log "..VERSION, Content=[[
+- Nil-safe labels/paragraphs
 - True live quest updates
 - Minimal resources
 - Works for IntValues like 'Kill'
-- Quest completion notifications removed
-]]
-})
-
-InfoTab:CreateSection("Discord 💬")
-InfoTab:CreateParagraph({
-    Title = "Dear @"..Player.DisplayName,
-    Content = [[
-Thank you for using my script! Every use really supports me, and gives me motivation to continue updating this script!
-If you have any suggestions, or just want to see sneak peaks, events and more then join the Discord Server! ❤️ - Murzay (Scripter)
-]]
-})
-InfoTab:CreateButton({
-    Name = "Join The Discord Server!",
-    Callback = function()
-        safeRun(function()
-            local discordLink = "DISCORD_LINK_HERE"
-            if discordLink and discordLink ~= "" then
-                if syn and syn.request then
-                    syn.request({Url=discordLink})
-                else
-                    setclipboard(discordLink)
-                end
-            end
-        end)
-    end
-})
+- Quest notifications removed
+]]})
 
 -------------------------------------------------
 -- HOME TAB
@@ -151,9 +118,9 @@ local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
 HomeTab:CreateSection("Live Stats 📊")
 local LiveStats = {}
-for statId, name in pairs(StatIdToName) do
+for statId,name in pairs(StatIdToName) do
     local statName, emoji = name:match("^(.-) (.+)$")
-    LiveStats[statId] = {Label=HomeTab:CreateLabel(statName..": ... "..emoji), Value=0, Emoji=emoji, StatName=statName}
+    LiveStats[statId] = {Label=HomeTab:CreateLabel(tostring(statName or "")..": ... "..tostring(emoji or "")), Value=0, Emoji=emoji, StatName=statName}
 end
 
 HomeTab:CreateSection("Quest Overview 📜")
@@ -165,12 +132,12 @@ local function createQuestLabel(questFolder)
         local name, number = displayName:match("(%a+)(%d+)")
         if name and number then displayName = name.." No."..number end
         if not QuestOverviewLabels[questFolder.Name] then
-            local label = HomeTab:CreateLabel(displayName.." [0%]")
+            local label = HomeTab:CreateLabel(tostring(displayName).. " [0%]")
             QuestOverviewLabels[questFolder.Name]={Label=label, Completed=false}
         end
     end)
 end
-for _, questFolder in ipairs(QuestsFolder:GetChildren()) do createQuestLabel(questFolder) end
+for _,questFolder in ipairs(QuestsFolder:GetChildren()) do createQuestLabel(questFolder) end
 QuestsFolder.ChildAdded:Connect(function(child)
     if child:IsA("Folder") then createQuestLabel(child) end
 end)
@@ -219,25 +186,31 @@ local function updateQuestParagraph(questFolder)
                     statName = statName or fullName
                     emoji = emoji or ""
                 else
-                    statName = req.Name
+                    statName = tostring(req.Name or "")
                     emoji = ""
                 end
 
                 local complete = progVal >= req.Value
                 if not complete then allComplete = false end
-                table.insert(descLines, string.format("%s/%s %s %s%s", abbreviateNumber(progVal), abbreviateNumber(req.Value), statName or "", emoji or "", complete and " ✅" or ""))
+                table.insert(descLines, string.format("%s/%s %s %s%s",
+                    abbreviateNumber(progVal or 0),
+                    abbreviateNumber(req.Value or 0),
+                    tostring(statName),
+                    tostring(emoji),
+                    complete and " ✅" or ""
+                ))
             end
         end
 
         local descText = table.concat(descLines,"\n")
-        local titleText = displayName..(allComplete and " ✅" or "")
+        local titleText = tostring(displayName)..(allComplete and " ✅" or "")
         local paragraph = QuestParagraphs[questFolder.Name]
         if not paragraph then
-            paragraph = QuestsTab:CreateParagraph({Title=titleText, Content=descText})
+            paragraph = QuestsTab:CreateParagraph({Title=titleText, Content=tostring(descText)})
             QuestParagraphs[questFolder.Name] = paragraph
         else
-            if paragraph and paragraph.Set then paragraph:Set(descText or "") end
-            if paragraph then paragraph.Title = titleText or displayName end
+            if paragraph and paragraph.Set then paragraph:Set(tostring(descText) or "") end
+            if paragraph then paragraph.Title = titleText end
         end
     end)
 end
@@ -254,7 +227,7 @@ RunService.Heartbeat:Connect(function()
     safeRun(function()
         -- Player Data Live
         if OtherData:FindFirstChild("Class") then
-            ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓"))
+            ClassLabel:Set(tostring("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓")))
         end
         if OtherData:FindFirstChild("TotalPower") then
             animateValue(PowerLabel,PowerLabel.Value or 0,OtherData.TotalPower.Value,"Total Power: ","⚡",0.5)
