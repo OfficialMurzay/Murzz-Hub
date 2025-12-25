@@ -1,6 +1,6 @@
--- MurzzHub v1.0p Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
+-- MurzzHub v1.0q Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0o -> v1.0p (Live Animated & Abbreviated Quest Progress, Notifications Removed)
+-- VERSION NOTE: v1.0p -> v1.0q (True Live Quest Updates, Lightweight, Notifications Removed)
 
 -------------------------------------------------
 -- SERVICES
@@ -15,7 +15,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0p Beta"
+local VERSION = "v1.0q Beta"
 
 -------------------------------------------------
 -- DEBUG SYSTEM
@@ -103,8 +103,8 @@ local StatIdToName = {
 local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
-    Title = "Update Log "..VERSION..": Live Animated & Abbreviated Quests 📝",
-    Content = "Quests now smoothly live-update with animated and abbreviated numbers. Supports numeric stats and custom-named requirements like 'Kill'. Notifications removed."
+    Title = "Update Log "..VERSION..": True Live Quest Updates",
+    Content = "Quests now read actual values every Heartbeat, animate smoothly, abbreviate numbers, and support direct IntValues like 'Kill'. Quest completion notifications removed for lower resource use."
 })
 
 InfoTab:CreateSection("Discord 💬")
@@ -173,7 +173,7 @@ end)
 local QuestsTab = Window:CreateTab("Quests 📜")
 QuestsTab:CreateSection("Current Quests 📌")
 local QuestParagraphs = {}
-local QuestValues = {} -- Track live values for animation
+local QuestValues = {} -- Live values for smooth animation
 
 local function updateQuestParagraph(questFolder)
     safeRun(function()
@@ -205,17 +205,15 @@ local function updateQuestParagraph(questFolder)
                     end
                 end
 
+                -- Animate numbers smoothly but snap small increments
                 QuestValues[questFolder.Name][req.Name] = QuestValues[questFolder.Name][req.Name] or progVal
                 local currentVal = QuestValues[questFolder.Name][req.Name]
-
-                local step = (progVal - currentVal)/5
-                if step ~= 0 then
-                    currentVal = currentVal + step
-                    if (step > 0 and currentVal > progVal) or (step < 0 and currentVal < progVal) then
-                        currentVal = progVal
-                    end
-                    QuestValues[questFolder.Name][req.Name] = currentVal
+                if math.abs(progVal - currentVal) < 1 then
+                    currentVal = progVal
+                else
+                    currentVal = currentVal + (progVal - currentVal)/2
                 end
+                QuestValues[questFolder.Name][req.Name] = currentVal
 
                 local statName, emoji
                 local numId = tonumber(req.Name)
@@ -237,7 +235,6 @@ local function updateQuestParagraph(questFolder)
 
         local descText = table.concat(descLines,"\n")
         local titleText = displayName..(allComplete and " ✅" or "")
-
         local paragraph = QuestParagraphs[questFolder.Name]
         if not paragraph then
             paragraph = QuestsTab:CreateParagraph({Title=titleText, Content=descText})
@@ -250,10 +247,13 @@ local function updateQuestParagraph(questFolder)
 end
 
 for _, questFolder in ipairs(QuestsFolder:GetChildren()) do updateQuestParagraph(questFolder) end
-QuestsFolder.ChildAdded:Connect(function(child) if child:IsA("Folder") then updateQuestParagraph(child) end end)
+QuestsFolder.ChildAdded:Connect(function(child)
+    if child:IsA("Folder") then updateQuestParagraph(child) end
+end)
 
 RunService.Heartbeat:Connect(function()
     safeRun(function()
+        -- Player Data Live
         if OtherData:FindFirstChild("Class") then
             ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓"))
         end
@@ -267,6 +267,7 @@ RunService.Heartbeat:Connect(function()
             animateValue(ChikaraLabel,ChikaraLabel.Value or 0,OtherData.Chikara.Value,"Chikara: ","💎",0.5)
         end
 
+        -- Live Stats
         for statId,data in pairs(LiveStats) do
             local statObj = StatsFolder:FindFirstChild(tostring(statId))
             if statObj and statObj.Value ~= data.Value then
@@ -275,6 +276,7 @@ RunService.Heartbeat:Connect(function()
             end
         end
 
+        -- Quests Live Update
         for questName, paragraph in pairs(QuestParagraphs) do
             local questFolder = QuestsFolder:FindFirstChild(questName)
             if questFolder then updateQuestParagraph(questFolder) end
