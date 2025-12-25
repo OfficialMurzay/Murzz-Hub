@@ -1,4 +1,4 @@
--- MurzzHub v1.0 Beta
+-- MurzzHub v1.0a Beta
 -- Rayfield UI for Anime Fighting Simulator: Endless
 -- Author: Murzay
 
@@ -65,7 +65,7 @@ end
 Rayfield:LoadConfiguration({
     Name = "MurzzHub Scripts",
     LoadingTitle = "MurzzHub Scripts",
-    LoadingSubtitle = "v1.0 Beta",
+    LoadingSubtitle = "v1.0a Beta",
     ConfigurationSaving = { Enabled = true, FolderName = nil, FileName = "MurzzHub" }
 })
 
