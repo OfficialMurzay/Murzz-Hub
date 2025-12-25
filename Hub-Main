@@ -1,4 +1,4 @@
--- MurzzHub v1.0s Beta
+-- MurzzHub v1.0r Beta
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train)
 -- Author: Murzay | Animated Numbers + Auto Train Logic
 
@@ -127,7 +127,7 @@ InfoTab:CreateParagraph({
 • Event-based (zero loops)
 • UI locked & stable
 • Home + Live Stats + Quest Progress animate incrementally with easing
-• Auto Train UI + functional toggles
+• Auto Train UI + functional toggles that trigger on cooldown
 ]]
 })
 
@@ -291,12 +291,11 @@ for _,q in ipairs(QuestsFolder:GetChildren()) do
 end
 
 -------------------------------------------------
--- AUTO FARMS TAB
+-- AUTO FARMS TAB (IMPROVED COOLDOWN)
 -------------------------------------------------
 local AutoTab = Window:CreateTab("Auto Farms ⚙️")
 AutoTab:CreateSection("Auto Train 🏋️")
 
--- Wait for MainClient and StatFunctions
 local mainClient = Player:WaitForChild("PlayerGui"):WaitForChild("Main"):WaitForChild("MainClient")
 local StatFunctions = require(mainClient:WaitForChild("StatFunctions"))
 local CharacterModule
@@ -305,10 +304,8 @@ repeat
     task.wait(0.1)
 until CharacterModule
 
--- Load GameData for cooldowns
 local GameData = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameData"))
 
--- Stats table
 local AutoStats = {
     {1, "Strength", "💪"},
     {2, "Durability", "🛡️"},
@@ -340,7 +337,15 @@ for _,stat in ipairs(AutoStats) do
                             CharacterModule:ResumeCharacter()
                             StatFunctions.CurrentKey = statID
                             StatFunctions[statID] = false
-                            local cooldown = GameData.Stats[statID].Cooldown
+
+                            local cooldown = GameData.Stats[statID].Cooldown or 0.1
+                            local fired = false
+                            local start = tick()
+
+                            while tick() - start < cooldown do
+                                task.wait(0.05) -- small interval to check
+                            end
+
                             local success, err = pcall(function()
                                 ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train", statID)
                             end)
@@ -349,7 +354,6 @@ for _,stat in ipairs(AutoStats) do
                             else
                                 log("TrainStat error: "..tostring(err))
                             end
-                            task.wait(cooldown)
                         end
                     end
                     ActiveTrains[statID] = nil
