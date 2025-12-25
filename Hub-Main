@@ -1,4 +1,4 @@
--- MurzzHub v1.0ab Beta (Quest Sections with Emojis + Live Labels)
+-- MurzzHub v1.0ac Beta (Fixed Label Creation)
 -- Author: Murzay (Modified by ChatGPT)
 
 -------------------------------------------------
@@ -14,7 +14,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0ab Beta"
+local VERSION = "v1.0ac Beta"
 
 -------------------------------------------------
 -- DEBUG
@@ -167,7 +167,7 @@ QuestsFolder.ChildAdded:Connect(function(child)
 end)
 
 -------------------------------------------------
--- QUESTS TAB (SECTIONS WITH EMOJIS + LIVE LABELS)
+-- QUESTS TAB (SECTIONS SIMULATED + LIVE LABELS)
 -------------------------------------------------
 local QuestsTab = Window:CreateTab("Quests 📜")
 local QuestSections = {}
@@ -191,9 +191,8 @@ local function updateQuestSection(questFolder)
         if name and number then displayName = name.." No."..number end
 
         if not QuestSections[questFolder.Name] then
-            QuestSections[questFolder.Name] = QuestsTab:CreateSection(emoji.." "..displayName)
+            QuestSections[questFolder.Name] = true
         end
-        local section = QuestSections[questFolder.Name]
 
         local Requirements = questFolder:FindFirstChild("Requirements")
         if not Requirements then return end
@@ -234,18 +233,15 @@ local function updateQuestSection(questFolder)
                     complete and " ✅" or ""
                 )
 
-                if not QuestLabels[questFolder.Name] then
-                    QuestLabels[questFolder.Name] = {}
-                end
+                QuestLabels[questFolder.Name] = QuestLabels[questFolder.Name] or {}
                 if not QuestLabels[questFolder.Name][req.Name] then
-                    local lbl = section:CreateLabel(labelText)
-                    QuestLabels[questFolder.Name][req.Name] = lbl
+                    QuestLabels[questFolder.Name][req.Name] = QuestsTab:CreateLabel(emoji.." "..displayName.." - "..labelText)
                 else
                     local lbl = QuestLabels[questFolder.Name][req.Name]
                     if lbl and lbl.Set then
-                        lbl:Set(labelText)
+                        lbl:Set(emoji.." "..displayName.." - "..labelText)
                     elseif lbl and lbl.Text ~= nil then
-                        lbl.Text = labelText
+                        lbl.Text = emoji.." "..displayName.." - "..labelText
                     end
                 end
             end
@@ -297,4 +293,4 @@ end)
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] v1.0ab Beta loaded successfully - Quest sections with live labels and emojis")
+print("[MurzzHub] v1.0ac Beta loaded successfully - Quest labels fixed and live updating")
