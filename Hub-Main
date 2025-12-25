@@ -38,23 +38,45 @@ local Window = Rayfield:CreateWindow({
 -- INFO TAB
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
+
+-- Update Log Section
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
     Title = "Update Log v1.0k: Auto Quest + Completion ✅",
     Content = "Added auto-detect for new quests and completion highlights!"
 })
 
+-- Discord Section
 InfoTab:CreateSection("Discord 💬")
+
+-- Gradient function for Rayfield text
+local function goldGradientText(text)
+    -- Rayfield supports gradient coloring by passing a Color3 table
+    -- We'll approximate gold gradient with yellow-orange
+    return {
+        Text = text,
+        Color = {
+            Color3.fromRGB(255, 215, 0),  -- Gold start
+            Color3.fromRGB(255, 165, 0)   -- Orange
+        }
+    }
+end
+
+local usernameText = string.format("Dear @%s,", Player.DisplayName)
 InfoTab:CreateParagraph({
-    Title = string.format("Dear @%s,", Player.DisplayName),
+    Title = goldGradientText(usernameText), -- gold gradient for username
     Content = [[
 Thank you for using my script! Every use really supports me, and gives me motivation to continue updating this script!
 If you have any suggestions, or just want to see the sneak peaks, events and more then join the Discord Server! ❤️ - Murzay (Scripter)
 ]]
 })
 
+-- Gradient Discord button
 InfoTab:CreateButton({
-    Name = "Join The Discord Server!",
+    Name = {
+        Text = "Join The Discord Server!",
+        Color = {Color3.fromRGB(128, 0, 128), Color3.fromRGB(255, 0, 255)} -- purple gradient
+    },
     Callback = function()
         local discordLink = "DISCORD_LINK_HERE"
         if discordLink and discordLink ~= "" then
