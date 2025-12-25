@@ -27,22 +27,38 @@ local Window = Rayfield:CreateWindow({
 })
 
 -------------------------------------------------
+-- CLASS & STAT MAP (Placeholders)
+-------------------------------------------------
+local ClassMap = {
+    [1]="Fighter 🥊",[2]="Shinobi 🌀",[3]="Pirate ☠️",[4]="Ghoul 👻",[5]="Hero 🦸",
+    [6]="Reaper ☠️",[7]="Saiyan 💥",[8]="Sin 😈",[9]="Magi 🧙",[10]="Akuma 😡",
+    [11]="Yonko 🏴‍☠️",[12]="Gorosei 🧓",[13]="Overlord 👑",[14]="Hokage 🦊",
+    [15]="Kaioshin 👼",[16]="Sage 🕊️",[17]="Espada ⚔️",[18]="Shinigami 👹",
+    [19]="Hashira ⚔️",[20]="Hakaishin 💀",[21]="Otsutsuki 🌌",
+    [22]="Pirate King 🏴‍☠️👑",[23]="Kishin 👿",[24]="Angel 😇",
+    [25]="Demon King 👹",[26]="Ultra Instinct ✨",[27]="Upper Moon 🌙"
+}
+
+local StatIdToName = {
+    [1]="Strength",[2]="Durability",[3]="Chakra",[4]="Sword",[5]="Speed",[6]="Agility"
+}
+
+-------------------------------------------------
 -- HOME TAB
 -------------------------------------------------
 local HomeTab = Window:CreateTab("Home 🏠")
 
--- Sections (visual only)
+-- Sections
 HomeTab:CreateSection("Player Data 👤")
+
+local ClassLabel   = HomeTab:CreateLabel("Class: ...")
+local PowerLabel   = HomeTab:CreateLabel("Total Power: ... ⚡")
+local YenLabel     = HomeTab:CreateLabel("Money: ... 💰")
+local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
+
 HomeTab:CreateSection("Live Stats 📊")
 
--- Player Data Labels
-local ClassLabel      = HomeTab:CreateLabel("Class: ...")
-local PowerLabel      = HomeTab:CreateLabel("Total Power: ... ⚡")
-local YenLabel        = HomeTab:CreateLabel("Money: ... 💰")
-local ChikaraLabel    = HomeTab:CreateLabel("Chikara: ... 💎")
-
--- Stats Labels
-local StatLabels = {
+local LiveStats = {
     Strength   = HomeTab:CreateLabel("Strength: ... 💪"),
     Durability = HomeTab:CreateLabel("Durability: ... 🛡️"),
     Chakra     = HomeTab:CreateLabel("Chakra: ... 🌀"),
@@ -51,21 +67,17 @@ local StatLabels = {
     Agility    = HomeTab:CreateLabel("Agility: ... ☁️"),
 }
 
--------------------------------------------------
--- QUEST TAB
--------------------------------------------------
-local QuestTab = Window:CreateTab("Quests 📜")
-QuestTab:CreateSection("Active Quests")
+HomeTab:CreateSection("Quest Overview 📜")
 
--- Placeholder Quest labels
-local QuestTitle = QuestTab:CreateLabel("Quest: ...")
-local QuestLines = {}
+-- Placeholder Quest Labels
+local QuestOverviewTitle = HomeTab:CreateLabel("Quest: ... 📜")
+local QuestOverviewLines = {}
 for i = 1, 3 do
-    QuestLines[i] = QuestTab:CreateLabel("Stat ... : 0 / 0")
+    QuestOverviewLines[i] = HomeTab:CreateLabel("Stat ... : 0 / 0")
 end
 
 -------------------------------------------------
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] UI-only v1.0d Beta loaded successfully")
+print("[MurzzHub] UI-only v1.0d Beta (Home + Quest Overview) loaded successfully")
