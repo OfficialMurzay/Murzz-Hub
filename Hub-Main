@@ -42,30 +42,30 @@ local InfoTab = Window:CreateTab("Info 🛠️")
 
 -- Update Log Section
 InfoTab:CreateSection("Update Log 📝")
-InfoTab:CreateLabel("Update Log v1.0: Release ✅")
-InfoTab:CreateLabel("Test") -- placeholder description
+InfoTab:CreateParagraph({
+    Title = "Update Log v1.0: Release ✅",
+    Content = "Test" -- placeholder description
+})
 
 -- Discord Section
 InfoTab:CreateSection("Discord 💬")
-
--- Dynamic DisplayName
-local discordTitle = string.format("Dear @%s,", Player.DisplayName)
-InfoTab:CreateLabel(discordTitle)
-
-InfoTab:CreateLabel(
-[[Thank you for using my script! Every use really supports me, and gives me motivation to continue updating this script! 
-If you have any suggestions, or just want to see the sneak peaks, events and more then join the Discord Server! ❤️ - Murzay (Scripter)]]
-)
+InfoTab:CreateParagraph({
+    Title = string.format("Dear @%s,", Player.DisplayName),
+    Content = [[
+Thank you for using my script! Every use really supports me, and gives me motivation to continue updating this script!
+If you have any suggestions, or just want to see the sneak peaks, events and more then join the Discord Server! ❤️ - Murzay (Scripter)
+]]
+})
 
 InfoTab:CreateButton({
     Name = "Join The Discord Server!",
     Callback = function()
         -- Replace this with your actual Discord link
-        local discordLink = "https://discord.gg/afse"
+        local discordLink = "DISCORD_LINK_HERE"
         if discordLink and discordLink ~= "" then
             -- Attempt to open URL
             if syn and syn.request then
-                syn.request({Url = discordLink}) -- for synapse users
+                syn.request({Url = discordLink}) -- for Synapse users
             else
                 setclipboard(discordLink) -- fallback copies link
             end
