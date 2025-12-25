@@ -1,216 +1,29 @@
--- Services
+--------------------------------------------------
+-- SERVICES
+--------------------------------------------------
 local Players = game:GetService("Players")
-local player = Players.LocalPlayer
 local RunService = game:GetService("RunService")
 
--- Load Rayfield
+local player = Players.LocalPlayer
+
+--------------------------------------------------
+-- LOAD RAYFIELD (LOADING ANIMATION)
+--------------------------------------------------
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
--- ========================
--- Main Window
--- ========================
 local Window = Rayfield:CreateWindow({
     Name = "MurzzHub v1.0",
-    LoadingTitle = "MurzzHub Scripts v0.6",
-    LoadingSubtitle = "Auto Train • Auto Quest",
+    LoadingTitle = "MurzzHub v1.0",
+    LoadingSubtitle = "Auto Train • Teleports • Quests",
     ConfigurationSaving = { Enabled = false },
     KeySystem = false
 })
 
--- ========================
--- Home Tab
--- ========================
-local HomeTab = Window:CreateTab("Home 🏠")
-
--- Player Data Section
-HomeTab:CreateSection("Player Data 👤")
-local OtherData = player:WaitForChild("OtherData")
-
-local ClassLabel = HomeTab:CreateLabel("Class: ... 🏆")
-local TotalPowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡️")
-local YenLabel = HomeTab:CreateLabel("Yen: ... 💰")
-local ChikaraLabel = HomeTab:CreateLabel("Chakira: ... 💎") -- UI text stays Chakira
-
--- Live Stats Section
-HomeTab:CreateSection("Live Stats 📊")
-
-local StatEmojis = {
-    Strength = "💪",
-    Durability = "🛡️",
-    Chakra = "🌀",
-    Sword = "🗡️",
-    Agility = "☁️",
-    Speed = "💨"
-}
-
--- Ordered stats
-local OrderedStats = {"Strength", "Durability", "Chakra", "Sword", "Speed", "Agility"}
-
--- Create labels for stats in fixed order
-local liveStats = {}
-for _, statName in ipairs(OrderedStats) do
-    liveStats[statName] = HomeTab:CreateLabel(statName..": ... "..StatEmojis[statName])
-end
-
-local StatMap = {
-    Strength = "1",
-    Durability = "2",
-    Chakra = "3",
-    Sword = "4",
-    Agility = "5",
-    Speed = "6"
-}
-
--- Classes mapping
-local ClassMap = {
-    [1] = "Fighter 🥊",
-    [2] = "Shinobi 🥷",
-    [3] = "Pirate ☠️",
-    [4] = "Ghoul 👹",
-    [5] = "Hero 🦸",
-    [6] = "Reaper ⚰️",
-    [7] = "Saiyan 💥",
-    [8] = "Sin 😈",
-    [9] = "Magi 🧙",
-    [10] = "Akuma 👿",
-    [11] = "Yonko 👑",
-    [12] = "Gorosei 👴",
-    [13] = "Overlord 🏰",
-    [14] = "Hokage 🔥",
-    [15] = "Kaioshin ✨",
-    [16] = "Sage 🍃",
-    [17] = "Espada ⚔️",
-    [18] = "Shinigami ⚰️",
-    [19] = "Hashira 🗡️",
-    [20] = "Hakaishin 💣",
-    [21] = "Otsutsuki 🌙",
-    [22] = "Pirate King 🏴‍☠️",
-    [23] = "Kishin 👺",
-    [24] = "Angel 😇",
-    [25] = "Demon King 👹",
-    [26] = "Ultra Instinct 🌀✨",
-    [27] = "Upper Moon 🌙🔝"
-}
-
--- Number Formatter
-local function formatNumber(num)
-    if not num then return "0" end
-    num = tonumber(num)
-    if not num then return "0" end
-    local formats = {
-        {1e18, "Qn"},
-        {1e15, "Qd"},
-        {1e12, "T"},
-        {1e9,  "B"},
-        {1e6,  "M"},
-        {1e3,  "K"},
-    }
-    for _, f in ipairs(formats) do
-        if num >= f[1] then
-            return string.format("%.2f%s", num / f[1], f[2]):gsub("%.00", "")
-        end
-    end
-    return tostring(num)
-end
-
--- Animate numbers safely
-local function animateValue(labelObj, statName, oldVal, newVal, emoji)
-    local steps = 15
-    local increment = (newVal - oldVal) / steps
-    local current = oldVal
-    for i = 1, steps do
-        current = current + increment
-        labelObj:Set(statName..": "..formatNumber(current).." "..emoji)
-        RunService.RenderStepped:Wait()
-    end
-    labelObj:Set(statName..": "..formatNumber(newVal).." "..emoji)
-end
-
--- Previous values
-local previousStats = {}
-local previousTotalPower = 0
-local previousYen = 0
-local previousChikara = 0
-
--- Home Tab Update Loop
-task.spawn(function()
-    while true do
-        -- Stats
-        local statsFolder = player:FindFirstChild("Stats")
-        if statsFolder then
-            for _, statName in ipairs(OrderedStats) do
-                local stat = statsFolder:FindFirstChild(StatMap[statName])
-                local value = stat and stat.Value or 0
-                local oldValue = previousStats[statName] or 0
-                if value ~= oldValue then
-                    animateValue(liveStats[statName], statName, oldValue, value, StatEmojis[statName])
-                    previousStats[statName] = value
-                end
-            end
-        end
-
-        -- Total Power
-        local totalPower = (OtherData:FindFirstChild("TotalPower") and OtherData.TotalPower.Value) or 0
-        if totalPower ~= previousTotalPower then
-            animateValue(TotalPowerLabel, "Total Power", previousTotalPower, totalPower, "⚡️")
-            previousTotalPower = totalPower
-        end
-
-        -- Class
-        local classID = (OtherData:FindFirstChild("Class") and OtherData.Class.Value) or 0
-        ClassLabel:Set("Class: "..(ClassMap[classID] or "Unknown ❓"))
-
-        -- Yen
-        local yen = (OtherData:FindFirstChild("Yen") and OtherData.Yen.Value) or 0
-        if yen ~= previousYen then
-            animateValue(YenLabel, "Yen", previousYen, yen, "💰")
-            previousYen = yen
-        end
-
-        -- Chikara
-        local chikara = (OtherData:FindFirstChild("Chikara") and OtherData.Chikara.Value) or 0
-        if chikara ~= previousChikara then
-            animateValue(ChikaraLabel, "Chakira", previousChikara, chikara, "💎")
-            previousChikara = chikara
-        end
-
-        task.wait(0.5)
-    end
-end)
-
--- SERVICES
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-
-local player = Players.LocalPlayer
-local QuestTab = Window:CreateTab("Quests 📜")
-local QuestsFolder = player:WaitForChild("Quests")
-
 --------------------------------------------------
--- STAT MAP + COLORS
+-- COMMON HELPERS
 --------------------------------------------------
-local StatMap = {
-    [1] = "Strength",
-    [2] = "Durability",
-    [3] = "Chakra",
-    [4] = "Sword",
-    [5] = "Agility",
-    [6] = "Speed"
-}
-
-local StatColors = {
-    Strength   = Color3.fromRGB(255, 80, 80),   -- Red
-    Durability = Color3.fromRGB(80, 160, 255), -- Blue
-    Chakra     = Color3.fromRGB(180, 90, 255), -- Purple
-    Sword      = Color3.fromRGB(80, 200, 120), -- Green
-    Agility    = Color3.fromRGB(255, 220, 80), -- Yellow
-    Speed      = Color3.fromRGB(255, 160, 80)  -- Orange
-}
-
---------------------------------------------------
--- NUMBER FORMATTER
---------------------------------------------------
-local function fmt(n)
+local function formatNumber(n)
+    n = tonumber(n) or 0
     local units = {
         {1e15,"Qd"},{1e12,"T"},{1e9,"B"},
         {1e6,"M"},{1e3,"K"}
@@ -224,84 +37,223 @@ local function fmt(n)
 end
 
 --------------------------------------------------
--- FIND ACTIVE BOOM QUEST (ONLY ONE EXISTS)
+-- STAT MAPS
 --------------------------------------------------
-local Boom
-for _,f in ipairs(QuestsFolder:GetChildren()) do
-    if f:IsA("Folder") and f.Name:match("^Boom%d+$") then
-        Boom = f
-        break
+local StatMap = {
+    [1] = "Strength",
+    [2] = "Durability",
+    [3] = "Chakra",
+    [4] = "Sword",
+    [5] = "Agility",
+    [6] = "Speed"
+}
+
+local StatEmojis = {
+    Strength = "💪",
+    Durability = "🛡️",
+    Chakra = "🌀",
+    Sword = "🗡️",
+    Speed = "💨",
+    Agility = "☁️"
+}
+
+local StatColors = {
+    Strength   = Color3.fromRGB(255, 80, 80),
+    Durability = Color3.fromRGB(80, 160, 255),
+    Chakra     = Color3.fromRGB(180, 90, 255),
+    Sword      = Color3.fromRGB(80, 200, 120),
+    Agility    = Color3.fromRGB(255, 220, 80),
+    Speed      = Color3.fromRGB(255, 160, 80)
+}
+
+--------------------------------------------------
+-- HOME TAB
+--------------------------------------------------
+local HomeTab = Window:CreateTab("Home 🏠")
+
+HomeTab:CreateSection("Player Data 👤")
+
+local ClassLabel = HomeTab:CreateLabel("Class: Loading...")
+local PowerLabel = HomeTab:CreateLabel("Total Power: Loading ⚡")
+local YenLabel = HomeTab:CreateLabel("Yen: Loading 💰")
+local ChakraLabel = HomeTab:CreateLabel("Chakra: Loading 💎")
+
+HomeTab:CreateSection("Live Stats 📊")
+
+local StatLabels = {
+    Strength   = HomeTab:CreateLabel("Strength: ... 💪"),
+    Durability = HomeTab:CreateLabel("Durability: ... 🛡️"),
+    Chakra     = HomeTab:CreateLabel("Chakra: ... 🌀"),
+    Sword      = HomeTab:CreateLabel("Sword: ... 🗡️"),
+    Speed      = HomeTab:CreateLabel("Speed: ... 💨"),
+    Agility    = HomeTab:CreateLabel("Agility: ... ☁️")
+}
+
+--------------------------------------------------
+-- HOME LIVE UPDATE
+--------------------------------------------------
+RunService.Heartbeat:Connect(function()
+    local stats = player:FindFirstChild("Stats")
+    local other = player:FindFirstChild("OtherData")
+    if not stats or not other then return end
+
+    -- Player data
+    local totalPower = other:FindFirstChild("TotalPower")
+    local yen = other:FindFirstChild("Yen")
+    local chakra = other:FindFirstChild("Chikara")
+
+    if totalPower then
+        PowerLabel:Set("Total Power: "..formatNumber(totalPower.Value).." ⚡")
     end
-end
+    if yen then
+        YenLabel:Set("Yen: "..formatNumber(yen.Value).." 💰")
+    end
+    if chakra then
+        ChakraLabel:Set("Chakra: "..formatNumber(chakra.Value).." 💎")
+    end
 
-if not Boom then
-    QuestTab:CreateLabel("No active Boom quest ❌")
-    return
-end
-
-local boomNumber = Boom.Name:gsub("Boom","")
+    -- Stats
+    for id,name in pairs(StatMap) do
+        local stat = stats:FindFirstChild(tostring(id))
+        if stat and StatLabels[name] then
+            StatLabels[name]:Set(
+                name..": "..formatNumber(stat.Value).." "..StatEmojis[name]
+            )
+        end
+    end
+end)
 
 --------------------------------------------------
--- SECTION HEADER
+-- QUEST TAB
 --------------------------------------------------
-QuestTab:CreateSection("Boom Quest No. "..boomNumber.." 🧨")
+local QuestTab = Window:CreateTab("Quests 📜")
+local QuestsFolder = player:WaitForChild("Quests")
 
---------------------------------------------------
--- CREATE BARS
---------------------------------------------------
+local ActiveQuest = nil
 local Bars = {}
+local UpdateConnection = nil
+local CompleteLabel = nil
 
-local progress = Boom:WaitForChild("Progress")
-local requirements = Boom:WaitForChild("Requirements")
+--------------------------------------------------
+-- CLEAN QUEST UI
+--------------------------------------------------
+local function clearQuestUI()
+    if UpdateConnection then
+        UpdateConnection:Disconnect()
+        UpdateConnection = nil
+    end
+    for _,b in pairs(Bars) do
+        b.Bar:Destroy()
+    end
+    Bars = {}
+    if CompleteLabel then
+        CompleteLabel:Destroy()
+        CompleteLabel = nil
+    end
+    QuestTab:Clear()
+end
 
-for _,p in ipairs(progress:GetChildren()) do
-    if not p:IsA("IntValue") then continue end
-
-    local statId = tonumber(p.Name)
-    local statName = StatMap[statId]
-    local req = requirements:FindFirstChild(p.Name)
-    if not statName or not req then continue end
-
-    local bar = QuestTab:CreateSlider({
-        Name = statName,
-        Range = {0, 100},
-        Increment = 1,
-        Suffix = "%",
-        CurrentValue = 0,
-        Callback = function() end
-    })
-
-    Bars[p] = {
-        Bar = bar,
-        Req = req,
-        Name = statName
-    }
-
-    -- Color the bar safely
-    task.spawn(function()
-        task.wait()
-        if bar.Container and bar.Container:FindFirstChild("Fill") then
-            bar.Container.Fill.BackgroundColor3 = StatColors[statName]
+--------------------------------------------------
+-- QUEST COMPLETE ANIMATION
+--------------------------------------------------
+local function playCompletion()
+    CompleteLabel = QuestTab:CreateLabel("✅ QUEST COMPLETE!")
+    task.delay(2, function()
+        if CompleteLabel then
+            CompleteLabel:Destroy()
+            CompleteLabel = nil
         end
     end)
 end
 
 --------------------------------------------------
--- LIVE UPDATE LOOP
+-- BUILD QUEST UI
 --------------------------------------------------
-RunService.Heartbeat:Connect(function()
-    for p,data in pairs(Bars) do
-        if not p.Parent then continue end
+local function buildQuestUI(quest)
+    clearQuestUI()
+    ActiveQuest = quest
 
-        local percent = math.clamp(p.Value / data.Req.Value, 0, 1)
-        data.Bar:Set({
-            Name = data.Name.."  "..fmt(p.Value).."/"..fmt(data.Req.Value),
-            CurrentValue = math.floor(percent * 100)
+    QuestTab:CreateSection("Quest: "..quest.Name.." 🧾")
+
+    local progress = quest:FindFirstChild("Progress")
+    local requirements = quest:FindFirstChild("Requirements")
+    if not progress or not requirements then return end
+
+    local completed = false
+
+    for _,p in ipairs(progress:GetChildren()) do
+        if not p:IsA("IntValue") then continue end
+
+        local statId = tonumber(p.Name)
+        local statName = StatMap[statId]
+        local req = requirements:FindFirstChild(p.Name)
+        if not statName or not req then continue end
+
+        local bar = QuestTab:CreateSlider({
+            Name = statName,
+            Range = {0,100},
+            Increment = 1,
+            Suffix = "%",
+            CurrentValue = 0,
+            Callback = function() end
         })
+
+        Bars[p] = { Bar = bar, Req = req, Name = statName }
+
+        task.spawn(function()
+            task.wait()
+            if bar.Container and bar.Container:FindFirstChild("Fill") then
+                bar.Container.Fill.BackgroundColor3 = StatColors[statName]
+            end
+        end)
+    end
+
+    UpdateConnection = RunService.Heartbeat:Connect(function()
+        if not quest.Parent then return end
+
+        local allDone = true
+        for p,data in pairs(Bars) do
+            if not p.Parent then continue end
+            local percent = math.clamp(p.Value / data.Req.Value, 0, 1)
+            data.Bar:Set({
+                Name = data.Name.."  "..formatNumber(p.Value).."/"..formatNumber(data.Req.Value),
+                CurrentValue = math.floor(percent * 100)
+            })
+            if p.Value < data.Req.Value then
+                allDone = false
+            end
+        end
+
+        if allDone and not completed then
+            completed = true
+            playCompletion()
+        end
+    end)
+end
+
+--------------------------------------------------
+-- QUEST WATCHER (AUTO SWITCH)
+--------------------------------------------------
+task.spawn(function()
+    local lastQuest = nil
+    while true do
+        local current = nil
+        for _,q in ipairs(QuestsFolder:GetChildren()) do
+            if q:IsA("Folder") and q:FindFirstChild("Progress") and q:FindFirstChild("Requirements") then
+                current = q
+                break
+            end
+        end
+
+        if current ~= lastQuest then
+            if current then
+                buildQuestUI(current)
+            else
+                clearQuestUI()
+                QuestTab:CreateLabel("No active quest ❌")
+            end
+            lastQuest = current
+        end
+        task.wait(0.5)
     end
 end)
-
--- ========================
--- Load Configuration
--- ========================
-Rayfield:LoadConfiguration()
