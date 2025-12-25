@@ -1,19 +1,12 @@
 -- MurzzHub v1.0j Beta
--- Info + Home tabs, Player Data live (AFSE-safe)
+-- Stable version: Info + Home tabs only
 -- Author: Murzay
 
 -------------------------------------------------
 -- SERVICES
 -------------------------------------------------
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 local Player = Players.LocalPlayer
-
--------------------------------------------------
--- WAIT FOR DATA
--------------------------------------------------
-local OtherData   = Player:WaitForChild("OtherData")
-local StatsFolder = Player:WaitForChild("Stats")
 
 -------------------------------------------------
 -- RAYFIELD
@@ -25,45 +18,22 @@ local VERSION = "v1.0j Beta"
 local Window = Rayfield:CreateWindow({
     Name = "MurzzHub "..VERSION,
     LoadingTitle = "MurzzHub "..VERSION,
-    LoadingSubtitle = VERSION.." - Player Data + Live Stats",
+    LoadingSubtitle = VERSION.." - Info + Home",
     ConfigurationSaving = { Enabled = false },
     KeySystem = false
 })
 
 -------------------------------------------------
--- CLASS MAP
--------------------------------------------------
-local ClassMap = {
-    [1]="Fighter 🥊",[2]="Shinobi 🌀",[3]="Pirate ☠️",[4]="Ghoul 👻",[5]="Hero 🦸",
-    [6]="Reaper ☠️",[7]="Saiyan 💥",[8]="Sin 😈",[9]="Magi 🧙",[10]="Akuma 😡",
-    [11]="Yonko 🏴‍☠️",[12]="Gorosei 🧓",[13]="Overlord 👑",[14]="Hokage 🦊",
-    [15]="Kaioshin 👼",[16]="Sage 🕊️",[17]="Espada ⚔️",[18]="Shinigami 👹",
-    [19]="Hashira ⚔️",[20]="Hakaishin 💀",[21]="Otsutsuki 🌌",
-    [22]="Pirate King 🏴‍☠️👑",[23]="Kishin 👿",[24]="Angel 😇",
-    [25]="Demon King 👹",[26]="Ultra Instinct ✨",[27]="Upper Moon 🌙"
-}
-
--------------------------------------------------
--- UTIL
--------------------------------------------------
-local function abbreviateNumber(num)
-    num = tonumber(num) or 0
-    if num >= 1e12 then return string.format("%.2fT", num/1e12)
-    elseif num >= 1e9 then return string.format("%.2fB", num/1e9)
-    elseif num >= 1e6 then return string.format("%.2fM", num/1e6)
-    elseif num >= 1e3 then return string.format("%.2fK", num/1e3)
-    else return tostring(num) end
-end
-
--------------------------------------------------
--- INFO TAB (UNCHANGED)
+-- INFO TAB
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
+
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
     Title = "Update Log "..VERSION,
     Content = "Quest Overview percentages fixed.\nAll existing systems preserved."
 })
+
 InfoTab:CreateSection("Discord 💬")
 InfoTab:CreateParagraph({
     Title = "Dear @"..Player.DisplayName,
@@ -73,6 +43,7 @@ InfoTab:CreateParagraph({
         "Join the Discord for sneak peeks, events and more!\n\n"..
         "❤️ - Murzay (Scripter)"
 })
+
 InfoTab:CreateButton({
     Name = "Join The Discord Server!",
     Callback = function()
@@ -85,14 +56,14 @@ InfoTab:CreateButton({
 -------------------------------------------------
 local HomeTab = Window:CreateTab("Home 🏠")
 
--- Player Data Section
+-- Player Data Section (labels only)
 HomeTab:CreateSection("Player Data 👤")
 local ClassLabel   = HomeTab:CreateLabel("Class: ...")
 local PowerLabel   = HomeTab:CreateLabel("Total Power: ... ⚡")
 local YenLabel     = HomeTab:CreateLabel("Money: ... 💰")
 local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
--- Live Stats Section (labels only, no functionality yet)
+-- Live Stats Section (labels only, no functionality)
 HomeTab:CreateSection("Live Stats 📊")
 local StatLabels = {}
 StatLabels["1"] = HomeTab:CreateLabel("Strength 💪: ...")
@@ -103,26 +74,7 @@ StatLabels["5"] = HomeTab:CreateLabel("Agility ☁️: ...")
 StatLabels["6"] = HomeTab:CreateLabel("Speed 💨: ...")
 
 -------------------------------------------------
--- HOME TAB FUNCTIONALITY (PLAYER DATA)
--------------------------------------------------
-RunService.Heartbeat:Connect(function()
-    -- AFSE-safe reading
-    if OtherData:FindFirstChild("Class") then
-        ClassLabel.Text = "Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓")
-    end
-    if OtherData:FindFirstChild("TotalPower") then
-        PowerLabel.Text = "Total Power: "..abbreviateNumber(OtherData.TotalPower.Value).." ⚡"
-    end
-    if OtherData:FindFirstChild("Yen") then
-        YenLabel.Text = "Money: "..abbreviateNumber(OtherData.Yen.Value).." 💰"
-    end
-    if OtherData:FindFirstChild("Chikara") then
-        ChikaraLabel.Text = "Chikara: "..abbreviateNumber(OtherData.Chikara.Value).." 💎"
-    end
-end)
-
--------------------------------------------------
 -- LOAD CONFIG
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] Info + Home (Player Data live) loaded")
+print("[MurzzHub] Stable version (Info + Home tabs) loaded")
