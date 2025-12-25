@@ -1,6 +1,6 @@
--- MurzzHub v1.0o Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
+-- MurzzHub v1.0p Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0n -> v1.0o (Live Updating Quests)
+-- VERSION NOTE: v1.0o -> v1.0p (Live Animated & Abbreviated Quest Progress)
 
 -------------------------------------------------
 -- SERVICES
@@ -15,7 +15,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0o Beta"
+local VERSION = "v1.0p Beta"
 
 -------------------------------------------------
 -- DEBUG SYSTEM
@@ -103,8 +103,8 @@ local StatIdToName = {
 local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
-    Title = "Update Log "..VERSION..": Live Updating Quests 📝",
-    Content = "All quests now live update with animated numbers like the Home stats. Ghoul Kill quests and custom named quests fully supported."
+    Title = "Update Log "..VERSION..": Live Animated & Abbreviated Quests 📝",
+    Content = "Quests now smoothly live-update with animated and abbreviated numbers. Supports numeric stats and custom-named requirements like 'Kill'."
 })
 
 InfoTab:CreateSection("Discord 💬")
@@ -173,9 +173,7 @@ end)
 local QuestsTab = Window:CreateTab("Quests 📜")
 QuestsTab:CreateSection("Current Quests 📌")
 local QuestParagraphs = {}
-
--- Store previous values to animate
-local QuestValues = {}
+local QuestValues = {} -- Track live values for animation
 
 local function updateQuestParagraph(questFolder)
     safeRun(function()
@@ -188,17 +186,26 @@ local function updateQuestParagraph(questFolder)
         local Progress = questFolder:FindFirstChild("Progress")
         if not Requirements or not Progress then return end
 
+        QuestValues[questFolder.Name] = QuestValues[questFolder.Name] or {}
         local descLines = {}
         local allComplete = true
-        QuestValues[questFolder.Name] = QuestValues[questFolder.Name] or {}
 
         for _, req in ipairs(Requirements:GetChildren()) do
-            local progVal = 0
-            local prog = Progress:FindFirstChild(req.Name)
             if req:IsA("IntValue") or req:IsA("NumberValue") then
-                if prog then progVal = prog.Value end
-                local statComplete = progVal >= req.Value
-                if not statComplete then allComplete = false end
+                local prog = Progress:FindFirstChild(req.Name)
+                local targetVal = prog and prog.Value or 0
+                QuestValues[questFolder.Name][req.Name] = QuestValues[questFolder.Name][req.Name] or targetVal
+                local currentVal = QuestValues[questFolder.Name][req.Name]
+
+                -- Smooth increment
+                local step = (targetVal - currentVal)/5
+                if step ~= 0 then
+                    currentVal = currentVal + step
+                    if (step > 0 and currentVal > targetVal) or (step < 0 and currentVal < targetVal) then
+                        currentVal = targetVal
+                    end
+                    QuestValues[questFolder.Name][req.Name] = currentVal
+                end
 
                 local statName, emoji
                 local numId = tonumber(req.Name)
@@ -212,71 +219,31 @@ local function updateQuestParagraph(questFolder)
                     emoji = ""
                 end
 
-                -- Animate the value
-                local previousVal = QuestValues[questFolder.Name][req.Name] or 0
-                QuestValues[questFolder.Name][req.Name] = progVal
-                local lineText = string.format("%s/%s %s %s%s", previousVal, req.Value, statName, emoji, statComplete and " ✅" or "")
-                table.insert(descLines, lineText)
+                local complete = targetVal >= req.Value
+                if not complete then allComplete = false end
+                table.insert(descLines, string.format("%s/%s %s %s%s", abbreviateNumber(math.floor(currentVal)), abbreviateNumber(req.Value), statName, emoji, complete and " ✅" or ""))
             end
         end
 
         local descText = table.concat(descLines,"\n")
         local titleText = displayName..(allComplete and " ✅" or "")
 
-        -- CREATE OR UPDATE PARAGRAPH
-        if not QuestParagraphs[questFolder.Name] then
-            local paragraph = QuestsTab:CreateParagraph({Title=titleText, Content=descText})
+        local paragraph = QuestParagraphs[questFolder.Name]
+        if not paragraph then
+            paragraph = QuestsTab:CreateParagraph({Title=titleText, Content=descText})
             QuestParagraphs[questFolder.Name] = paragraph
-            paragraph.Completed = allComplete
         else
-            local paragraph = QuestParagraphs[questFolder.Name]
             if paragraph and paragraph.Set then
-                -- Animate each line
-                local newLines = {}
-                for i, req in ipairs(Requirements:GetChildren()) do
-                    if req:IsA("IntValue") or req:IsA("NumberValue") then
-                        local prog = Progress:FindFirstChild(req.Name)
-                        local progVal = prog and prog.Value or 0
-                        local statName, emoji
-                        local numId = tonumber(req.Name)
-                        if numId and StatIdToName[numId] then
-                            local fullName = StatIdToName[numId]
-                            statName, emoji = fullName:match("^(.-) (.+)$")
-                            statName = statName or fullName
-                            emoji = emoji or ""
-                        else
-                            statName = req.Name
-                            emoji = ""
-                        end
-                        local prevVal = QuestValues[questFolder.Name][req.Name] or 0
-                        animateValue(paragraph, prevVal, progVal, "", "", 0.5)
-                        QuestValues[questFolder.Name][req.Name] = progVal
-                        table.insert(newLines, string.format("%s/%s %s %s%s", progVal, req.Value, statName, emoji, progVal >= req.Value and " ✅" or ""))
-                    end
-                end
-                paragraph:Set(table.concat(newLines,"\n"))
+                paragraph:Set(descText)
             end
-            if paragraph then paragraph.Title = titleText end
-            paragraph.Completed = allComplete
-        end
-
-        -- QUEST COMPLETION NOTIFICATION
-        if allComplete then
-            local paragraph = QuestParagraphs[questFolder.Name]
-            if paragraph and not paragraph.Notified then
-                paragraph.Notified = true
-                Rayfield:Notify({
-                    Title="✅ You completed a quest!",
-                    Content="You completed "..displayName.."! Stay on that grinding streak!",
-                    Duration=5,
-                    Image=1580567251
-                })
+            if paragraph then
+                paragraph.Title = titleText
             end
         end
     end)
 end
 
--- INITIAL PARAGRAPHS
+-- Initial paragraphs
 for _, questFolder in ipairs(QuestsFolder:GetChildren()) do updateQuestParagraph(questFolder) end
 QuestsFolder.ChildAdded:Connect(function(child) if child:IsA("Folder") then updateQuestParagraph(child) end end)
 
@@ -306,7 +273,7 @@ RunService.Heartbeat:Connect(function()
             end
         end
 
-        -- QUESTS TAB LIVE UPDATE
+        -- LIVE QUESTS UPDATE
         for questName, paragraph in pairs(QuestParagraphs) do
             local questFolder = QuestsFolder:FindFirstChild(questName)
             if questFolder then updateQuestParagraph(questFolder) end
