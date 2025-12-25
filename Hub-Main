@@ -1,6 +1,6 @@
 -- MurzzHub v1.0r Beta
 -- Full Stable Build (Info + Home + Live Stats + Quests)
--- Author: Murzay | OVERVIEW REMOVED
+-- Author: Murzay | Animated Home + Live Stats
 
 -------------------------------------------------
 -- SERVICES
@@ -66,6 +66,19 @@ local function abbreviate(n)
     end
 end
 
+-- Animated number increment
+local function animateNumber(label, startValue, endValue, prefix, emoji, duration)
+    duration = duration or 0.5 -- seconds
+    local steps = math.max(1, math.floor(duration * 60)) -- assume 60 FPS
+    local diff = endValue - startValue
+    for i = 1, steps do
+        local val = startValue + diff * (i/steps)
+        label:Set(prefix..abbreviate(math.floor(val)).." "..emoji)
+        task.wait(duration / steps)
+    end
+    label:Set(prefix..abbreviate(endValue).." "..emoji)
+end
+
 -------------------------------------------------
 -- MAPS
 -------------------------------------------------
@@ -90,7 +103,7 @@ local StatMap = {
 }
 
 -------------------------------------------------
--- INFO TAB (UNCHANGED)
+-- INFO TAB
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
 
@@ -104,6 +117,7 @@ InfoTab:CreateParagraph({
 • Kill quests fully supported
 • Event-based (zero loops)
 • UI locked & stable
+• Home + Live Stats now animate when updated
 ]]
 })
 
@@ -137,10 +151,16 @@ local PowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡")
 local YenLabel = HomeTab:CreateLabel("Money: ... 💰")
 local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
+-- Bind animated value
 local function bindValue(obj, label, prefix, emoji)
     if not obj then return end
+    local current = obj.Value
     local function update()
-        label:Set(prefix..abbreviate(obj.Value).." "..emoji)
+        local newVal = obj.Value
+        task.spawn(function()
+            animateNumber(label, current, newVal, prefix, emoji)
+            current = newVal
+        end)
     end
     update()
     obj:GetPropertyChangedSignal("Value"):Connect(update)
@@ -169,8 +189,13 @@ for id,data in pairs(StatMap) do
         local label = HomeTab:CreateLabel(name..": ... "..emoji)
         local stat = StatsFolder:FindFirstChild(id)
         if stat then
+            local current = stat.Value
             local function update()
-                label:Set(name..": "..abbreviate(stat.Value).." "..emoji)
+                local newVal = stat.Value
+                task.spawn(function()
+                    animateNumber(label, current, newVal, name..": ", emoji)
+                    current = newVal
+                end)
             end
             update()
             stat:GetPropertyChangedSignal("Value"):Connect(update)
