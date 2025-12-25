@@ -1,6 +1,6 @@
--- MurzzHub v1.0n Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
+-- MurzzHub v1.0o Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0m -> v1.0n
+-- VERSION NOTE: v1.0n -> v1.0o
 
 -------------------------------------------------
 -- SERVICES
@@ -15,7 +15,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0n Beta"
+local VERSION = "v1.0o Beta"
 
 -------------------------------------------------
 -- DEBUG SYSTEM
@@ -78,42 +78,6 @@ local function animateValue(label, startVal, endVal, prefix, emoji, duration)
 end
 
 -------------------------------------------------
--- INFO TAB
--------------------------------------------------
-local InfoTab = Window:CreateTab("Info 🛠️")
-InfoTab:CreateSection("Update Log 📝")
-InfoTab:CreateParagraph({
-    Title = "Update Log "..VERSION..": Quests Tab 📝",
-    Content = "Added dedicated Quests tab with live stat progress, abbreviated numbers, and completion notifications!"
-})
-
-InfoTab:CreateSection("Discord 💬")
-local usernameLabel = InfoTab:CreateLabel("Dear @"..Player.DisplayName..",")
-if usernameLabel.SetColor then usernameLabel:SetColor(Color3.fromRGB(255,215,0)) end
-InfoTab:CreateParagraph({
-    Title = "Message",
-    Content = [[
-Thank you for using my script! Every use really supports me, and gives me motivation to continue updating this script!
-If you have any suggestions, or just want to see the sneak peaks, events and more then join the Discord Server! ❤️ - Murzay (Scripter)
-]]
-})
-InfoTab:CreateButton({
-    Name = "Join The Discord Server!",
-    Callback = function()
-        safeRun(function()
-            local discordLink = "DISCORD_LINK_HERE"
-            if discordLink and discordLink ~= "" then
-                if syn and syn.request then
-                    syn.request({Url=discordLink})
-                else
-                    setclipboard(discordLink)
-                end
-            end
-        end)
-    end
-})
-
--------------------------------------------------
 -- CLASS MAP
 -------------------------------------------------
 local ClassMap = {
@@ -132,6 +96,40 @@ local ClassMap = {
 local StatIdToName = {
     [1]="Strength 💪",[2]="Durability 🛡️",[3]="Chakra 🌀",[4]="Sword 🗡️",[5]="Speed 💨",[6]="Agility ☁️"
 }
+
+-------------------------------------------------
+-- INFO TAB
+-------------------------------------------------
+local InfoTab = Window:CreateTab("Info 🛠️")
+InfoTab:CreateSection("Update Log 📝")
+InfoTab:CreateParagraph({
+    Title = "Update Log "..VERSION..": Quests Tab 📝",
+    Content = "Added dedicated Quests tab with live stat progress, abbreviated numbers, completion notifications, and fixed Home tab and Info tab layout."
+})
+
+InfoTab:CreateSection("Discord 💬")
+InfoTab:CreateParagraph({
+    Title = "Dear @"..Player.DisplayName,
+    Content = [[
+Thank you for using my script! Every use really supports me, and gives me motivation to continue updating this script!
+If you have any suggestions, or just want to see sneak peaks, events and more then join the Discord Server! ❤️ - Murzay (Scripter)
+]]
+})
+InfoTab:CreateButton({
+    Name = "Join The Discord Server!",
+    Callback = function()
+        safeRun(function()
+            local discordLink = "DISCORD_LINK_HERE"
+            if discordLink and discordLink ~= "" then
+                if syn and syn.request then
+                    syn.request({Url=discordLink})
+                else
+                    setclipboard(discordLink)
+                end
+            end
+        end)
+    end
+})
 
 -------------------------------------------------
 -- HOME TAB
@@ -153,17 +151,20 @@ end
 HomeTab:CreateSection("Quest Overview 📜")
 local QuestOverviewLabels = {}
 local function createQuestLabel(questFolder)
-    local displayName = questFolder.Name
-    local name, number = displayName:match("(%a+)(%d+)")
-    if name and number then displayName = name.." No."..number end
-    local label = HomeTab:CreateLabel(displayName.." [0%]")
-    QuestOverviewLabels[questFolder.Name]={Label=label, Completed=false}
+    safeRun(function()
+        if not questFolder then return end
+        local displayName = questFolder.Name
+        local name, number = displayName:match("(%a+)(%d+)")
+        if name and number then displayName = name.." No."..number end
+        if not QuestOverviewLabels[questFolder.Name] then
+            local label = HomeTab:CreateLabel(displayName.." [0%]")
+            QuestOverviewLabels[questFolder.Name]={Label=label, Completed=false}
+        end
+    end)
 end
-for _,questFolder in ipairs(QuestsFolder:GetChildren()) do
-    if questFolder:IsA("Folder") then createQuestLabel(questFolder) end
-end
+for _,questFolder in ipairs(QuestsFolder:GetChildren()) do createQuestLabel(questFolder) end
 QuestsFolder.ChildAdded:Connect(function(child)
-    if child:IsA("Folder") and not QuestOverviewLabels[child.Name] then createQuestLabel(child) end
+    if child:IsA("Folder") then createQuestLabel(child) end
 end)
 
 -------------------------------------------------
@@ -200,6 +201,7 @@ local function updateQuestParagraph(questFolder)
         local descText = table.concat(descLines,"\n")
         local titleText = displayName..(allComplete and " ✅" or "")
 
+        -- CREATE OR UPDATE PARAGRAPH
         if not QuestParagraphs[questFolder.Name] then
             local paragraph = QuestsTab:CreateParagraph({Title=titleText, Content=descText})
             QuestParagraphs[questFolder.Name] = paragraph
@@ -211,6 +213,7 @@ local function updateQuestParagraph(questFolder)
             paragraph.Completed = allComplete
         end
 
+        -- QUEST COMPLETION NOTIFICATION
         if allComplete then
             local paragraph = QuestParagraphs[questFolder.Name]
             if paragraph and not paragraph.Notified then
@@ -226,38 +229,40 @@ local function updateQuestParagraph(questFolder)
     end)
 end
 
+-- INITIAL PARAGRAPHS
 for _,questFolder in ipairs(QuestsFolder:GetChildren()) do updateQuestParagraph(questFolder) end
 QuestsFolder.ChildAdded:Connect(function(child) if child:IsA("Folder") then updateQuestParagraph(child) end end)
-RunService.Heartbeat:Connect(function()
-    for questName, paragraph in pairs(QuestParagraphs) do
-        local questFolder = QuestsFolder:FindFirstChild(questName)
-        if questFolder then updateQuestParagraph(questFolder) end
-    end
-end)
 
--------------------------------------------------
--- PLAYER DATA & STATS LIVE UPDATE
--------------------------------------------------
-local currentPower,currentYen,currentChikara = 0,0,0
+-- LIVE UPDATE LOOP
 RunService.Heartbeat:Connect(function()
     safeRun(function()
+        -- PLAYER DATA LIVE
         if OtherData:FindFirstChild("Class") then
             ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓"))
         end
         if OtherData:FindFirstChild("TotalPower") then
-            local target = OtherData.TotalPower.Value
-            animateValue(PowerLabel,currentPower,target,"Total Power: ","⚡",0.5)
-            currentPower=target
+            animateValue(PowerLabel,PowerLabel.Value or 0,OtherData.TotalPower.Value,"Total Power: ","⚡",0.5)
         end
         if OtherData:FindFirstChild("Yen") then
-            local target = OtherData.Yen.Value
-            animateValue(YenLabel,currentYen,target,"Money: ","💰",0.5)
-            currentYen=target
+            animateValue(YenLabel,YenLabel.Value or 0,OtherData.Yen.Value,"Money: ","💰",0.5)
         end
         if OtherData:FindFirstChild("Chikara") then
-            local target = OtherData.Chikara.Value
-            animateValue(ChikaraLabel,currentChikara,target,"Chikara: ","💎",0.5)
-            currentChikara=target
+            animateValue(ChikaraLabel,ChikaraLabel.Value or 0,OtherData.Chikara.Value,"Chikara: ","💎",0.5)
+        end
+
+        -- LIVE STATS
+        for statId,data in pairs(LiveStats) do
+            local statObj = StatsFolder:FindFirstChild(tostring(statId))
+            if statObj and statObj.Value ~= data.Value then
+                animateValue(data.Label,data.Value,statObj.Value,data.StatName..": ",data.Emoji,0.5)
+                data.Value = statObj.Value
+            end
+        end
+
+        -- QUESTS TAB LIVE UPDATE
+        for questName, paragraph in pairs(QuestParagraphs) do
+            local questFolder = QuestsFolder:FindFirstChild(questName)
+            if questFolder then updateQuestParagraph(questFolder) end
         end
     end)
 end)
