@@ -1,6 +1,6 @@
--- MurzzHub v1.0q Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
+-- MurzzHub v1.0r Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0p -> v1.0q (True Live Quest Updates, Lightweight, Notifications Removed)
+-- VERSION NOTE: v1.0q -> v1.0r (True Live Quest Updates, Lightweight, Notifications Removed)
 
 -------------------------------------------------
 -- SERVICES
@@ -15,7 +15,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0q Beta"
+local VERSION = "v1.0r Beta"
 
 -------------------------------------------------
 -- DEBUG SYSTEM
@@ -103,8 +103,14 @@ local StatIdToName = {
 local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
-    Title = "Update Log "..VERSION..": True Live Quest Updates",
-    Content = "Quests now read actual values every Heartbeat, animate smoothly, abbreviate numbers, and support direct IntValues like 'Kill'. Quest completion notifications removed for lower resource use."
+    Title = "Update Log "..VERSION..": Lightweight True Live Quest Updates",
+    Content = [[
+- Quests now read actual progress values every Heartbeat
+- Updates display instantly (no slow animation)
+- Minimal resource usage
+- Works for direct IntValues like 'Kill'
+- Quest completion notifications removed
+]]
 })
 
 InfoTab:CreateSection("Discord 💬")
@@ -173,7 +179,6 @@ end)
 local QuestsTab = Window:CreateTab("Quests 📜")
 QuestsTab:CreateSection("Current Quests 📌")
 local QuestParagraphs = {}
-local QuestValues = {} -- Live values for smooth animation
 
 local function updateQuestParagraph(questFolder)
     safeRun(function()
@@ -185,7 +190,6 @@ local function updateQuestParagraph(questFolder)
         local Requirements = questFolder:FindFirstChild("Requirements")
         if not Requirements then return end
 
-        QuestValues[questFolder.Name] = QuestValues[questFolder.Name] or {}
         local descLines = {}
         local allComplete = true
 
@@ -205,16 +209,6 @@ local function updateQuestParagraph(questFolder)
                     end
                 end
 
-                -- Animate numbers smoothly but snap small increments
-                QuestValues[questFolder.Name][req.Name] = QuestValues[questFolder.Name][req.Name] or progVal
-                local currentVal = QuestValues[questFolder.Name][req.Name]
-                if math.abs(progVal - currentVal) < 1 then
-                    currentVal = progVal
-                else
-                    currentVal = currentVal + (progVal - currentVal)/2
-                end
-                QuestValues[questFolder.Name][req.Name] = currentVal
-
                 local statName, emoji
                 local numId = tonumber(req.Name)
                 if numId and StatIdToName[numId] then
@@ -229,7 +223,7 @@ local function updateQuestParagraph(questFolder)
 
                 local complete = progVal >= req.Value
                 if not complete then allComplete = false end
-                table.insert(descLines, string.format("%s/%s %s %s%s", abbreviateNumber(math.floor(currentVal)), abbreviateNumber(req.Value), statName, emoji, complete and " ✅" or ""))
+                table.insert(descLines, string.format("%s/%s %s %s%s", abbreviateNumber(progVal), abbreviateNumber(req.Value), statName, emoji, complete and " ✅" or ""))
             end
         end
 
@@ -251,6 +245,9 @@ QuestsFolder.ChildAdded:Connect(function(child)
     if child:IsA("Folder") then updateQuestParagraph(child) end
 end)
 
+-------------------------------------------------
+-- HEARTBEAT LOOP
+-------------------------------------------------
 RunService.Heartbeat:Connect(function()
     safeRun(function()
         -- Player Data Live
