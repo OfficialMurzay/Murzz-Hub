@@ -1,15 +1,16 @@
 -- MurzzHub v1.0j Beta
--- BASE RESET: Info + Home (Player Data + Live Stats)
+-- RESET BASE: Info + Home (AFSE-CORRECT)
 -- Author: Murzay
 
 -------------------------------------------------
 -- SERVICES
 -------------------------------------------------
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local Player = Players.LocalPlayer
 
 -------------------------------------------------
--- SAFE WAIT FUNCTION
+-- WAIT
 -------------------------------------------------
 local function waitFor(parent, name)
     local obj = parent:FindFirstChild(name)
@@ -21,7 +22,7 @@ local function waitFor(parent, name)
 end
 
 -------------------------------------------------
--- PLAYER DATA
+-- DATA
 -------------------------------------------------
 local OtherData   = waitFor(Player, "OtherData")
 local StatsFolder = waitFor(Player, "Stats")
@@ -36,7 +37,7 @@ local VERSION = "v1.0j Beta"
 local Window = Rayfield:CreateWindow({
     Name = "MurzzHub "..VERSION,
     LoadingTitle = "MurzzHub "..VERSION,
-    LoadingSubtitle = VERSION.." - UI Live Player Data",
+    LoadingSubtitle = VERSION.." - Live Player Data",
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "MurzzHub",
@@ -46,7 +47,7 @@ local Window = Rayfield:CreateWindow({
 })
 
 -------------------------------------------------
--- CLASS MAP (UNCHANGED)
+-- MAPS
 -------------------------------------------------
 local ClassMap = {
     [1]="Fighter 🥊",[2]="Shinobi 🌀",[3]="Pirate ☠️",[4]="Ghoul 👻",[5]="Hero 🦸",
@@ -58,9 +59,6 @@ local ClassMap = {
     [25]="Demon King 👹",[26]="Ultra Instinct ✨",[27]="Upper Moon 🌙"
 }
 
--------------------------------------------------
--- STAT MAP (UNCHANGED)
--------------------------------------------------
 local StatIdToName = {
     ["1"]="Strength 💪",
     ["2"]="Durability 🛡️",
@@ -73,17 +71,17 @@ local StatIdToName = {
 -------------------------------------------------
 -- UTIL
 -------------------------------------------------
-local function abbreviateNumber(num)
-    num = tonumber(num) or 0
-    if num >= 1e12 then return string.format("%.2fT", num/1e12)
-    elseif num >= 1e9 then return string.format("%.2fB", num/1e9)
-    elseif num >= 1e6 then return string.format("%.2fM", num/1e6)
-    elseif num >= 1e3 then return string.format("%.2fK", num/1e3)
-    else return tostring(num) end
+local function abbr(n)
+    n = tonumber(n) or 0
+    if n >= 1e12 then return string.format("%.2fT", n/1e12)
+    elseif n >= 1e9 then return string.format("%.2fB", n/1e9)
+    elseif n >= 1e6 then return string.format("%.2fM", n/1e6)
+    elseif n >= 1e3 then return string.format("%.2fK", n/1e3)
+    else return tostring(n) end
 end
 
 -------------------------------------------------
--- INFO TAB (RESTORED)
+-- INFO TAB (UNCHANGED)
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
 
@@ -115,66 +113,46 @@ InfoTab:CreateButton({
 -------------------------------------------------
 local HomeTab = Window:CreateTab("Home 🏠")
 
--------------------------------------------------
--- PLAYER DATA
--------------------------------------------------
 HomeTab:CreateSection("Player Data 👤")
-
 local ClassLabel   = HomeTab:CreateLabel("Class: ...")
 local PowerLabel   = HomeTab:CreateLabel("Total Power: ... ⚡")
 local YenLabel     = HomeTab:CreateLabel("Money: ... 💰")
 local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
--------------------------------------------------
--- LIVE STATS
--------------------------------------------------
 HomeTab:CreateSection("Live Stats 📊")
 local StatLabels = {}
-
 for id,name in pairs(StatIdToName) do
     StatLabels[id] = HomeTab:CreateLabel(name..": ...")
 end
 
 -------------------------------------------------
--- BIND PLAYER VALUES (EVENT-BASED)
+-- LIVE READ (AFSE-CORRECT)
 -------------------------------------------------
-local function bindValue(folder, name, label, prefix, suffix)
-    local v = waitFor(folder, name)
-    local function update()
-        label.Text = prefix..abbreviateNumber(v.Value)..(suffix or "")
+RunService.Heartbeat:Connect(function()
+    local class = OtherData:FindFirstChild("Class")
+    if class then
+        ClassLabel.Text = "Class: "..(ClassMap[class.Value] or "Unknown ❓")
     end
-    update()
-    v.Changed:Connect(update)
-end
 
-bindValue(OtherData, "TotalPower", PowerLabel, "Total Power: ", " ⚡")
-bindValue(OtherData, "Yen",        YenLabel,   "Money: ",       " 💰")
-bindValue(OtherData, "Chikara",    ChikaraLabel,"Chikara: ",    " 💎")
+    local tp = OtherData:FindFirstChild("TotalPower")
+    if tp then PowerLabel.Text = "Total Power: "..abbr(tp.Value).." ⚡" end
 
--------------------------------------------------
--- CLASS (SPECIAL CASE)
--------------------------------------------------
-local ClassValue = waitFor(OtherData, "Class")
-local function updateClass()
-    ClassLabel.Text = "Class: "..(ClassMap[ClassValue.Value] or "Unknown ❓")
-end
-updateClass()
-ClassValue.Changed:Connect(updateClass)
+    local yen = OtherData:FindFirstChild("Yen")
+    if yen then YenLabel.Text = "Money: "..abbr(yen.Value).." 💰" end
 
--------------------------------------------------
--- STAT BINDING
--------------------------------------------------
-for id,label in pairs(StatLabels) do
-    local stat = waitFor(StatsFolder, id)
-    local function update()
-        label.Text = StatIdToName[id]..": "..abbreviateNumber(stat.Value)
+    local chi = OtherData:FindFirstChild("Chikara")
+    if chi then ChikaraLabel.Text = "Chikara: "..abbr(chi.Value).." 💎" end
+
+    for id,label in pairs(StatLabels) do
+        local stat = StatsFolder:FindFirstChild(id)
+        if stat then
+            label.Text = StatIdToName[id]..": "..abbr(stat.Value)
+        end
     end
-    update()
-    stat.Changed:Connect(update)
-end
+end)
 
 -------------------------------------------------
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] Base UI loaded successfully")
+print("[MurzzHub] Home values live and synced")
