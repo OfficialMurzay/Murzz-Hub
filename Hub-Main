@@ -1,4 +1,4 @@
--- MurzzHub v1.0h Beta (UI + Player Data & Live Stats Emoji Fixed)
+-- MurzzHub v1.0i Beta (UI + Player Data, Live Stats & Quest Overview placeholder)
 -- Author: Murzay
 
 -------------------------------------------------
@@ -10,6 +10,7 @@ local RunService = game:GetService("RunService")
 local Player = Players.LocalPlayer
 local OtherData = Player:WaitForChild("OtherData")
 local StatsFolder = Player:WaitForChild("Stats")
+local QuestsFolder = Player:WaitForChild("Quests") -- For dynamic quest reading
 
 -------------------------------------------------
 -- RAYFIELD
@@ -17,9 +18,9 @@ local StatsFolder = Player:WaitForChild("Stats")
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "MurzzHub v1.0h Beta",
-    LoadingTitle = "MurzzHub v1.0h Beta",
-    LoadingSubtitle = "Player Data & Stats Live",
+    Name = "MurzzHub v1.0i Beta",
+    LoadingTitle = "MurzzHub v1.0i Beta",
+    LoadingSubtitle = "UI Live Player Data, Stats & Quests",
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "MurzzHub",
@@ -104,7 +105,6 @@ local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 HomeTab:CreateSection("Live Stats 📊")
 local LiveStats = {}
 for statId, name in pairs(StatIdToName) do
-    -- Split name and emoji
     local statName, emoji = name:match("^(.-) (.+)$")
     LiveStats[statId] = {
         Label = HomeTab:CreateLabel(statName..": ... "..emoji),
@@ -114,16 +114,26 @@ for statId, name in pairs(StatIdToName) do
     }
 end
 
--- Quest Overview placeholders
+-- Quest Overview Section
 HomeTab:CreateSection("Quest Overview 📜")
-local QuestOverviewTitle = HomeTab:CreateLabel("Quest: Example 10%")
-local QuestOverviewLines = {}
-for i = 1, 3 do
-    QuestOverviewLines[i] = HomeTab:CreateLabel("Quest: Example "..(i*10).."%")
+local QuestOverviewLabels = {}
+
+-- Dynamically read quest folders and create labels
+for _, questFolder in ipairs(QuestsFolder:GetChildren()) do
+    if questFolder:IsA("Folder") then
+        local questName = questFolder.Name
+        -- Convert Ghoul1 -> Ghoul No.1
+        local name, number = questName:match("(%a+)(%d+)")
+        if name and number then
+            questName = name.." No."..number
+        end
+        -- Create label with 0% for now
+        QuestOverviewLabels[questFolder.Name] = HomeTab:CreateLabel("Quest: "..questName.." 0%")
+    end
 end
 
 -------------------------------------------------
--- PLAYER DATA LIVE UPDATE
+-- PLAYER DATA & STATS LIVE UPDATE
 -------------------------------------------------
 local currentPower, currentYen, currentChikara = 0, 0, 0
 
@@ -168,4 +178,4 @@ end)
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] UI + Player Data & Live Stats functionality v1.0h Beta loaded successfully")
+print("[MurzzHub] UI + Player Data, Live Stats & Quest Overview v1.0i Beta loaded successfully")
