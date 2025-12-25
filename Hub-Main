@@ -1,4 +1,4 @@
--- MurzzHub v1.0a Beta
+-- MurzzHub v1.0b Beta
 -- Rayfield UI for Anime Fighting Simulator: Endless
 -- Author: Murzay
 
@@ -11,8 +11,8 @@
 - Class detection with emoji
 - Modern, lively UI
 - Automatic updates
-- Safe section handling to prevent CreateLabel errors
-- Versioning: v1.0a Beta (next minor update -> v1.0b, ... z -> 1.1)
+- Debugging messages for reliability
+- Waits for tabs/sections to load
 ]]
 
 --// Services
@@ -22,6 +22,7 @@ local LocalPlayer = Players.LocalPlayer
 
 --// Rayfield Library
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+print("[MurzzHub] Rayfield loaded")
 
 --// Class Table with Emojis
 local Classes = {
@@ -69,45 +70,67 @@ end
 Rayfield:LoadConfiguration({
     Name = "MurzzHub Scripts",
     LoadingTitle = "MurzzHub Scripts",
-    LoadingSubtitle = "v1.0a Beta",
+    LoadingSubtitle = "v1.0b Beta",
     ConfigurationSaving = { Enabled = true, FolderName = nil, FileName = "MurzzHub" }
 })
+print("[MurzzHub] Configuration loaded")
 
 --// Main Window
 local Window = Rayfield:CreateWindow({
     Name = "Murzzhub | AFSE",
     LoadingTitle = "MurzzHub Scripts",
-    LoadingSubtitle = "v1.0a Beta",
+    LoadingSubtitle = "v1.0b Beta",
     ConfigurationSaving = { Enabled = true, FolderName = nil, FileName = "MurzzHub" }
 })
+print("[MurzzHub] Window created")
 
 --// Home Tab
 local HomeTab = Window:CreateTab("Home 🏠", nil)
 
+-- Wait for tab to be ready
+local function waitForTab(tab, timeout)
+    local t0 = tick()
+    while tick() - t0 < (timeout or 5) do
+        if tab and type(tab.CreateSection) == "function" then
+            return true
+        end
+        task.wait(0.1)
+    end
+    return false
+end
+
+if not waitForTab(HomeTab) then
+    warn("[MurzzHub] HomeTab did not become ready in time!")
+end
+
 -- Safe section creation
 local function createSectionSafe(tab, title)
-    local success, section = pcall(function()
-        return tab:CreateSection(title)
-    end)
-    if success and section then return section end
-    warn("Failed to create section:", title)
-    return nil
+    local success, section = pcall(function() return tab:CreateSection(title) end)
+    if success and section then
+        print("[MurzzHub] Section created:", title)
+        return section
+    else
+        warn("[MurzzHub] Failed to create section:", title)
+        return nil
+    end
 end
 
 -- Safe label creation
 local function createLabelSafe(section, props)
     if section and type(section.CreateLabel) == "function" then
-        return section:CreateLabel(props)
+        local lbl = section:CreateLabel(props)
+        print("[MurzzHub] Label created:", props.Name)
+        return lbl
     else
-        warn("Section invalid or missing CreateLabel:", section)
+        warn("[MurzzHub] Section invalid or missing CreateLabel:", section)
         return nil
     end
 end
 
 --// Sections
 local PlayerSection = createSectionSafe(HomeTab, "Player Data 🧑‍💻")
-local StatsSection = createSectionSafe(HomeTab, "Live Stats ⚡")
-local QuestSection = createSectionSafe(HomeTab, "Quests Overview 🗂️")
+local StatsSection  = createSectionSafe(HomeTab, "Live Stats ⚡")
+local QuestSection  = createSectionSafe(HomeTab, "Quests Overview 🗂️")
 
 --// Player Data Labels
 local ClassLabel = createLabelSafe(PlayerSection, { Name = "Class: ..." })
@@ -125,32 +148,44 @@ end
 --// Quest Labels
 local QuestLabels = {}
 
+--// Wait for data to exist
+local function waitForChildSafe(parent, childName, timeout)
+    local t0 = tick()
+    while tick() - t0 < (timeout or 5) do
+        local child = parent:FindFirstChild(childName)
+        if child then return child end
+        task.wait(0.1)
+    end
+    warn("[MurzzHub] Child not found:", childName)
+    return nil
+end
+
 --// Update UI
 local function updateUI()
-    local OtherData = LocalPlayer:WaitForChild("OtherData")
-    local Stats = LocalPlayer:WaitForChild("Stats")
-    local Quests = LocalPlayer:WaitForChild("Quests")
+    local OtherData = waitForChildSafe(LocalPlayer, "OtherData")
+    local Stats = waitForChildSafe(LocalPlayer, "Stats")
+    local Quests = waitForChildSafe(LocalPlayer, "Quests")
+    if not OtherData or not Stats or not Quests then return end
 
     -- Player Data
     if ClassLabel then
-        local classId = OtherData:WaitForChild("Class").Value
+        local classId = waitForChildSafe(OtherData, "Class") and OtherData.Class.Value or 0
         ClassLabel:Set("Class: "..(Classes[classId] or "Unknown ❓"))
     end
-    if TotalPowerLabel then
-        animateValue(TotalPowerLabel, tonumber(TotalPowerLabel.Name:match("%d+")) or 0, OtherData.TotalPower.Value, 0.5)
+    if TotalPowerLabel and waitForChildSafe(OtherData, "TotalPower") then
+        animateValue(TotalPowerLabel, 0, OtherData.TotalPower.Value, 0.5)
     end
-    if YenLabel then
-        animateValue(YenLabel, tonumber(YenLabel.Name:match("%d+")) or 0, OtherData.Yen.Value, 0.5)
+    if YenLabel and waitForChildSafe(OtherData, "Yen") then
+        animateValue(YenLabel, 0, OtherData.Yen.Value, 0.5)
     end
-    if ChikaraLabel then
-        animateValue(ChikaraLabel, tonumber(ChikaraLabel.Name:match("%d+")) or 0, OtherData.Chikara.Value, 0.5)
+    if ChikaraLabel and waitForChildSafe(OtherData, "Chikara") then
+        animateValue(ChikaraLabel, 0, OtherData.Chikara.Value, 0.5)
     end
 
     -- Stats
     for i, statName in ipairs(StatNames) do
-        if StatLabels[statName] then
-            local statValue = Stats[tostring(i)].Value
-            animateValue(StatLabels[statName], tonumber(StatLabels[statName].Name:match("%d+")) or 0, statValue, 0.5)
+        if StatLabels[statName] and Stats[tostring(i)] then
+            animateValue(StatLabels[statName], 0, Stats[tostring(i)].Value, 0.5)
         end
     end
 
@@ -183,10 +218,11 @@ local function updateUI()
     end
 end
 
---// Initial animated load
+-- Initial animated load
 local function initialLoad()
-    local OtherData = LocalPlayer:WaitForChild("OtherData")
-    local Stats = LocalPlayer:WaitForChild("Stats")
+    local OtherData = waitForChildSafe(LocalPlayer, "OtherData")
+    local Stats = waitForChildSafe(LocalPlayer, "Stats")
+    if not OtherData or not Stats then return end
     if TotalPowerLabel then animateValue(TotalPowerLabel, 0, OtherData.TotalPower.Value, 1) end
     if YenLabel then animateValue(YenLabel, 0, OtherData.Yen.Value, 1) end
     if ChikaraLabel then animateValue(ChikaraLabel, 0, OtherData.Chikara.Value, 1) end
@@ -203,3 +239,4 @@ RunService.RenderStepped:Connect(updateUI)
 
 -- Save/load Rayfield configuration
 Rayfield:LoadConfiguration()
+print("[MurzzHub] Script v1.0b Beta loaded successfully")
