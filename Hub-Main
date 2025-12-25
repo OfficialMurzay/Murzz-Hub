@@ -1,4 +1,4 @@
--- MurzzHub v1.0b Beta
+-- MurzzHub v1.0c Beta
 -- Rayfield UI for Anime Fighting Simulator: Endless
 -- Author: Murzay
 
@@ -11,8 +11,8 @@
 - Class detection with emoji
 - Modern, lively UI
 - Automatic updates
-- Debugging messages for reliability
-- Waits for tabs/sections to load
+- Debugging messages
+- Reliable label creation directly on the tab (fixes CreateLabel errors)
 ]]
 
 --// Services
@@ -70,7 +70,7 @@ end
 Rayfield:LoadConfiguration({
     Name = "MurzzHub Scripts",
     LoadingTitle = "MurzzHub Scripts",
-    LoadingSubtitle = "v1.0b Beta",
+    LoadingSubtitle = "v1.0c Beta",
     ConfigurationSaving = { Enabled = true, FolderName = nil, FileName = "MurzzHub" }
 })
 print("[MurzzHub] Configuration loaded")
@@ -79,7 +79,7 @@ print("[MurzzHub] Configuration loaded")
 local Window = Rayfield:CreateWindow({
     Name = "Murzzhub | AFSE",
     LoadingTitle = "MurzzHub Scripts",
-    LoadingSubtitle = "v1.0b Beta",
+    LoadingSubtitle = "v1.0c Beta",
     ConfigurationSaving = { Enabled = true, FolderName = nil, FileName = "MurzzHub" }
 })
 print("[MurzzHub] Window created")
@@ -87,76 +87,36 @@ print("[MurzzHub] Window created")
 --// Home Tab
 local HomeTab = Window:CreateTab("Home 🏠", nil)
 
--- Wait for tab to be ready
-local function waitForTab(tab, timeout)
-    local t0 = tick()
-    while tick() - t0 < (timeout or 5) do
-        if tab and type(tab.CreateSection) == "function" then
-            return true
-        end
-        task.wait(0.1)
-    end
-    return false
-end
+-- Optional visual sections (not required for CreateLabel)
+local PlayerSection = HomeTab:CreateSection("Player Data 🧑‍💻")
+local StatsSection  = HomeTab:CreateSection("Live Stats ⚡")
+local QuestSection  = HomeTab:CreateSection("Quests Overview 🗂️")
 
-if not waitForTab(HomeTab) then
-    warn("[MurzzHub] HomeTab did not become ready in time!")
-end
-
--- Safe section creation
-local function createSectionSafe(tab, title)
-    local success, section = pcall(function() return tab:CreateSection(title) end)
-    if success and section then
-        print("[MurzzHub] Section created:", title)
-        return section
-    else
-        warn("[MurzzHub] Failed to create section:", title)
-        return nil
-    end
-end
-
--- Safe label creation
-local function createLabelSafe(section, props)
-    if section and type(section.CreateLabel) == "function" then
-        local lbl = section:CreateLabel(props)
-        print("[MurzzHub] Label created:", props.Name)
-        return lbl
-    else
-        warn("[MurzzHub] Section invalid or missing CreateLabel:", section)
-        return nil
-    end
-end
-
---// Sections
-local PlayerSection = createSectionSafe(HomeTab, "Player Data 🧑‍💻")
-local StatsSection  = createSectionSafe(HomeTab, "Live Stats ⚡")
-local QuestSection  = createSectionSafe(HomeTab, "Quests Overview 🗂️")
-
---// Player Data Labels
-local ClassLabel = createLabelSafe(PlayerSection, { Name = "Class: ..." })
-local TotalPowerLabel = createLabelSafe(PlayerSection, { Name = "Total Power: ..." })
-local YenLabel = createLabelSafe(PlayerSection, { Name = "Yen: ..." })
-local ChikaraLabel = createLabelSafe(PlayerSection, { Name = "Chikara: ..." })
+--// Player Data Labels (created directly on tab)
+local ClassLabel      = HomeTab:CreateLabel({ Name = "Class: ..." })
+local TotalPowerLabel = HomeTab:CreateLabel({ Name = "Total Power: ..." })
+local YenLabel        = HomeTab:CreateLabel({ Name = "Yen: ..." })
+local ChikaraLabel    = HomeTab:CreateLabel({ Name = "Chikara: ..." })
 
 --// Stats Labels
 local StatLabels = {}
 local StatNames = {"Strength", "Durability", "Chakra", "Sword", "Speed", "Agility"}
 for _, statName in ipairs(StatNames) do
-    StatLabels[statName] = createLabelSafe(StatsSection, { Name = statName.." : ..." })
+    StatLabels[statName] = HomeTab:CreateLabel({ Name = statName.." : ..." })
 end
 
 --// Quest Labels
 local QuestLabels = {}
 
---// Wait for data to exist
-local function waitForChildSafe(parent, childName, timeout)
+--// Wait for child safely
+local function waitForChildSafe(parent, name, timeout)
     local t0 = tick()
     while tick() - t0 < (timeout or 5) do
-        local child = parent:FindFirstChild(childName)
+        local child = parent:FindFirstChild(name)
         if child then return child end
         task.wait(0.1)
     end
-    warn("[MurzzHub] Child not found:", childName)
+    warn("[MurzzHub] Child not found:", name)
     return nil
 end
 
@@ -191,8 +151,8 @@ local function updateUI()
 
     -- Quests
     for _, questFolder in ipairs(Quests:GetChildren()) do
-        if QuestSection and not QuestLabels[questFolder.Name] then
-            QuestLabels[questFolder.Name] = createLabelSafe(QuestSection, { Name = questFolder.Name.." : 0%" })
+        if not QuestLabels[questFolder.Name] then
+            QuestLabels[questFolder.Name] = HomeTab:CreateLabel({ Name = questFolder.Name.." : 0%" })
         end
 
         local progressSum, requirementSum = 0, 0
@@ -239,4 +199,4 @@ RunService.RenderStepped:Connect(updateUI)
 
 -- Save/load Rayfield configuration
 Rayfield:LoadConfiguration()
-print("[MurzzHub] Script v1.0b Beta loaded successfully")
+print("[MurzzHub] Script v1.0c Beta loaded successfully")
