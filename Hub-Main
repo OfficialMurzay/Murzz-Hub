@@ -54,15 +54,17 @@ Thank you for using my script! Every use really supports me, and gives me motiva
 If you have any suggestions, or just want to see the sneak peaks, events and more then join the Discord Server! ❤️ - Murzay (Scripter)
 ]]
 })
+-- FIXED BUTTON
 InfoTab:CreateButton({
-    Name = {
-        Text = "Join The Discord Server!",
-        Color = {Color3.fromRGB(128,0,128), Color3.fromRGB(255,0,255)}
-    },
+    Name = "Join The Discord Server!",
     Callback = function()
         local discordLink = "DISCORD_LINK_HERE"
         if discordLink and discordLink ~= "" then
-            if syn and syn.request then syn.request({Url=discordLink}) else setclipboard(discordLink) end
+            if syn and syn.request then
+                syn.request({Url=discordLink})
+            else
+                setclipboard(discordLink)
+            end
         end
     end
 })
@@ -190,11 +192,9 @@ local function updateQuestParagraph(questFolder)
         })
     else
         QuestParagraphs[questFolder.Name]:Set(descText)
-        -- Update title if completed
         QuestParagraphs[questFolder.Name].Title = titleText
     end
 
-    -- Notification if fully completed
     if allComplete and not QuestParagraphs[questFolder.Name].Completed then
         QuestParagraphs[questFolder.Name].Completed=true
         Rayfield:Notify({
@@ -237,42 +237,6 @@ RunService.Heartbeat:Connect(function()
         local target = OtherData.Chikara.Value
         animateValue(ChikaraLabel,currentChikara,target,"Chikara: ","💎",0.5)
         currentChikara=target
-    end
-    for statId,data in pairs(LiveStats) do
-        local statObj=StatsFolder:FindFirstChild(tostring(statId))
-        if statObj and statObj.Value~=data.Value then
-            animateValue(data.Label,data.Value,statObj.Value,data.StatName..": ",data.Emoji,0.5)
-            data.Value=statObj.Value
-        end
-    end
-    for questName,data in pairs(QuestOverviewLabels) do
-        local questFolder=QuestsFolder:FindFirstChild(questName)
-        if questFolder then
-            local requirementsFolder = questFolder:FindFirstChild("Requirements")
-            local progressFolder = questFolder:FindFirstChild("Progress")
-            if requirementsFolder and progressFolder then
-                local totalReq,totalProg=0,0
-                for _,req in ipairs(requirementsFolder:GetChildren()) do
-                    if req:IsA("IntValue") or req:IsA("NumberValue") then totalReq=totalReq+req.Value end
-                end
-                for _,prog in ipairs(progressFolder:GetChildren()) do
-                    if prog:IsA("IntValue") or prog:IsA("NumberValue") then totalProg=totalProg+prog.Value end
-                end
-                local percent=0
-                if totalReq>0 then percent=math.floor((totalProg/totalReq)*100) end
-                local displayName=questFolder.Name
-                local name,number=displayName:match("(%a+)(%d+)")
-                if name and number then displayName=name.." No."..number end
-                local labelText=string.format("%s [%d%%]",displayName,percent)
-                local labelObj=data.Label
-                if percent>=100 and not data.Completed then
-                    data.Completed=true
-                    labelObj:Set(labelText.." ✅")
-                    if labelObj.SetColor then labelObj:SetColor(Color3.fromRGB(144,238,144)) end
-                    Rayfield:Notify({Title="✅ You completed a quest!",Content="You completed "..displayName.."! Stay on that grinding streak!",Duration=5,Image=1580567251})
-                else labelObj:Set(labelText) end
-            end
-        end
     end
 end)
 
