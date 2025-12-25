@@ -1,6 +1,5 @@
 -- MurzzHub v1.0j Beta
--- NOTE: After z -> 1.01a
--- Stable build: Home, Info, Quests, Quest Overview FIXED
+-- Stable build: Info, Home, Quests, Quest Overview FIXED
 -- Author: Murzay
 
 -------------------------------------------------
@@ -122,17 +121,16 @@ local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
 HomeTab:CreateSection("Live Stats 📊")
 local StatLabels = {}
-
 for id, name in pairs(StatNames) do
 	StatLabels[id] = HomeTab:CreateLabel(name..": ...")
 end
 
+-------------------------------------------------
+-- QUEST OVERVIEW
+-------------------------------------------------
 HomeTab:CreateSection("Quest Overview 📜")
 local QuestOverview = {}
 
--------------------------------------------------
--- QUEST OVERVIEW LOGIC (FIXED)
--------------------------------------------------
 local function formatQuestName(raw)
 	local n, num = raw:match("(%a+)(%d+)")
 	if n and num then
@@ -144,22 +142,29 @@ end
 local function calculateQuestPercent(qFolder)
 	local req = qFolder:FindFirstChild("Requirements")
 	local prog = qFolder:FindFirstChild("Progress")
-	if not req or not prog then return 0 end
+	if not req or not prog then return 0, false end
 
-	local reqTotal, progTotal = 0, 0
-	for _, v in ipairs(req:GetChildren()) do
-		if v:IsA("IntValue") then
-			reqTotal += v.Value
+	local totalReq, totalProg = 0, 0
+	local complete = true
+
+	for _, r in ipairs(req:GetChildren()) do
+		if r:IsA("IntValue") then
+			local p = prog:FindFirstChild(r.Name)
+			-- Special case: "Kill" progress
+			local pVal = 0
+			if r.Name == "Kill" and prog:FindFirstChild("Kill") then
+				pVal = prog.Kill.Value
+			elseif p and p:IsA("IntValue") then
+				pVal = p.Value
+			end
+			totalReq += r.Value
+			totalProg += pVal
+			if pVal < r.Value then complete = false end
 		end
 	end
-	for _, v in ipairs(prog:GetChildren()) do
-		if v:IsA("IntValue") then
-			progTotal += v.Value
-		end
-	end
 
-	if reqTotal == 0 then return 0 end
-	return math.clamp(math.floor((progTotal / reqTotal) * 100), 0, 100)
+	local percent = totalReq > 0 and math.floor((totalProg / totalReq) * 100) or 0
+	return percent, complete
 end
 
 local function updateQuestOverview()
@@ -167,13 +172,21 @@ local function updateQuestOverview()
 
 	for _, q in ipairs(QuestsFolder:GetChildren()) do
 		if q:IsA("Folder") then
-			local percent = calculateQuestPercent(q)
+			local percent, done = calculateQuestPercent(q)
 			local name = formatQuestName(q.Name)
+			local text = name.." ["..percent.."%]"..(done and " ✅" or "")
 
 			if not QuestOverview[q] then
-				QuestOverview[q] = HomeTab:CreateLabel(name.." ["..percent.."%]")
+				QuestOverview[q] = HomeTab:CreateLabel(text)
 			else
-				QuestOverview[q]:Set(name.." ["..percent.."%]")
+				QuestOverview[q]:Set(text)
+			end
+
+			-- Live update for progress
+			local prog = q:FindFirstChild("Progress")
+			if prog then
+				prog.ChildAdded:Connect(function() updateQuestOverview() end)
+				prog.ChildRemoved:Connect(function() updateQuestOverview() end)
 			end
 		end
 	end
@@ -206,8 +219,14 @@ local function updateQuestTab()
 						local done = p.Value >= r.Value
 						if done then completedStats += 1 end
 						table.insert(lines,
-							abbreviate(p.Value).."/"..abbreviate(r.Value)..
-							(done and " ✅" or "")
+							abbreviate(p.Value).."/"..abbreviate(r.Value)..(done and " ✅" or "")
+						)
+					elseif r and r.Name == "Kill" and prog:FindFirstChild("Kill") then
+						local pVal = prog.Kill.Value
+						local done = pVal >= r.Value
+						if done then completedStats += 1 end
+						table.insert(lines,
+							abbreviate(pVal).."/"..abbreviate(r.Value)..(done and " ✅" or "")
 						)
 					end
 				end
@@ -234,7 +253,7 @@ local function updateQuestTab()
 end
 
 -------------------------------------------------
--- LIVE UPDATES (EVENT-BASED)
+-- LIVE UPDATES (PLAYER DATA + STATS)
 -------------------------------------------------
 local function updateStats()
 	if OtherData then
@@ -282,4 +301,4 @@ if QuestsFolder then
 	end)
 end
 
-print("[MurzzHub] v1.0j Beta loaded successfully.")
+print("[MurzzHub] v1.0j Beta loaded successfully with fixed Quest Overview ✅")
