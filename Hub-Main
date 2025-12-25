@@ -1,6 +1,6 @@
--- MurzzHub v1.0m Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
+-- MurzzHub v1.0n Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0l -> v1.0m
+-- VERSION NOTE: v1.0m -> v1.0n
 
 -------------------------------------------------
 -- SERVICES
@@ -15,7 +15,19 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0m Beta"
+local VERSION = "v1.0n Beta"
+
+-------------------------------------------------
+-- DEBUG SYSTEM
+-------------------------------------------------
+local debugErrorShown = false
+local function safeRun(func)
+    local ok, err = pcall(func)
+    if not ok and not debugErrorShown then
+        debugErrorShown = true
+        warn("[MurzzHub Debug] An error occurred:\n"..err)
+    end
+end
 
 -------------------------------------------------
 -- RAYFIELD
@@ -88,14 +100,16 @@ If you have any suggestions, or just want to see the sneak peaks, events and mor
 InfoTab:CreateButton({
     Name = "Join The Discord Server!",
     Callback = function()
-        local discordLink = "DISCORD_LINK_HERE"
-        if discordLink and discordLink ~= "" then
-            if syn and syn.request then
-                syn.request({Url=discordLink})
-            else
-                setclipboard(discordLink)
+        safeRun(function()
+            local discordLink = "DISCORD_LINK_HERE"
+            if discordLink and discordLink ~= "" then
+                if syn and syn.request then
+                    syn.request({Url=discordLink})
+                else
+                    setclipboard(discordLink)
+                end
             end
-        end
+        end)
     end
 })
 
@@ -160,54 +174,56 @@ QuestsTab:CreateSection("Current Quests 📌")
 local QuestParagraphs = {}
 
 local function updateQuestParagraph(questFolder)
-    if not questFolder then return end
-    local displayName = questFolder.Name
-    local name, number = displayName:match("(%a+)(%d+)")
-    if name and number then displayName = name.." No."..number end
+    safeRun(function()
+        if not questFolder then return end
+        local displayName = questFolder.Name
+        local name, number = displayName:match("(%a+)(%d+)")
+        if name and number then displayName = name.." No."..number end
 
-    local Requirements = questFolder:FindFirstChild("Requirements")
-    local Progress = questFolder:FindFirstChild("Progress")
-    if not Requirements or not Progress then return end
+        local Requirements = questFolder:FindFirstChild("Requirements")
+        local Progress = questFolder:FindFirstChild("Progress")
+        if not Requirements or not Progress then return end
 
-    local descLines = {}
-    local allComplete = true
-    for _, req in ipairs(Requirements:GetChildren()) do
-        if req:IsA("IntValue") or req:IsA("NumberValue") then
-            local prog = Progress:FindFirstChild(req.Name)
-            local progVal = 0
-            if prog and (prog:IsA("IntValue") or prog:IsA("NumberValue")) then progVal = prog.Value end
-            local statComplete = progVal >= req.Value
-            if not statComplete then allComplete=false end
-            local line = string.format("%s/%s %s%s", abbreviateNumber(progVal), abbreviateNumber(req.Value), req.Name, statComplete and " ✅" or "")
-            table.insert(descLines,line)
+        local descLines = {}
+        local allComplete = true
+        for _, req in ipairs(Requirements:GetChildren()) do
+            if req:IsA("IntValue") or req:IsA("NumberValue") then
+                local prog = Progress:FindFirstChild(req.Name)
+                local progVal = 0
+                if prog and (prog:IsA("IntValue") or prog:IsA("NumberValue")) then progVal = prog.Value end
+                local statComplete = progVal >= req.Value
+                if not statComplete then allComplete=false end
+                local line = string.format("%s/%s %s%s", abbreviateNumber(progVal), abbreviateNumber(req.Value), req.Name, statComplete and " ✅" or "")
+                table.insert(descLines,line)
+            end
         end
-    end
-    local descText = table.concat(descLines,"\n")
-    local titleText = displayName..(allComplete and " ✅" or "")
+        local descText = table.concat(descLines,"\n")
+        local titleText = displayName..(allComplete and " ✅" or "")
 
-    if not QuestParagraphs[questFolder.Name] then
-        local paragraph = QuestsTab:CreateParagraph({Title=titleText, Content=descText})
-        QuestParagraphs[questFolder.Name] = paragraph
-        paragraph.Completed = allComplete
-    else
-        local paragraph = QuestParagraphs[questFolder.Name]
-        if paragraph and paragraph.Set then paragraph:Set(descText) end
-        if paragraph then paragraph.Title = titleText end
-        paragraph.Completed = allComplete
-    end
-
-    if allComplete then
-        local paragraph = QuestParagraphs[questFolder.Name]
-        if paragraph and not paragraph.Notified then
-            paragraph.Notified = true
-            Rayfield:Notify({
-                Title="✅ You completed a quest!",
-                Content="You completed "..displayName.."! Stay on that grinding streak!",
-                Duration=5,
-                Image=1580567251
-            })
+        if not QuestParagraphs[questFolder.Name] then
+            local paragraph = QuestsTab:CreateParagraph({Title=titleText, Content=descText})
+            QuestParagraphs[questFolder.Name] = paragraph
+            paragraph.Completed = allComplete
+        else
+            local paragraph = QuestParagraphs[questFolder.Name]
+            if paragraph and paragraph.Set then paragraph:Set(descText) end
+            if paragraph then paragraph.Title = titleText end
+            paragraph.Completed = allComplete
         end
-    end
+
+        if allComplete then
+            local paragraph = QuestParagraphs[questFolder.Name]
+            if paragraph and not paragraph.Notified then
+                paragraph.Notified = true
+                Rayfield:Notify({
+                    Title="✅ You completed a quest!",
+                    Content="You completed "..displayName.."! Stay on that grinding streak!",
+                    Duration=5,
+                    Image=1580567251
+                })
+            end
+        end
+    end)
 end
 
 for _,questFolder in ipairs(QuestsFolder:GetChildren()) do updateQuestParagraph(questFolder) end
@@ -224,24 +240,26 @@ end)
 -------------------------------------------------
 local currentPower,currentYen,currentChikara = 0,0,0
 RunService.Heartbeat:Connect(function()
-    if OtherData:FindFirstChild("Class") then
-        ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓"))
-    end
-    if OtherData:FindFirstChild("TotalPower") then
-        local target = OtherData.TotalPower.Value
-        animateValue(PowerLabel,currentPower,target,"Total Power: ","⚡",0.5)
-        currentPower=target
-    end
-    if OtherData:FindFirstChild("Yen") then
-        local target = OtherData.Yen.Value
-        animateValue(YenLabel,currentYen,target,"Money: ","💰",0.5)
-        currentYen=target
-    end
-    if OtherData:FindFirstChild("Chikara") then
-        local target = OtherData.Chikara.Value
-        animateValue(ChikaraLabel,currentChikara,target,"Chikara: ","💎",0.5)
-        currentChikara=target
-    end
+    safeRun(function()
+        if OtherData:FindFirstChild("Class") then
+            ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓"))
+        end
+        if OtherData:FindFirstChild("TotalPower") then
+            local target = OtherData.TotalPower.Value
+            animateValue(PowerLabel,currentPower,target,"Total Power: ","⚡",0.5)
+            currentPower=target
+        end
+        if OtherData:FindFirstChild("Yen") then
+            local target = OtherData.Yen.Value
+            animateValue(YenLabel,currentYen,target,"Money: ","💰",0.5)
+            currentYen=target
+        end
+        if OtherData:FindFirstChild("Chikara") then
+            local target = OtherData.Chikara.Value
+            animateValue(ChikaraLabel,currentChikara,target,"Chikara: ","💎",0.5)
+            currentChikara=target
+        end
+    end)
 end)
 
 -------------------------------------------------
