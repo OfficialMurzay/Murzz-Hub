@@ -49,29 +49,22 @@ InfoTab:CreateParagraph({
 -- Discord Section
 InfoTab:CreateSection("Discord 💬")
 
--- Gradient function for Rayfield text
-local function goldGradientText(text)
-    -- Rayfield supports gradient coloring by passing a Color3 table
-    -- We'll approximate gold gradient with yellow-orange
-    return {
-        Text = text,
-        Color = {
-            Color3.fromRGB(255, 215, 0),  -- Gold start
-            Color3.fromRGB(255, 165, 0)   -- Orange
-        }
-    }
+-- Username as gold-colored label
+local usernameLabel = InfoTab:CreateLabel("Dear @"..Player.DisplayName..",")
+if usernameLabel.SetColor then
+    usernameLabel:SetColor(Color3.fromRGB(255, 215, 0)) -- Gold
 end
 
-local usernameText = string.format("Dear @%s,", Player.DisplayName)
+-- Paragraph with message
 InfoTab:CreateParagraph({
-    Title = goldGradientText(usernameText), -- gold gradient for username
+    Title = "Message",
     Content = [[
 Thank you for using my script! Every use really supports me, and gives me motivation to continue updating this script!
 If you have any suggestions, or just want to see the sneak peaks, events and more then join the Discord Server! ❤️ - Murzay (Scripter)
 ]]
 })
 
--- Gradient Discord button
+-- Discord button with purple gradient
 InfoTab:CreateButton({
     Name = {
         Text = "Join The Discord Server!",
@@ -278,9 +271,8 @@ RunService.Heartbeat:Connect(function()
                 if percent >= 100 and not data.Completed then
                     data.Completed = true
                     labelObj:Set(labelText.." ✅")
-                    -- Light -> dark green gradient (approximated)
                     if labelObj.SetColor then
-                        labelObj:SetColor(Color3.fromRGB(144, 238, 144)) -- light green start
+                        labelObj:SetColor(Color3.fromRGB(144, 238, 144)) -- light green
                     end
                     -- Notification
                     Rayfield:Notify({
