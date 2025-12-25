@@ -211,4 +211,29 @@ end
 -------------------------------------------------
 RunService.Heartbeat:Connect(function()
     if OtherData:FindFirstChild("Class") then
-        ClassLabel.Text = "Class: "..(ClassMap[OtherData.Class.Value] or "Unk
+        ClassLabel.Text = "Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓")
+    end
+    if OtherData:FindFirstChild("TotalPower") then
+        PowerLabel.Text = "Total Power: "..abbreviateNumber(OtherData.TotalPower.Value).." ⚡"
+    end
+    if OtherData:FindFirstChild("Yen") then
+        YenLabel.Text = "Money: "..abbreviateNumber(OtherData.Yen.Value).." 💰"
+    end
+    if OtherData:FindFirstChild("Chikara") then
+        ChikaraLabel.Text = "Chikara: "..abbreviateNumber(OtherData.Chikara.Value).." 💎"
+    end
+
+    for id,data in pairs(LiveStats) do
+        local stat = StatsFolder:FindFirstChild(tostring(id))
+        if stat then
+            data.Label.Text =
+                data.StatName..": "..abbreviateNumber(stat.Value).." "..data.Emoji
+        end
+    end
+end)
+
+-------------------------------------------------
+-- DONE
+-------------------------------------------------
+Rayfield:LoadConfiguration()
+print("[MurzzHub] "..VERSION.." loaded successfully")
