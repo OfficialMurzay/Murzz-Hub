@@ -1,216 +1,147 @@
--------------------------------------------------
--- SERVICES
--------------------------------------------------
+-- MurzzHub v1.0 Beta
+-- Rayfield UI for Anime Fighting Simulator: Endless
+-- Author: Murzz (Ashy Bashy)
+
+--[[
+📝 Features:
+- Animated loading
+- Live player stats
+- Live quests overview with percentage
+- Animated stat increment
+- Abbreviated numbers (K, M, B, T, Qd, Qn, Sx)
+- Modern, lively UI with emojis
+- Automatic updates
+]]
+
+--// Services
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
 
-local Player = Players.LocalPlayer
-local OtherData = Player:WaitForChild("OtherData")
-local QuestsFolder = Player:WaitForChild("Quests")
+--// Rayfield Library
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/GreenDeno/Venyx-UI-Library/main/Rayfield.lua"))()
 
--------------------------------------------------
--- RAYFIELD
--------------------------------------------------
-local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+--// Utility: Format numbers
+local function abbreviateNumber(num)
+    local absNum = math.abs(num)
+    if absNum >= 1e21 then return string.format("%.2fSx", num / 1e21)
+    elseif absNum >= 1e18 then return string.format("%.2fQn", num / 1e18)
+    elseif absNum >= 1e15 then return string.format("%.2fQd", num / 1e15)
+    elseif absNum >= 1e12 then return string.format("%.2fT", num / 1e12)
+    elseif absNum >= 1e9 then return string.format("%.2fB", num / 1e9)
+    elseif absNum >= 1e6 then return string.format("%.2fM", num / 1e6)
+    elseif absNum >= 1e3 then return string.format("%.2fK", num / 1e3)
+    else return tostring(num)
+    end
+end
 
-local Window = Rayfield:CreateWindow({
-    Name = "MurzzHub v1.0",
-    LoadingTitle = "MurzzHub v1.0",
-    LoadingSubtitle = "Auto Train • Teleports",
+--// Animated increment function
+local function animateValue(label, startVal, endVal, duration)
+    local step = (endVal - startVal) / (duration * 30)
+    local current = startVal
+    local connection
+    connection = game:GetService("RunService").RenderStepped:Connect(function()
+        current = current + step
+        if (step > 0 and current >= endVal) or (step < 0 and current <= endVal) then
+            current = endVal
+            connection:Disconnect()
+        end
+        label:Set(abbreviateNumber(math.floor(current)))
+    end)
+end
+
+--// Loading Screen
+Rayfield:LoadConfiguration({
+    Name = "MurzzHub Scripts",
+    LoadingTitle = "MurzzHub Scripts",
+    LoadingSubtitle = "v1.0 Beta",
     ConfigurationSaving = {
         Enabled = true,
-        FolderName = "MurzzHub",
-        FileName = "AFSE"
+        FolderName = nil,
+        FileName = "MurzzHub"
     },
-    KeySystem = false
 })
 
--------------------------------------------------
--- UTILITIES
--------------------------------------------------
-local function formatNumber(num)
-    if not num then return "0" end
-    local formats = {
-        {1e15,"Qd"},
-        {1e12,"T"},
-        {1e9,"B"},
-        {1e6,"M"},
-        {1e3,"K"}
+--// Main Window
+local Window = Rayfield:CreateWindow({
+    Name = "Murzzhub | AFSE",
+    LoadingTitle = "MurzzHub Scripts",
+    LoadingSubtitle = "v1.0 Beta",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = nil,
+        FileName = "MurzzHub"
     }
-    for _,f in ipairs(formats) do
-        if num >= f[1] then
-            return string.format("%.2f%s", num/f[1], f[2])
-        end
-    end
-    return tostring(num)
+})
+
+--// Home Tab
+local HomeTab = Window:CreateTab("Home 🏠", nil)
+
+-- Player Data Section
+local PlayerSection = HomeTab:CreateSection("Player Data 🧑‍💻")
+
+-- Stats labels
+local ClassLabel = PlayerSection:CreateLabel({ Name = "Class: ..." })
+local TotalPowerLabel = PlayerSection:CreateLabel({ Name = "Total Power: ..." })
+local YenLabel = PlayerSection:CreateLabel({ Name = "Yen: ..." })
+local ChikaraLabel = PlayerSection:CreateLabel({ Name = "Chikara: ..." })
+
+-- Live Stats Section
+local StatsSection = HomeTab:CreateSection("Live Stats ⚡")
+local StatLabels = {}
+local StatNames = {"Strength", "Durability", "Chakra", "Sword", "Speed", "Agility"}
+for i, stat in ipairs(StatNames) do
+    StatLabels[stat] = StatsSection:CreateLabel({ Name = stat.." : ..." })
 end
 
--------------------------------------------------
--- CLASS MAP
--------------------------------------------------
-local ClassMap = {
-    [1]="Fighter",[2]="Shinobi",[3]="Pirate",[4]="Ghoul",[5]="Hero",
-    [6]="Reaper",[7]="Saiyan",[8]="Sin",[9]="Magi",[10]="Akuma",
-    [11]="Yonko",[12]="Gorosei",[13]="Overlord",[14]="Hokage",
-    [15]="Kaioshin",[16]="Sage",[17]="Espada",[18]="Shinigami",
-    [19]="Hashira",[20]="Hakaishin",[21]="Otsutsuki",
-    [22]="Pirate King",[23]="Kishin",[24]="Angel",
-    [25]="Demon King",[26]="Ultra Instinct",[27]="Upper Moon"
-}
+-- Quests Overview Section
+local QuestSection = HomeTab:CreateSection("Quests Overview 🗂️")
+local QuestLabels = {}
 
--------------------------------------------------
--- STAT MAP
--------------------------------------------------
-local StatIdToName = {
-    [1]="Strength",
-    [2]="Durability",
-    [3]="Chakra",
-    [4]="Sword",
-    [5]="Speed",
-    [6]="Agility"
-}
+--// Update Loop
+local function updateUI()
+    -- Player Data
+    ClassLabel:Set("Class: "..tostring(LocalPlayer:WaitForChild("OtherData"):WaitForChild("Class").Value).." 🏷️")
+    animateValue(TotalPowerLabel, tonumber(TotalPowerLabel.Name:match("%d+")) or 0, LocalPlayer.OtherData.TotalPower.Value, 0.5)
+    animateValue(YenLabel, tonumber(YenLabel.Name:match("%d+")) or 0, LocalPlayer.OtherData.Yen.Value, 0.5)
+    animateValue(ChikaraLabel, tonumber(ChikaraLabel.Name:match("%d+")) or 0, LocalPlayer.OtherData.Chikara.Value, 0.5)
 
--------------------------------------------------
--- HOME TAB
--------------------------------------------------
-local HomeTab = Window:CreateTab("Home 🏠")
-
-HomeTab:CreateSection("Player Data 👤")
-
-local ClassLabel   = HomeTab:CreateLabel("Class: ...")
-local PowerLabel   = HomeTab:CreateLabel("Total Power: ... ⚡")
-local YenLabel     = HomeTab:CreateLabel("Money: ... 💰")
-local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
-
-HomeTab:CreateSection("Live Stats 📊")
-
-local LiveStats = {
-    Strength   = HomeTab:CreateLabel("Strength: ... 💪"),
-    Durability = HomeTab:CreateLabel("Durability: ... 🛡️"),
-    Chakra     = HomeTab:CreateLabel("Chakra: ... 🌀"),
-    Sword      = HomeTab:CreateLabel("Sword: ... 🗡️"),
-    Speed      = HomeTab:CreateLabel("Speed: ... 💨"),
-    Agility    = HomeTab:CreateLabel("Agility: ... ☁️"),
-}
-
--------------------------------------------------
--- QUEST TAB
--------------------------------------------------
-local QuestTab = Window:CreateTab("Quests 📜")
-QuestTab:CreateSection("Active Quest")
-
-local QuestTitle = QuestTab:CreateLabel("")
-local QuestLines = {}
-
--------------------------------------------------
--- CLEAR QUEST TEXT (SAFE)
--------------------------------------------------
-local function clearQuestLines()
-    for _,label in ipairs(QuestLines) do
-        label:Set("")
-    end
-    QuestLines = {}
-end
-
--------------------------------------------------
--- BUILD QUEST TEXT UI
--------------------------------------------------
-local function buildQuestUI(quest)
-    clearQuestLines()
-
-    if not quest then
-        QuestTitle:Set("")
-        return
+    -- Live Stats
+    local Stats = LocalPlayer:WaitForChild("Stats")
+    for i, statName in ipairs(StatNames) do
+        local statValue = Stats[tostring(i)].Value
+        animateValue(StatLabels[statName], tonumber(StatLabels[statName].Name:match("%d+")) or 0, statValue, 0.5)
     end
 
-    QuestTitle:Set("Quest: "..quest.Name.." 📜")
-
-    local progress = quest:FindFirstChild("Progress")
-    local requirements = quest:FindFirstChild("Requirements")
-    if not progress or not requirements then return end
-
-    for _,p in ipairs(progress:GetChildren()) do
-        if not p:IsA("IntValue") then continue end
-
-        local statId = tonumber(p.Name)
-        local statName = StatIdToName[statId]
-        local req = requirements:FindFirstChild(p.Name)
-
-        if statName and req then
-            local label = QuestTab:CreateLabel("")
-            table.insert(QuestLines, {
-                Label = label,
-                Progress = p,
-                Requirement = req,
-                Name = statName
-            })
+    -- Quests
+    local Quests = LocalPlayer:WaitForChild("Quests")
+    for _, questFolder in ipairs(Quests:GetChildren()) do
+        if not QuestLabels[questFolder.Name] then
+            QuestLabels[questFolder.Name] = QuestSection:CreateLabel({ Name = questFolder.Name.." : 0%" })
         end
-    end
-end
 
--------------------------------------------------
--- QUEST LIVE UPDATE
--------------------------------------------------
-RunService.Heartbeat:Connect(function()
-    for _,data in ipairs(QuestLines) do
-        local p = data.Progress
-        local r = data.Requirement
-        if p and r then
-            data.Label:Set(
-                formatNumber(p.Value).." / "..formatNumber(r.Value).." "..data.Name
-            )
-        end
-    end
-end)
-
--------------------------------------------------
--- QUEST DETECTION (ANY QUEST)
--------------------------------------------------
-task.spawn(function()
-    local lastQuest
-    while true do
-        local foundQuest
-
-        for _,q in ipairs(QuestsFolder:GetChildren()) do
-            if q:IsA("Folder") and q:FindFirstChild("Progress") then
-                foundQuest = q
-                break
+        local progressSum, requirementSum = 0, 0
+        local Progress = questFolder:FindFirstChild("Progress")
+        local Requirements = questFolder:FindFirstChild("Requirements")
+        if Progress and Requirements then
+            for i=1,6 do
+                local progVal = Progress:FindFirstChild(tostring(i))
+                local reqVal = Requirements:FindFirstChild(tostring(i))
+                if progVal and reqVal then
+                    progressSum = progressSum + progVal.Value
+                    requirementSum = requirementSum + reqVal.Value
+                end
             end
         end
-
-        if foundQuest ~= lastQuest then
-            buildQuestUI(foundQuest)
-            lastQuest = foundQuest
+        local percent = 0
+        if requirementSum > 0 then
+            percent = math.floor(progressSum / requirementSum * 100)
         end
+        QuestLabels[questFolder.Name]:Set(questFolder.Name.." : "..percent.."%")
+    end
+end
 
-        task.wait(0.5)
-    end
-end)
-
--------------------------------------------------
--- HOME LIVE UPDATE
--------------------------------------------------
-RunService.Heartbeat:Connect(function()
-    if OtherData:FindFirstChild("Class") then
-        ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown"))
-    end
-    if OtherData:FindFirstChild("TotalPower") then
-        PowerLabel:Set("Total Power: "..formatNumber(OtherData.TotalPower.Value).." ⚡")
-    end
-    if OtherData:FindFirstChild("Yen") then
-        YenLabel:Set("Money: "..formatNumber(OtherData.Yen.Value).." 💰")
-    end
-    if OtherData:FindFirstChild("Chikara") then
-        ChikaraLabel:Set("Chikara: "..formatNumber(OtherData.Chikara.Value).." 💎")
-    end
-
-    for stat,label in pairs(LiveStats) do
-        local obj = OtherData:FindFirstChild(stat)
-        if obj then
-            label:Set(stat..": "..formatNumber(obj.Value))
-        end
-    end
-end)
+--// Update every frame
+game:GetService("RunService").RenderStepped:Connect(updateUI)
 
 -------------------------------------------------
 Rayfield:LoadConfiguration()
