@@ -1,5 +1,6 @@
--- MurzzHub v1.0j Beta (UI + Player Data, Live Stats & Quest Overview with functional percentages)
+-- MurzzHub v1.0j Beta (UI + Player Data, Stats & Quest Overview with functional percentages)
 -- Author: Murzay (Modified by ChatGPT)
+-- VERSION NOTE: v1.0i -> v1.0j; next after z would be 1.01a, etc.
 
 -------------------------------------------------
 -- SERVICES
@@ -10,7 +11,7 @@ local RunService = game:GetService("RunService")
 local Player = Players.LocalPlayer
 local OtherData = Player:WaitForChild("OtherData")
 local StatsFolder = Player:WaitForChild("Stats")
-local QuestsFolder = Player:WaitForChild("Quests") -- For dynamic quest reading
+local QuestsFolder = Player:WaitForChild("Quests")
 
 -------------------------------------------------
 -- RAYFIELD
@@ -18,8 +19,8 @@ local QuestsFolder = Player:WaitForChild("Quests") -- For dynamic quest reading
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "MurzzHub v1.0i Beta",
-    LoadingTitle = "MurzzHub v1.0i Beta",
+    Name = "MurzzHub v1.0j Beta",
+    LoadingTitle = "MurzzHub v1.0j Beta",
     LoadingSubtitle = "UI Live Player Data, Stats & Quests",
     ConfigurationSaving = {
         Enabled = true,
@@ -118,17 +119,21 @@ end
 HomeTab:CreateSection("Quest Overview 📜")
 local QuestOverviewLabels = {}
 
--- Dynamically read quest folders and create labels
-for _, questFolder in ipairs(QuestsFolder:GetChildren()) do
-    if questFolder:IsA("Folder") then
-        local questName = questFolder.Name
-        local name, number = questName:match("(%a+)(%d+)")
-        if name and number then
-            questName = name.." No."..number
+-- Dynamically create labels for all quests
+local function createQuestLabels()
+    QuestOverviewLabels = {} -- reset
+    for _, questFolder in ipairs(QuestsFolder:GetChildren()) do
+        if questFolder:IsA("Folder") then
+            local displayName = questFolder.Name
+            local name, number = displayName:match("(%a+)(%d+)")
+            if name and number then
+                displayName = name.." No."..number
+            end
+            QuestOverviewLabels[questFolder.Name] = HomeTab:CreateLabel("Quest: "..displayName.." 0%")
         end
-        QuestOverviewLabels[questFolder.Name] = HomeTab:CreateLabel("Quest: "..questName.." 0%")
     end
 end
+createQuestLabels()
 
 -------------------------------------------------
 -- PLAYER DATA & STATS LIVE UPDATE
@@ -171,37 +176,39 @@ RunService.Heartbeat:Connect(function()
         end
     end
 
-    -- Quest Overview Percentages
+    -- Quest Percentages
     for questName, label in pairs(QuestOverviewLabels) do
         local questFolder = QuestsFolder:FindFirstChild(questName)
-        if questFolder and questFolder:FindFirstChild("Requirements") and questFolder:FindFirstChild("Progress") then
-            local requirements = questFolder.Requirements:GetChildren()
-            local progress = questFolder.Progress:GetChildren()
+        if questFolder then
+            local requirementsFolder = questFolder:FindFirstChild("Requirements")
+            local progressFolder = questFolder:FindFirstChild("Progress")
+            if requirementsFolder and progressFolder then
+                local totalReq, totalProg = 0, 0
 
-            local totalReq, totalProg = 0, 0
-            for _, req in ipairs(requirements) do
-                if req:IsA("IntValue") or req:IsA("NumberValue") then
-                    totalReq = totalReq + req.Value
+                for _, req in ipairs(requirementsFolder:GetChildren()) do
+                    if req:IsA("IntValue") or req:IsA("NumberValue") then
+                        totalReq = totalReq + req.Value
+                    end
                 end
-            end
-            for _, prog in ipairs(progress) do
-                if prog:IsA("IntValue") or prog:IsA("NumberValue") then
-                    totalProg = totalProg + prog.Value
+                for _, prog in ipairs(progressFolder:GetChildren()) do
+                    if prog:IsA("IntValue") or prog:IsA("NumberValue") then
+                        totalProg = totalProg + prog.Value
+                    end
                 end
-            end
 
-            local percent = 0
-            if totalReq > 0 then
-                percent = math.floor((totalProg / totalReq) * 100)
-            end
+                local percent = 0
+                if totalReq > 0 then
+                    percent = math.floor((totalProg / totalReq) * 100)
+                end
 
-            -- Update label text
-            local displayName = questFolder.Name
-            local name, number = displayName:match("(%a+)(%d+)")
-            if name and number then
-                displayName = name.." No."..number
+                local displayName = questFolder.Name
+                local name, number = displayName:match("(%a+)(%d+)")
+                if name and number then
+                    displayName = name.." No."..number
+                end
+
+                label:Set(string.format("Quest: %s %d%% (%d/%d)", displayName, percent, totalProg, totalReq))
             end
-            label:Set(string.format("Quest: %s %d%% (%d/%d)", displayName, percent, totalProg, totalReq))
         end
     end
 end)
@@ -210,4 +217,4 @@ end)
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] UI + Player Data, Live Stats & Quest Overview v1.0i Beta loaded successfully")
+print("[MurzzHub] UI + Player Data, Live Stats & Quest Overview v1.0j Beta loaded successfully")
