@@ -1,4 +1,4 @@
--- MurzzHub v1.0w Beta (UI + Player Data + Stats + Truly Live Quest Updates)
+-- MurzzHub v1.0x Beta (UI + Player Data + Stats + Live Quest Updates)
 -- Author: Murzay (Modified by ChatGPT)
 
 -------------------------------------------------
@@ -14,7 +14,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0w Beta"
+local VERSION = "v1.0x Beta"
 
 -------------------------------------------------
 -- DEBUG
@@ -169,12 +169,14 @@ end)
 local QuestsTab = Window:CreateTab("Quests 📜")
 QuestsTab:CreateSection("Current Quests 📌")
 local QuestParagraphs = {}
+local AnimatedQuestValues = {} -- external table for animation
 
--- Helper: animate and store live values for each quest requirement
-local function getAnimatedValue(folder, name)
-    folder.AnimatedValues = folder.AnimatedValues or {}
-    if folder.AnimatedValues[name] == nil then folder.AnimatedValues[name] = 0 end
-    return folder.AnimatedValues[name]
+local function getAnimatedValue(questFolder, reqName)
+    AnimatedQuestValues[questFolder] = AnimatedQuestValues[questFolder] or {}
+    if AnimatedQuestValues[questFolder][reqName] == nil then
+        AnimatedQuestValues[questFolder][reqName] = 0
+    end
+    return AnimatedQuestValues[questFolder][reqName]
 end
 
 local function updateQuestParagraph(questFolder)
@@ -186,10 +188,9 @@ local function updateQuestParagraph(questFolder)
 
         local Requirements = questFolder:FindFirstChild("Requirements")
         if not Requirements then return end
-
+        local ProgressFolder = questFolder:FindFirstChild("Progress")
         local descLines = {}
         local allComplete = true
-        local ProgressFolder = questFolder:FindFirstChild("Progress")
 
         for _, req in ipairs(Requirements:GetChildren()) do
             if req:IsA("IntValue") or req:IsA("NumberValue") then
@@ -198,9 +199,8 @@ local function updateQuestParagraph(questFolder)
                     local prog = ProgressFolder:FindFirstChild(req.Name)
                     if prog and (prog:IsA("IntValue") or prog:IsA("NumberValue")) then
                         progVal = prog.Value
-                        -- Animate value continuously
                         local animVal = getAnimatedValue(questFolder, req.Name)
-                        animateValue({Set=function(v) questFolder.AnimatedValues[req.Name]=v end}, animVal, progVal, "", "", 0.5)
+                        animateValue({Set=function(v) AnimatedQuestValues[questFolder][req.Name]=v end}, animVal, progVal, "", "", 0.5)
                     end
                 else
                     local prog = questFolder:FindFirstChild(req.Name)
@@ -246,10 +246,7 @@ local function updateQuestParagraph(questFolder)
     end)
 end
 
--- Initialize all quests
-for _, questFolder in ipairs(QuestsFolder:GetChildren()) do
-    updateQuestParagraph(questFolder)
-end
+for _, questFolder in ipairs(QuestsFolder:GetChildren()) do updateQuestParagraph(questFolder) end
 QuestsFolder.ChildAdded:Connect(function(child)
     if child:IsA("Folder") then updateQuestParagraph(child) end
 end)
@@ -294,4 +291,4 @@ end)
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] v1.0w Beta loaded successfully - Quests now truly live-update")
+print("[MurzzHub] v1.0x Beta loaded successfully - Quests truly live-update now")
