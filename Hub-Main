@@ -196,10 +196,18 @@ local function updateQuestParagraph(questFolder)
                 local statComplete = progVal >= req.Value
                 if not statComplete then allComplete = false end
 
-                local fullName = StatIdToName[tonumber(req.Name)] or req.Name
-                local statName, emoji = fullName:match("^(.-) (.+)$")
-                statName = statName or fullName
-                emoji = emoji or ""
+                local statName, emoji
+                local numId = tonumber(req.Name)
+                if numId and StatIdToName[numId] then
+                    local fullName = StatIdToName[numId]
+                    statName, emoji = fullName:match("^(.-) (.+)$")
+                    statName = statName or fullName
+                    emoji = emoji or ""
+                else
+                    statName = req.Name
+                    emoji = ""
+                end
+
                 local line = string.format("%s/%s %s %s%s", abbreviateNumber(progVal), abbreviateNumber(req.Value), statName, emoji, statComplete and " ✅" or "")
                 table.insert(descLines, line)
             end
