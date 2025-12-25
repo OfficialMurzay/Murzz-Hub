@@ -1,6 +1,6 @@
 -- MurzzHub v1.0r Beta
--- Full Stable Build (Info + Home + Live Stats + Quests)
--- Author: Murzay | Animated Home + Live Stats
+-- Full Stable Build (Home + Live Stats + Quests with Smooth Animations)
+-- Author: Murzay | Animated + Easing Numbers
 
 -------------------------------------------------
 -- SERVICES
@@ -66,15 +66,20 @@ local function abbreviate(n)
     end
 end
 
--- Animated number increment
+-- Smooth easing animation function
+local function easeOutQuad(t) -- t = 0..1
+    return 1 - (1 - t)^2
+end
+
 local function animateNumber(label, startValue, endValue, prefix, emoji, duration)
-    duration = duration or 0.5 -- seconds
-    local steps = math.max(1, math.floor(duration * 60)) -- assume 60 FPS
-    local diff = endValue - startValue
+    duration = duration or 0.5
+    local fps = 60
+    local steps = math.max(1, math.floor(duration * fps))
     for i = 1, steps do
-        local val = startValue + diff * (i/steps)
+        local t = easeOutQuad(i/steps)
+        local val = startValue + (endValue - startValue) * t
         label:Set(prefix..abbreviate(math.floor(val)).." "..emoji)
-        task.wait(duration / steps)
+        task.wait(duration/steps)
     end
     label:Set(prefix..abbreviate(endValue).." "..emoji)
 end
@@ -117,7 +122,7 @@ InfoTab:CreateParagraph({
 • Kill quests fully supported
 • Event-based (zero loops)
 • UI locked & stable
-• Home + Live Stats now animate when updated
+• Home + Live Stats + Quest Progress now animate smoothly
 ]]
 })
 
@@ -151,14 +156,13 @@ local PowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡")
 local YenLabel = HomeTab:CreateLabel("Money: ... 💰")
 local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
--- Bind animated value
 local function bindValue(obj, label, prefix, emoji)
     if not obj then return end
     local current = obj.Value
     local function update()
         local newVal = obj.Value
         task.spawn(function()
-            animateNumber(label, current, newVal, prefix, emoji)
+            animateNumber(label, current, newVal, prefix, emoji, 0.7)
             current = newVal
         end)
     end
@@ -193,7 +197,7 @@ for id,data in pairs(StatMap) do
             local function update()
                 local newVal = stat.Value
                 task.spawn(function()
-                    animateNumber(label, current, newVal, name..": ", emoji)
+                    animateNumber(label, current, newVal, name..": ", emoji, 0.7)
                     current = newVal
                 end)
             end
@@ -235,11 +239,10 @@ local function setupQuest(quest)
                     end
 
                     local done = progress >= req.Value
-                    label:Set(
-                        abbreviate(progress).."/"..abbreviate(req.Value)
-                        .." "..name.." "..emoji
-                        ..(done and " ✅" or "")
-                    )
+                    task.spawn(function()
+                        animateNumber(label, 0, progress, "", "", 0.7)
+                        label:Set(abbreviate(progress).."/"..abbreviate(req.Value).." "..name.." "..emoji..(done and " ✅" or ""))
+                    end)
                 end
 
                 update()
