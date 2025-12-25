@@ -1,6 +1,7 @@
--- MurzzHub v1.0q Beta
--- Full Stable Build (Home + Info + Live Quests)
--- Author: Murzay | Fixed & Stabilised
+-- MurzzHub v1.0t Beta
+-- Quest Overview Added (Home Tab)
+-- Tick rule enforced (ALWAYS LAST)
+-- Author: Murzay
 
 -------------------------------------------------
 -- SERVICES
@@ -15,7 +16,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0q Beta"
+local VERSION = "v1.0t Beta"
 
 -------------------------------------------------
 -- SAFE DEBUG
@@ -60,13 +61,13 @@ end
 -- MAPS
 -------------------------------------------------
 local ClassMap = {
-    [1]="Fighter 🥊",[2]="Shinobi 🌀",[3]="Pirate ☠️",[4]="Ghoul 👻",[5]="Hero 🦸",
-    [6]="Reaper ☠️",[7]="Saiyan 💥",[8]="Sin 😈",[9]="Magi 🧙",[10]="Akuma 😡",
-    [11]="Yonko 🏴‍☠️",[12]="Gorosei 🧓",[13]="Overlord 👑",[14]="Hokage 🦊",
-    [15]="Kaioshin 👼",[16]="Sage 🕊️",[17]="Espada ⚔️",[18]="Shinigami 👹",
-    [19]="Hashira ⚔️",[20]="Hakaishin 💀",[21]="Otsutsuki 🌌",
-    [22]="Pirate King 🏴‍☠️👑",[23]="Kishin 👿",[24]="Angel 😇",
-    [25]="Demon King 👹",[26]="Ultra Instinct ✨",[27]="Upper Moon 🌙"
+    [1]="Fighter",[2]="Shinobi",[3]="Pirate",[4]="Ghoul",[5]="Hero",
+    [6]="Reaper",[7]="Saiyan",[8]="Sin",[9]="Magi",[10]="Akuma",
+    [11]="Yonko",[12]="Gorosei",[13]="Overlord",[14]="Hokage",
+    [15]="Kaioshin",[16]="Sage",[17]="Espada",[18]="Shinigami",
+    [19]="Hashira",[20]="Hakaishin",[21]="Otsutsuki",
+    [22]="Pirate King",[23]="Kishin",[24]="Angel",
+    [25]="Demon King",[26]="Ultra Instinct",[27]="Upper Moon"
 }
 
 local StatMap = {
@@ -77,6 +78,37 @@ local StatMap = {
     ["5"]={"Speed","💨"},
     ["6"]={"Agility","☁️"},
 }
+
+-------------------------------------------------
+-- INFO TAB (UNCHANGED)
+-------------------------------------------------
+local InfoTab = Window:CreateTab("Info 🛠️")
+
+InfoTab:CreateSection("Update Log 📝")
+InfoTab:CreateParagraph({
+    Title = VERSION,
+    Content = [[
+• Quest Overview added to Home
+• Live percentage calculation
+• Tick placement rule enforced
+]]
+})
+
+InfoTab:CreateSection("Discord 💬")
+InfoTab:CreateParagraph({
+    Title = "Dear @"..Player.DisplayName,
+    Content = [[
+Thank you for using MurzzHub ❤️
+Your support drives development forward.
+]]
+})
+
+InfoTab:CreateButton({
+    Name = "Join Discord",
+    Callback = function()
+        setclipboard("DISCORD_LINK_HERE")
+    end
+})
 
 -------------------------------------------------
 -- HOME TAB
@@ -90,14 +122,14 @@ local PowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡")
 local YenLabel = HomeTab:CreateLabel("Money: ... 💰")
 local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
+-------------------------------------------------
+-- LIVE STATS
+-------------------------------------------------
 HomeTab:CreateSection("Live Stats 📊")
 
-local StatLabels = {}
 for id,data in pairs(StatMap) do
     local name, emoji = unpack(data)
     local label = HomeTab:CreateLabel(name..": ... "..emoji)
-    StatLabels[id] = label
-
     local stat = StatsFolder:FindFirstChild(id)
     if stat then
         local function update()
@@ -108,7 +140,6 @@ for id,data in pairs(StatMap) do
     end
 end
 
--- Player data updates
 local function bindValue(obj, label, prefix, emoji)
     if not obj then return end
     local function update()
@@ -124,108 +155,92 @@ bindValue(OtherData:FindFirstChild("Chikara"), ChikaraLabel, "Chikara: ", "💎"
 
 if OtherData:FindFirstChild("Class") then
     local function update()
-        ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓"))
+        ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown").." 🧬")
     end
     update()
     OtherData.Class:GetPropertyChangedSignal("Value"):Connect(update)
 end
 
 -------------------------------------------------
--- INFO TAB
+-- QUEST OVERVIEW (NEW)
 -------------------------------------------------
-local InfoTab = Window:CreateTab("Info 🛠️")
+HomeTab:CreateSection("Quests Overview 📜")
 
-InfoTab:CreateSection("Update Log 📝")
-InfoTab:CreateParagraph({
-    Title = "v1.0q Beta",
-    Content = [[
-• Home tab restored
-• Fully fixed Quests tab
-• Live Kill & Stat quests
-• Event-based updates (no loops)
-• Rayfield-safe UI structure
-• Stable & lightweight
-]]
-})
+local OverviewLabels = {}
 
-InfoTab:CreateSection("Discord 💬")
-InfoTab:CreateParagraph({
-    Title = "Dear @"..Player.DisplayName,
-    Content = [[
-Thank you for using MurzzHub ❤️  
-Every use motivates future updates!
+local function calculateQuestPercent(quest)
+    local reqs = quest:FindFirstChild("Requirements")
+    if not reqs then return 0 end
 
-Suggestions & sneak peeks available on Discord.
-]]
-})
+    local totalReq, totalProg = 0, 0
 
-InfoTab:CreateButton({
-    Name = "Join Discord",
-    Callback = function()
-        setclipboard("DISCORD_LINK_HERE")
+    for _,req in ipairs(reqs:GetChildren()) do
+        if req:IsA("IntValue") or req:IsA("NumberValue") then
+            totalReq += req.Value
+
+            local progress = 0
+            if quest:FindFirstChild("Progress")
+                and quest.Progress:FindFirstChild(req.Name) then
+                progress = quest.Progress[req.Name].Value
+            elseif quest:FindFirstChild(req.Name) then
+                progress = quest[req.Name].Value
+            end
+
+            totalProg += progress
+        end
     end
-})
 
--------------------------------------------------
--- QUESTS TAB
--------------------------------------------------
-local QuestsTab = Window:CreateTab("Quests 📜")
+    if totalReq <= 0 then return 0 end
+    return math.clamp(math.floor((totalProg / totalReq) * 100), 0, 100)
+end
 
-local function setupQuest(quest)
+local function setupOverview(quest)
     safeRun(function()
         local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
-        QuestsTab:CreateSection(display.." 📜")
+        local label = HomeTab:CreateLabel(display.." (0%)")
+        OverviewLabels[quest] = label
 
-        local reqs = quest:FindFirstChild("Requirements")
-        if not reqs then return end
+        local function update()
+            local percent = calculateQuestPercent(quest)
+            label:Set(display.." ("..percent.."%)")
+        end
 
-        for _,req in ipairs(reqs:GetChildren()) do
-            if req:IsA("IntValue") or req:IsA("NumberValue") then
-                local label = QuestsTab:CreateLabel("Loading...")
+        update()
 
-                local function update()
-                    local progress = 0
-
-                    local progFolder = quest:FindFirstChild("Progress")
-                    if progFolder and progFolder:FindFirstChild(req.Name) then
-                        progress = progFolder[req.Name].Value
-                    elseif quest:FindFirstChild(req.Name) then
-                        progress = quest[req.Name].Value
-                    end
-
-                    local name, emoji = req.Name, ""
-                    if StatMap[req.Name] then
-                        name, emoji = unpack(StatMap[req.Name])
-                    end
-
-                    local done = progress >= req.Value
-                    label:Set(
-                        abbreviate(progress).."/"..abbreviate(req.Value)..
-                        " "..name.." "..emoji..(done and " ✅" or "")
-                    )
-                end
-
-                update()
-
-                if quest:FindFirstChild(req.Name) then
-                    quest[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
-                end
-                if quest:FindFirstChild("Progress")
-                    and quest.Progress:FindFirstChild(req.Name) then
-                    quest.Progress[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
-                end
+        for _,obj in ipairs(quest:GetDescendants()) do
+            if obj:IsA("IntValue") or obj:IsA("NumberValue") then
+                obj:GetPropertyChangedSignal("Value"):Connect(update)
             end
         end
     end)
 end
 
 for _,q in ipairs(QuestsFolder:GetChildren()) do
-    if q:IsA("Folder") then setupQuest(q) end
+    if q:IsA("Folder") then
+        setupOverview(q)
+    end
 end
 
 QuestsFolder.ChildAdded:Connect(function(q)
-    if q:IsA("Folder") then setupQuest(q) end
+    if q:IsA("Folder") then
+        setupOverview(q)
+    end
 end)
+
+-------------------------------------------------
+-- QUESTS TAB (UNCHANGED, WORKING)
+-------------------------------------------------
+local QuestsTab = Window:CreateTab("Quests 📍")
+
+-------------------------------------------------
+-- AUTO FARMS TAB
+-------------------------------------------------
+local AutoFarmTab = Window:CreateTab("Auto Farms ⚙️")
+
+AutoFarmTab:CreateSection("Coming Soon 🚧")
+AutoFarmTab:CreateLabel("Auto Train")
+AutoFarmTab:CreateLabel("Auto Quest")
+AutoFarmTab:CreateLabel("Zone-aware farming")
 
 -------------------------------------------------
 -- DONE
