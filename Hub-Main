@@ -197,10 +197,10 @@ local function bindOverview(quest)
                     totalReq += req.Value
                     local prog = 0
 
-                    if quest:FindFirstChild(req.Name) then
+                    -- Check direct value first, then inside Progress folder
+                    if quest:FindFirstChild(req.Name) and (quest[req.Name]:IsA("IntValue") or quest[req.Name]:IsA("NumberValue")) then
                         prog = quest[req.Name].Value
-                    elseif quest:FindFirstChild("Progress")
-                        and quest.Progress:FindFirstChild(req.Name) then
+                    elseif quest:FindFirstChild("Progress") and quest.Progress:FindFirstChild(req.Name) and (quest.Progress[req.Name]:IsA("IntValue") or quest.Progress[req.Name]:IsA("NumberValue")) then
                         prog = quest.Progress[req.Name].Value
                     end
 
@@ -209,15 +209,13 @@ local function bindOverview(quest)
             end
         end
 
-        local percent = totalReq > 0
-            and math.floor((totalProg / totalReq) * 100)
-            or 0
-
+        local percent = totalReq > 0 and math.floor((totalProg / totalReq) * 100) or 0
         label:Set(display.." ("..percent.."%)")
     end
 
     recalc()
 
+    -- Live updates
     for _,obj in ipairs(quest:GetDescendants()) do
         if obj:IsA("IntValue") or obj:IsA("NumberValue") then
             obj:GetPropertyChangedSignal("Value"):Connect(recalc)
