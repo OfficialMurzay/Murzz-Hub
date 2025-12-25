@@ -1,4 +1,4 @@
--- MurzzHub v1.0e Beta (UI + Player Data Functionality Fixed)
+-- MurzzHub v1.0f Beta (UI + Player Data Animated & Live)
 -- Author: Murzay
 
 -------------------------------------------------
@@ -16,8 +16,8 @@ local OtherData = Player:WaitForChild("OtherData") -- Wait for OtherData folder
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "MurzzHub v1.0e Beta",
-    LoadingTitle = "MurzzHub v1.0e Beta",
+    Name = "MurzzHub v1.0f Beta",
+    LoadingTitle = "MurzzHub v1.0f Beta",
     LoadingSubtitle = "Player Data Live • UI Only",
     ConfigurationSaving = {
         Enabled = true,
@@ -56,7 +56,7 @@ local function abbreviateNumber(num)
     else return tostring(num) end
 end
 
-local function animateValue(label, startVal, endVal, duration)
+local function animateValue(label, startVal, endVal, prefix, emoji, duration)
     local step = (endVal - startVal) / (duration * 30)
     local current = startVal
     local connection
@@ -67,7 +67,7 @@ local function animateValue(label, startVal, endVal, duration)
             connection:Disconnect()
         end
         if label and label.Set then
-            label:Set(abbreviateNumber(math.floor(current)))
+            label:Set(prefix..abbreviateNumber(math.floor(current)).." "..emoji)
         end
     end)
 end
@@ -86,6 +86,7 @@ local PowerLabel      = HomeTab:CreateLabel("Total Power: ... ⚡")
 local YenLabel        = HomeTab:CreateLabel("Money: ... 💰")
 local ChikaraLabel    = HomeTab:CreateLabel("Chikara: ... 💎")
 
+-- Live Stats placeholders
 HomeTab:CreateSection("Live Stats 📊")
 local LiveStats = {
     Strength   = HomeTab:CreateLabel("Strength: ... 💪"),
@@ -96,6 +97,7 @@ local LiveStats = {
     Agility    = HomeTab:CreateLabel("Agility: ... ☁️"),
 }
 
+-- Quest Overview placeholders
 HomeTab:CreateSection("Quest Overview 📜")
 local QuestOverviewTitle = HomeTab:CreateLabel("Quest: Example 10%")
 local QuestOverviewLines = {}
@@ -117,21 +119,21 @@ RunService.Heartbeat:Connect(function()
     -- Total Power
     if OtherData:FindFirstChild("TotalPower") then
         local target = OtherData.TotalPower.Value
-        animateValue(PowerLabel, currentPower, target, 0.5)
+        animateValue(PowerLabel, currentPower, target, "Total Power: ", "⚡", 0.5)
         currentPower = target
     end
 
     -- Yen
     if OtherData:FindFirstChild("Yen") then
         local target = OtherData.Yen.Value
-        animateValue(YenLabel, currentYen, target, 0.5)
+        animateValue(YenLabel, currentYen, target, "Money: ", "💰", 0.5)
         currentYen = target
     end
 
     -- Chikara
     if OtherData:FindFirstChild("Chikara") then
         local target = OtherData.Chikara.Value
-        animateValue(ChikaraLabel, currentChikara, target, 0.5)
+        animateValue(ChikaraLabel, currentChikara, target, "Chikara: ", "💎", 0.5)
         currentChikara = target
     end
 end)
@@ -140,4 +142,4 @@ end)
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] UI + Player Data functionality v1.0e Beta loaded successfully")
+print("[MurzzHub] UI + Player Data functionality v1.0f Beta loaded successfully")
