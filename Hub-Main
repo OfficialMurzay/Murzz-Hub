@@ -1,6 +1,6 @@
 -- MurzzHub v1.0j Beta
 -- UI + Player Data + Live Stats + Info + Quests
--- FIX: Quest Overview percentages now functional
+-- FULL FIXED VERSION (No nil errors)
 -- Author: Murzay
 
 -------------------------------------------------
@@ -75,21 +75,20 @@ local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
     Title = "Update Log "..VERSION,
-    Content = "Quest Overview percentages fixed.\nAll existing systems preserved."
+    Content = "Quest overview fixed.\nNil indexing eliminated.\nLive AFSE-safe UI."
 })
 
 InfoTab:CreateSection("Discord 💬")
 InfoTab:CreateParagraph({
     Title = "Dear @"..Player.DisplayName,
     Content =
-        "Thank you for using my script!\n\n"..
-        "Every use supports me and motivates future updates.\n"..
-        "Join the Discord for sneak peeks, events and more!\n\n"..
-        "❤️ - Murzay (Scripter)"
+        "Thank you for using MurzzHub!\n\n"..
+        "Join the Discord for updates, previews and events.\n\n"..
+        "❤️ - Murzay"
 })
 
 InfoTab:CreateButton({
-    Name = "Join The Discord Server!",
+    Name = "Copy Discord Invite",
     Callback = function()
         setclipboard("DISCORD_LINK_HERE")
     end
@@ -116,80 +115,95 @@ for id, name in pairs(StatIdToName) do
     local stat, emoji = name:match("^(.-) (.+)$")
     LiveStats[id] = {
         Label = HomeTab:CreateLabel(stat..": ... "..emoji),
-        Value = 0,
         StatName = stat,
         Emoji = emoji
     }
 end
 
 -------------------------------------------------
--- QUEST OVERVIEW (FIXED)
+-- QUEST OVERVIEW (FULLY SAFE)
 -------------------------------------------------
 HomeTab:CreateSection("Quest Overview 📜")
-local QuestOverviewLabels = {}
+local QuestLabels = {}
 
-local function computeQuestPercent(questFolder)
-    local req = questFolder:FindFirstChild("Requirements")
-    local prog = questFolder:FindFirstChild("Progress")
-    if not req or not prog then return 0, false end
+local function formatQuestName(name)
+    local a,b = name:match("(%a+)(%d+)")
+    return a and b and (a.." No."..b) or name
+end
 
-    local totalReq, totalProg = 0, 0
-    local complete = true
+local function computeQuestPercent(q)
+    local req = q:FindFirstChild("Requirements")
+    local prog = q:FindFirstChild("Progress")
+    if not req or not prog then return 0,false end
 
-    for _, r in ipairs(req:GetChildren()) do
+    local totalReq,totalProg = 0,0
+    local done = true
+
+    for _,r in ipairs(req:GetChildren()) do
         if r:IsA("IntValue") then
             totalReq += r.Value
             local p = prog:FindFirstChild(r.Name)
-            local pv = p and p:IsA("IntValue") and p.Value or 0
+            local pv = (p and p:IsA("IntValue")) and p.Value or 0
             totalProg += pv
-            if pv < r.Value then complete = false end
+            if pv < r.Value then done = false end
         end
     end
 
-    local percent = totalReq > 0 and math.floor((totalProg / totalReq) * 100) or 0
-    return percent, complete
+    local percent = totalReq > 0 and math.floor((totalProg/totalReq)*100) or 0
+    return percent,done
 end
 
-local function updateQuestOverview(questFolder)
-    local display = questFolder.Name
-    local a,b = display:match("(%a+)(%d+)")
-    if a and b then display = a.." No."..b end
+local function updateQuest(q)
+    local percent,done = computeQuestPercent(q)
+    local text = formatQuestName(q.Name).." ["..percent.."%]"..(done and " ✅" or "")
 
-    local percent, done = computeQuestPercent(questFolder)
-    local text = display.." ["..percent.."%]"..(done and " ✅" or "")
-
-    if not QuestOverviewLabels[questFolder.Name] then
-        QuestOverviewLabels[questFolder.Name] = HomeTab:CreateLabel(text)
+    if not QuestLabels[q] then
+        QuestLabels[q] = HomeTab:CreateLabel(text)
     else
-        QuestOverviewLabels[questFolder.Name].Text = text
+        QuestLabels[q].Text = text
     end
 end
 
-for _, q in ipairs(QuestsFolder:GetChildren()) do
-    if q:IsA("Folder") then
-        updateQuestOverview(q)
-        q.Progress.ChildAdded:Connect(function() updateQuestOverview(q) end)
-        q.Progress.ChildRemoved:Connect(function() updateQuestOverview(q) end)
-    end
+local function hookQuest(q)
+    if not q:IsA("Folder") then return end
+    updateQuest(q)
+
+    task.spawn(function()
+        local prog = q:WaitForChild("Progress",10)
+        if not prog then return end
+
+        prog.ChildAdded:Connect(function() updateQuest(q) end)
+        prog.ChildRemoved:Connect(function() updateQuest(q) end)
+
+        for _,v in ipairs(prog:GetChildren()) do
+            if v:IsA("IntValue") then
+                v.Changed:Connect(function()
+                    updateQuest(q)
+                end)
+            end
+        end
+    end)
 end
 
-QuestsFolder.ChildAdded:Connect(function(q)
-    if q:IsA("Folder") then updateQuestOverview(q) end
-end)
+for _,q in ipairs(QuestsFolder:GetChildren()) do
+    hookQuest(q)
+end
+
+QuestsFolder.ChildAdded:Connect(hookQuest)
 
 -------------------------------------------------
--- QUESTS TAB
+-- QUESTS TAB (STATIC DETAILS)
 -------------------------------------------------
 local QuestsTab = Window:CreateTab("Quests 📜")
 QuestsTab:CreateSection("Current Quests 📌")
 
-for _, quest in ipairs(QuestsFolder:GetChildren()) do
+for _,q in ipairs(QuestsFolder:GetChildren()) do
+    local req = q:FindFirstChild("Requirements")
+    local prog = q:FindFirstChild("Progress")
     local lines = {}
-    local req = quest:FindFirstChild("Requirements")
-    local prog = quest:FindFirstChild("Progress")
 
     if req and prog then
-        for _, r in ipairs(req:GetChildren()) do
+        for _,r in ipairs(req:GetChildren()) do
             if r:IsA("IntValue") then
                 local p = prog:FindFirstChild(r.Name)
                 local pv = p and p.Value or 0
@@ -201,8 +215,8 @@ for _, quest in ipairs(QuestsFolder:GetChildren()) do
     end
 
     QuestsTab:CreateParagraph({
-        Title = quest.Name,
-        Content = table.concat(lines, "\n")
+        Title = q.Name,
+        Content = table.concat(lines,"\n")
     })
 end
 
@@ -226,8 +240,7 @@ RunService.Heartbeat:Connect(function()
     for id,data in pairs(LiveStats) do
         local stat = StatsFolder:FindFirstChild(tostring(id))
         if stat then
-            data.Label.Text =
-                data.StatName..": "..abbreviateNumber(stat.Value).." "..data.Emoji
+            data.Label.Text = data.StatName..": "..abbreviateNumber(stat.Value).." "..data.Emoji
         end
     end
 end)
