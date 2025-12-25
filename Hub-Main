@@ -1,6 +1,6 @@
 -- MurzzHub v1.0o Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Quests Tab)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0n -> v1.0o
+-- VERSION NOTE: v1.0n -> v1.0o (Live Updating Quests)
 
 -------------------------------------------------
 -- SERVICES
@@ -103,8 +103,8 @@ local StatIdToName = {
 local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
-    Title = "Update Log "..VERSION..": Quests Tab 📝",
-    Content = "Added dedicated Quests tab with live stat progress, abbreviated numbers, completion notifications, and fixed Home tab and Info tab layout."
+    Title = "Update Log "..VERSION..": Live Updating Quests 📝",
+    Content = "All quests now live update with animated numbers like the Home stats. Ghoul Kill quests and custom named quests fully supported."
 })
 
 InfoTab:CreateSection("Discord 💬")
@@ -174,6 +174,9 @@ local QuestsTab = Window:CreateTab("Quests 📜")
 QuestsTab:CreateSection("Current Quests 📌")
 local QuestParagraphs = {}
 
+-- Store previous values to animate
+local QuestValues = {}
+
 local function updateQuestParagraph(questFolder)
     safeRun(function()
         if not questFolder then return end
@@ -187,10 +190,11 @@ local function updateQuestParagraph(questFolder)
 
         local descLines = {}
         local allComplete = true
+        QuestValues[questFolder.Name] = QuestValues[questFolder.Name] or {}
+
         for _, req in ipairs(Requirements:GetChildren()) do
             local progVal = 0
             local prog = Progress:FindFirstChild(req.Name)
-
             if req:IsA("IntValue") or req:IsA("NumberValue") then
                 if prog then progVal = prog.Value end
                 local statComplete = progVal >= req.Value
@@ -208,8 +212,11 @@ local function updateQuestParagraph(questFolder)
                     emoji = ""
                 end
 
-                local line = string.format("%s/%s %s %s%s", abbreviateNumber(progVal), abbreviateNumber(req.Value), statName, emoji, statComplete and " ✅" or "")
-                table.insert(descLines, line)
+                -- Animate the value
+                local previousVal = QuestValues[questFolder.Name][req.Name] or 0
+                QuestValues[questFolder.Name][req.Name] = progVal
+                local lineText = string.format("%s/%s %s %s%s", previousVal, req.Value, statName, emoji, statComplete and " ✅" or "")
+                table.insert(descLines, lineText)
             end
         end
 
@@ -223,7 +230,32 @@ local function updateQuestParagraph(questFolder)
             paragraph.Completed = allComplete
         else
             local paragraph = QuestParagraphs[questFolder.Name]
-            if paragraph and paragraph.Set then paragraph:Set(descText) end
+            if paragraph and paragraph.Set then
+                -- Animate each line
+                local newLines = {}
+                for i, req in ipairs(Requirements:GetChildren()) do
+                    if req:IsA("IntValue") or req:IsA("NumberValue") then
+                        local prog = Progress:FindFirstChild(req.Name)
+                        local progVal = prog and prog.Value or 0
+                        local statName, emoji
+                        local numId = tonumber(req.Name)
+                        if numId and StatIdToName[numId] then
+                            local fullName = StatIdToName[numId]
+                            statName, emoji = fullName:match("^(.-) (.+)$")
+                            statName = statName or fullName
+                            emoji = emoji or ""
+                        else
+                            statName = req.Name
+                            emoji = ""
+                        end
+                        local prevVal = QuestValues[questFolder.Name][req.Name] or 0
+                        animateValue(paragraph, prevVal, progVal, "", "", 0.5)
+                        QuestValues[questFolder.Name][req.Name] = progVal
+                        table.insert(newLines, string.format("%s/%s %s %s%s", progVal, req.Value, statName, emoji, progVal >= req.Value and " ✅" or ""))
+                    end
+                end
+                paragraph:Set(table.concat(newLines,"\n"))
+            end
             if paragraph then paragraph.Title = titleText end
             paragraph.Completed = allComplete
         end
