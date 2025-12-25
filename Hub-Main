@@ -1,5 +1,5 @@
 -- MurzzHub v1.0j Beta
--- Info + Home tabs with full Player Data + Live Stats functionality
+-- Info + Home tabs with Player Data + Live Stats (AFSE-safe)
 -- Author: Murzay
 
 -------------------------------------------------
@@ -10,7 +10,7 @@ local RunService = game:GetService("RunService")
 local Player = Players.LocalPlayer
 
 -------------------------------------------------
--- WAIT FOR FOLDERS
+-- WAIT FOR DATA
 -------------------------------------------------
 local OtherData   = Player:WaitForChild("OtherData")
 local StatsFolder = Player:WaitForChild("Stats")
@@ -108,33 +108,26 @@ for id,name in pairs(StatMap) do
 end
 
 -------------------------------------------------
--- LIVE UPDATES (AFSE-SAFE)
+-- LIVE UPDATES (PLAYER DATA + STATS)
 -------------------------------------------------
 RunService.Heartbeat:Connect(function()
     -- Player Data
-    local classVal = OtherData:FindFirstChild("Class")
-    if classVal then
-        ClassLabel.Text = "Class: "..(ClassMap[classVal.Value] or "Unknown ❓")
+    if Player.OtherData:FindFirstChild("Class") then
+        ClassLabel.Text = "Class: "..(ClassMap[Player.OtherData.Class.Value] or "Unknown ❓")
     end
-
-    local tp = OtherData:FindFirstChild("TotalPower")
-    if tp then
-        PowerLabel.Text = "Total Power: "..abbreviateNumber(tp.Value).." ⚡"
+    if Player.OtherData:FindFirstChild("TotalPower") then
+        PowerLabel.Text = "Total Power: "..abbreviateNumber(Player.OtherData.TotalPower.Value).." ⚡"
     end
-
-    local yen = OtherData:FindFirstChild("Yen")
-    if yen then
-        YenLabel.Text = "Money: "..abbreviateNumber(yen.Value).." 💰"
+    if Player.OtherData:FindFirstChild("Yen") then
+        YenLabel.Text = "Money: "..abbreviateNumber(Player.OtherData.Yen.Value).." 💰"
     end
-
-    local chi = OtherData:FindFirstChild("Chikara")
-    if chi then
-        ChikaraLabel.Text = "Chikara: "..abbreviateNumber(chi.Value).." 💎"
+    if Player.OtherData:FindFirstChild("Chikara") then
+        ChikaraLabel.Text = "Chikara: "..abbreviateNumber(Player.OtherData.Chikara.Value).." 💎"
     end
 
     -- Live Stats
     for id,label in pairs(StatLabels) do
-        local stat = StatsFolder:FindFirstChild(id)
+        local stat = Player.Stats:FindFirstChild(id)
         if stat and stat:IsA("IntValue") then
             label.Text = StatMap[id] .. ": " .. abbreviateNumber(stat.Value)
         end
@@ -145,4 +138,4 @@ end)
 -- LOAD CONFIG
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] Info + Home tabs (Player Data + Live Stats) loaded and functional")
+print("[MurzzHub] Info + Home tabs (Player Data + Live Stats) fully functional")
