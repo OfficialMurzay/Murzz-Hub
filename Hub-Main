@@ -1,5 +1,5 @@
 -- MurzzHub v1.0j Beta
--- Info Tab + Live Stats Only
+-- Info + Home tabs with Live Stats only
 -- Author: Murzay
 
 -------------------------------------------------
@@ -57,14 +57,24 @@ InfoTab:CreateButton({
 })
 
 -------------------------------------------------
--- LIVE STATS TAB
+-- HOME TAB
 -------------------------------------------------
-local StatsTab = Window:CreateTab("Live Stats 📊")
-StatsTab:CreateSection("Stats")
+local HomeTab = Window:CreateTab("Home 🏠")
 
 -------------------------------------------------
--- STAT MAP
+-- PLAYER DATA (KEEP LABELS ONLY)
 -------------------------------------------------
+HomeTab:CreateSection("Player Data 👤")
+local ClassLabel   = HomeTab:CreateLabel("Class: ...")
+local PowerLabel   = HomeTab:CreateLabel("Total Power: ... ⚡")
+local YenLabel     = HomeTab:CreateLabel("Money: ... 💰")
+local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
+
+-------------------------------------------------
+-- LIVE STATS (NEW FUNCTIONALITY)
+-------------------------------------------------
+HomeTab:CreateSection("Live Stats 📊")
+
 local StatMap = {
     ["1"] = "Strength 💪",
     ["2"] = "Durability 🛡️",
@@ -74,17 +84,12 @@ local StatMap = {
     ["6"] = "Speed 💨"
 }
 
--------------------------------------------------
--- CREATE LABELS
--------------------------------------------------
 local StatLabels = {}
 for id,name in pairs(StatMap) do
-    StatLabels[id] = StatsTab:CreateLabel(name .. ": ...")
+    StatLabels[id] = HomeTab:CreateLabel(name .. ": ...")
 end
 
--------------------------------------------------
--- LIVE UPDATE
--------------------------------------------------
+-- Update stats live via Heartbeat (AFSE-safe)
 RunService.Heartbeat:Connect(function()
     for id,label in pairs(StatLabels) do
         local stat = StatsFolder:FindFirstChild(id)
@@ -98,4 +103,4 @@ end)
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] Info + Live Stats running")
+print("[MurzzHub] Info + Home (Live Stats) running")
