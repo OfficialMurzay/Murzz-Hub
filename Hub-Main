@@ -1,6 +1,6 @@
 -- MurzzHub v1.0r Beta
--- Full Stable Build (Home + Live Stats + Quests with Smooth Animations)
--- Author: Murzay | Animated Numbers (Incremental)
+-- Full Stable Build (Home + Live Stats + Quests with Smooth Incremental Animations)
+-- Author: Murzay | Animated Numbers Fixed for Quest Labels
 
 -------------------------------------------------
 -- SERVICES
@@ -122,7 +122,7 @@ InfoTab:CreateParagraph({
 • Kill quests fully supported
 • Event-based (zero loops)
 • UI locked & stable
-• Home + Live Stats + Quest Progress now animate smoothly (number -> new number)
+• Home + Live Stats + Quest Progress animate incrementally with easing
 ]]
 })
 
@@ -241,9 +241,30 @@ local function setupQuest(quest)
                     end
 
                     local done = progress >= req.Value
+
+                    -- Animate only the numeric part, keep rest of label static
                     task.spawn(function()
-                        animateNumber(label, current, progress, "", "", 0.7)
-                        label:Set(abbreviate(progress).."/"..abbreviate(req.Value).." "..name.." "..emoji..(done and " ✅" or ""))
+                        local steps = 30
+                        local duration = 0.7
+                        for i = 1, steps do
+                            local t = easeOutQuad(i/steps)
+                            local val = current + (progress - current) * t
+                            label:Set(string.format("%s/%s %s %s%s",
+                                abbreviate(math.floor(val)),
+                                abbreviate(req.Value),
+                                name,
+                                emoji,
+                                done and " ✅" or ""
+                            ))
+                            task.wait(duration/steps)
+                        end
+                        label:Set(string.format("%s/%s %s %s%s",
+                            abbreviate(progress),
+                            abbreviate(req.Value),
+                            name,
+                            emoji,
+                            done and " ✅" or ""
+                        ))
                         current = progress
                     end)
                 end
