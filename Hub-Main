@@ -11,6 +11,7 @@
 - Class detection with emoji
 - Modern, lively UI
 - Automatic updates
+- Safe section handling to prevent CreateLabel errors
 ]]
 
 --// Services
@@ -57,7 +58,9 @@ local function animateValue(label, startVal, endVal, duration)
             current = endVal
             connection:Disconnect()
         end
-        label:Set(abbreviateNumber(math.floor(current)))
+        if label and label.Set then
+            label:Set(abbreviateNumber(math.floor(current)))
+        end
     end)
 end
 
@@ -73,68 +76,81 @@ Rayfield:LoadConfiguration({
 local Window = Rayfield:CreateWindow({
     Name = "Murzzhub | AFSE",
     LoadingTitle = "MurzzHub Scripts",
-    LoadingSubtitle = "v1.0 Beta",
+    LoadingSubtitle = "v1.0a Beta",
     ConfigurationSaving = { Enabled = true, FolderName = nil, FileName = "MurzzHub" }
 })
 
 --// Home Tab
 local HomeTab = Window:CreateTab("Home 🏠", nil)
 
--- Player Data Section
-local PlayerSection = HomeTab:CreateSection("Player Data 🧑‍💻")
-local ClassLabel
-local TotalPowerLabel
-local YenLabel
-local ChikaraLabel
+-- Safe section creation
+local function createSectionSafe(tab, title)
+    local success, section = pcall(function()
+        return tab:CreateSection(title)
+    end)
+    if success and section then return section end
+    warn("Failed to create section:", title)
+    return nil
+end
 
+-- Sections
+local PlayerSection = createSectionSafe(HomeTab, "Player Data 🧑‍💻")
+local StatsSection = createSectionSafe(HomeTab, "Live Stats ⚡")
+local QuestSection = createSectionSafe(HomeTab, "Quests Overview 🗂️")
+
+-- Player Data Labels
+local ClassLabel, TotalPowerLabel, YenLabel, ChikaraLabel
 if PlayerSection then
     ClassLabel = PlayerSection:CreateLabel({ Name = "Class: ..." })
     TotalPowerLabel = PlayerSection:CreateLabel({ Name = "Total Power: ..." })
     YenLabel = PlayerSection:CreateLabel({ Name = "Yen: ..." })
     ChikaraLabel = PlayerSection:CreateLabel({ Name = "Chikara: ..." })
-else
-    warn("PlayerSection not created! Labels missing.")
 end
 
--- Live Stats Section
-local StatsSection = HomeTab:CreateSection("Live Stats ⚡")
+-- Stats Labels
 local StatLabels = {}
 local StatNames = {"Strength", "Durability", "Chakra", "Sword", "Speed", "Agility"}
-
 if StatsSection then
-    for i, stat in ipairs(StatNames) do
+    for _, stat in ipairs(StatNames) do
         StatLabels[stat] = StatsSection:CreateLabel({ Name = stat.." : ..." })
     end
-else
-    warn("StatsSection not created! Stat labels missing.")
 end
 
--- Quests Overview Section
-local QuestSection = HomeTab:CreateSection("Quests Overview 🗂️")
+-- Quests Labels
 local QuestLabels = {}
 
---// Update UI Function
+--// Update UI
 local function updateUI()
     local OtherData = LocalPlayer:WaitForChild("OtherData")
     local Stats = LocalPlayer:WaitForChild("Stats")
     local Quests = LocalPlayer:WaitForChild("Quests")
 
     -- Player Data
-    local classId = OtherData:WaitForChild("Class").Value
-    ClassLabel:Set("Class: "..(Classes[classId] or "Unknown ❓"))
-    animateValue(TotalPowerLabel, tonumber(TotalPowerLabel.Name:match("%d+")) or 0, OtherData.TotalPower.Value, 0.5)
-    animateValue(YenLabel, tonumber(YenLabel.Name:match("%d+")) or 0, OtherData.Yen.Value, 0.5)
-    animateValue(ChikaraLabel, tonumber(ChikaraLabel.Name:match("%d+")) or 0, OtherData.Chikara.Value, 0.5)
+    if ClassLabel then
+        local classId = OtherData:WaitForChild("Class").Value
+        ClassLabel:Set("Class: "..(Classes[classId] or "Unknown ❓"))
+    end
+    if TotalPowerLabel then
+        animateValue(TotalPowerLabel, tonumber(TotalPowerLabel.Name:match("%d+")) or 0, OtherData.TotalPower.Value, 0.5)
+    end
+    if YenLabel then
+        animateValue(YenLabel, tonumber(YenLabel.Name:match("%d+")) or 0, OtherData.Yen.Value, 0.5)
+    end
+    if ChikaraLabel then
+        animateValue(ChikaraLabel, tonumber(ChikaraLabel.Name:match("%d+")) or 0, OtherData.Chikara.Value, 0.5)
+    end
 
-    -- Live Stats
+    -- Stats
     for i, statName in ipairs(StatNames) do
-        local statValue = Stats[tostring(i)].Value
-        animateValue(StatLabels[statName], tonumber(StatLabels[statName].Name:match("%d+")) or 0, statValue, 0.5)
+        if StatLabels[statName] then
+            local statValue = Stats[tostring(i)].Value
+            animateValue(StatLabels[statName], tonumber(StatLabels[statName].Name:match("%d+")) or 0, statValue, 0.5)
+        end
     end
 
     -- Quests
     for _, questFolder in ipairs(Quests:GetChildren()) do
-        if not QuestLabels[questFolder.Name] and QuestSection then
+        if QuestSection and not QuestLabels[questFolder.Name] then
             QuestLabels[questFolder.Name] = QuestSection:CreateLabel({ Name = questFolder.Name.." : 0%" })
         end
 
@@ -151,7 +167,6 @@ local function updateUI()
                 end
             end
         end
-
         local percent = 0
         if requirementSum > 0 then
             percent = math.floor(progressSum / requirementSum * 100)
@@ -162,22 +177,23 @@ local function updateUI()
     end
 end
 
---// Initial animated load for all numeric stats
+-- Initial animated load
 local function initialLoad()
     local OtherData = LocalPlayer:WaitForChild("OtherData")
     local Stats = LocalPlayer:WaitForChild("Stats")
-    animateValue(TotalPowerLabel, 0, OtherData.TotalPower.Value, 1)
-    animateValue(YenLabel, 0, OtherData.Yen.Value, 1)
-    animateValue(ChikaraLabel, 0, OtherData.Chikara.Value, 1)
+    if TotalPowerLabel then animateValue(TotalPowerLabel, 0, OtherData.TotalPower.Value, 1) end
+    if YenLabel then animateValue(YenLabel, 0, OtherData.Yen.Value, 1) end
+    if ChikaraLabel then animateValue(ChikaraLabel, 0, OtherData.Chikara.Value, 1) end
     for i, statName in ipairs(StatNames) do
-        animateValue(StatLabels[statName], 0, Stats[tostring(i)].Value, 1)
+        if StatLabels[statName] then
+            animateValue(StatLabels[statName], 0, Stats[tostring(i)].Value, 1)
+        end
     end
 end
-
--- Run initial load once
 initialLoad()
 
---// Update every frame
+-- Update every frame
 RunService.RenderStepped:Connect(updateUI)
 
+-- Save/load Rayfield configuration
 Rayfield:LoadConfiguration()
