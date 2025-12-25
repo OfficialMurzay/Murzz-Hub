@@ -304,16 +304,16 @@ local AutoStats = {
     {"Agility", "☁️"},
 }
 
--- Create a switch for each stat
+-- Create a switch for each stat with "Train" in front
 local AutoToggles = {} -- store toggle references
 for _,stat in ipairs(AutoStats) do
     local name, emoji = unpack(stat)
     local toggle = AutoTab:CreateToggle({
-        Name = name.." "..emoji,
+        Name = "Train "..name.." "..emoji,
         CurrentValue = false,
         Flag = name.."Toggle", -- optional, for Rayfield config
         Callback = function(val)
-            print(name.." Auto Train: "..tostring(val))
+            print("Train "..name..": "..tostring(val))
         end
     })
     table.insert(AutoToggles, toggle)
