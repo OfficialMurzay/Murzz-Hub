@@ -1,4 +1,4 @@
--- MurzzHub v1.0e Beta (UI Only + Player Data Functionality)
+-- MurzzHub v1.0e Beta (UI + Player Data Functionality Fixed)
 -- Author: Murzay
 
 -------------------------------------------------
@@ -86,7 +86,6 @@ local PowerLabel      = HomeTab:CreateLabel("Total Power: ... ⚡")
 local YenLabel        = HomeTab:CreateLabel("Money: ... 💰")
 local ChikaraLabel    = HomeTab:CreateLabel("Chikara: ... 💎")
 
--- Live Stats & Quest Overview remain placeholders for now
 HomeTab:CreateSection("Live Stats 📊")
 local LiveStats = {
     Strength   = HomeTab:CreateLabel("Strength: ... 💪"),
@@ -107,6 +106,8 @@ end
 -------------------------------------------------
 -- PLAYER DATA LIVE UPDATE
 -------------------------------------------------
+local currentPower, currentYen, currentChikara = 0, 0, 0
+
 RunService.Heartbeat:Connect(function()
     -- Class
     if OtherData:FindFirstChild("Class") then
@@ -115,20 +116,23 @@ RunService.Heartbeat:Connect(function()
 
     -- Total Power
     if OtherData:FindFirstChild("TotalPower") then
-        local current = tonumber(PowerLabel.Name:match("%d+")) or 0
-        animateValue(PowerLabel, current, OtherData.TotalPower.Value, 0.5)
+        local target = OtherData.TotalPower.Value
+        animateValue(PowerLabel, currentPower, target, 0.5)
+        currentPower = target
     end
 
     -- Yen
     if OtherData:FindFirstChild("Yen") then
-        local current = tonumber(YenLabel.Name:match("%d+")) or 0
-        animateValue(YenLabel, current, OtherData.Yen.Value, 0.5)
+        local target = OtherData.Yen.Value
+        animateValue(YenLabel, currentYen, target, 0.5)
+        currentYen = target
     end
 
     -- Chikara
     if OtherData:FindFirstChild("Chikara") then
-        local current = tonumber(ChikaraLabel.Name:match("%d+")) or 0
-        animateValue(ChikaraLabel, current, OtherData.Chikara.Value, 0.5)
+        local target = OtherData.Chikara.Value
+        animateValue(ChikaraLabel, currentChikara, target, 0.5)
+        currentChikara = target
     end
 end)
 
