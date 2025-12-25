@@ -1,13 +1,12 @@
--- MurzzHub v1.0j Beta (UI + Player Data, Stats & Quest Overview + Info Tab)
+-- MurzzHub v1.0k Beta (UI + Player Data, Stats & Quest Overview + Info Tab + Auto Quest Detection & Completion)
 -- Author: Murzay (Modified by ChatGPT)
--- VERSION NOTE: v1.0i -> v1.0j; next after z would be 1.01a etc.
+-- VERSION NOTE: v1.0j -> v1.0k; next after z would be 1.01a etc.
 
 -------------------------------------------------
 -- SERVICES
 -------------------------------------------------
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-
 local Player = Players.LocalPlayer
 local OtherData = Player:WaitForChild("OtherData")
 local StatsFolder = Player:WaitForChild("Stats")
@@ -16,7 +15,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0j Beta"
+local VERSION = "v1.0k Beta"
 
 -------------------------------------------------
 -- RAYFIELD
@@ -39,15 +38,12 @@ local Window = Rayfield:CreateWindow({
 -- INFO TAB
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
-
--- Update Log Section
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
-    Title = "Update Log v1.0: Release ✅",
-    Content = "Test" -- placeholder description
+    Title = "Update Log v1.0k: Auto Quest + Completion ✅",
+    Content = "Added auto-detect for new quests and completion highlights!"
 })
 
--- Discord Section
 InfoTab:CreateSection("Discord 💬")
 InfoTab:CreateParagraph({
     Title = string.format("Dear @%s,", Player.DisplayName),
@@ -60,14 +56,12 @@ If you have any suggestions, or just want to see the sneak peaks, events and mor
 InfoTab:CreateButton({
     Name = "Join The Discord Server!",
     Callback = function()
-        -- Replace this with your actual Discord link
         local discordLink = "DISCORD_LINK_HERE"
         if discordLink and discordLink ~= "" then
-            -- Attempt to open URL
             if syn and syn.request then
-                syn.request({Url = discordLink}) -- for Synapse users
+                syn.request({Url = discordLink})
             else
-                setclipboard(discordLink) -- fallback copies link
+                setclipboard(discordLink)
             end
         end
     end
@@ -136,16 +130,14 @@ end
 -------------------------------------------------
 local HomeTab = Window:CreateTab("Home 🏠")
 
--- Sections
+-- Player Data
 HomeTab:CreateSection("Player Data 👤")
-
--- Player Data Labels
-local ClassLabel   = HomeTab:CreateLabel("Class: ...")
-local PowerLabel   = HomeTab:CreateLabel("Total Power: ... ⚡")
-local YenLabel     = HomeTab:CreateLabel("Money: ... 💰")
+local ClassLabel = HomeTab:CreateLabel("Class: ...")
+local PowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡")
+local YenLabel = HomeTab:CreateLabel("Money: ... 💰")
 local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
--- Live Stats Section
+-- Live Stats
 HomeTab:CreateSection("Live Stats 📊")
 local LiveStats = {}
 for statId, name in pairs(StatIdToName) do
@@ -158,25 +150,33 @@ for statId, name in pairs(StatIdToName) do
     }
 end
 
--- Quest Overview Section
+-- Quest Overview
 HomeTab:CreateSection("Quest Overview 📜")
 local QuestOverviewLabels = {}
 
--- Dynamically create labels for all quests
-local function createQuestLabels()
-    QuestOverviewLabels = {} -- reset
-    for _, questFolder in ipairs(QuestsFolder:GetChildren()) do
-        if questFolder:IsA("Folder") then
-            local displayName = questFolder.Name
-            local name, number = displayName:match("(%a+)(%d+)")
-            if name and number then
-                displayName = name.." No."..number
-            end
-            QuestOverviewLabels[questFolder.Name] = HomeTab:CreateLabel(displayName.." [0%]")
-        end
+local function createQuestLabel(questFolder)
+    local displayName = questFolder.Name
+    local name, number = displayName:match("(%a+)(%d+)")
+    if name and number then
+        displayName = name.." No."..number
+    end
+    local label = HomeTab:CreateLabel(displayName.." [0%]")
+    QuestOverviewLabels[questFolder.Name] = {Label = label, Completed = false}
+end
+
+-- Initial quests
+for _, questFolder in ipairs(QuestsFolder:GetChildren()) do
+    if questFolder:IsA("Folder") then
+        createQuestLabel(questFolder)
     end
 end
-createQuestLabels()
+
+-- Detect new quests dynamically
+QuestsFolder.ChildAdded:Connect(function(child)
+    if child:IsA("Folder") and not QuestOverviewLabels[child.Name] then
+        createQuestLabel(child)
+    end
+end)
 
 -------------------------------------------------
 -- PLAYER DATA & STATS LIVE UPDATE
@@ -220,14 +220,13 @@ RunService.Heartbeat:Connect(function()
     end
 
     -- Quest Percentages
-    for questName, label in pairs(QuestOverviewLabels) do
+    for questName, data in pairs(QuestOverviewLabels) do
         local questFolder = QuestsFolder:FindFirstChild(questName)
         if questFolder then
             local requirementsFolder = questFolder:FindFirstChild("Requirements")
             local progressFolder = questFolder:FindFirstChild("Progress")
             if requirementsFolder and progressFolder then
                 local totalReq, totalProg = 0, 0
-
                 for _, req in ipairs(requirementsFolder:GetChildren()) do
                     if req:IsA("IntValue") or req:IsA("NumberValue") then
                         totalReq = totalReq + req.Value
@@ -250,7 +249,27 @@ RunService.Heartbeat:Connect(function()
                     displayName = name.." No."..number
                 end
 
-                label:Set(string.format("%s [%d%%]", displayName, percent))
+                local labelText = string.format("%s [%d%%]", displayName, percent)
+                local labelObj = data.Label
+
+                -- Completion highlight
+                if percent >= 100 and not data.Completed then
+                    data.Completed = true
+                    labelObj:Set(labelText.." ✅")
+                    -- Light -> dark green gradient (approximated)
+                    if labelObj.SetColor then
+                        labelObj:SetColor(Color3.fromRGB(144, 238, 144)) -- light green start
+                    end
+                    -- Notification
+                    Rayfield:Notify({
+                        Title = "✅ You completed a quest!",
+                        Content = "You completed "..displayName.."! Stay on that grinding streak!",
+                        Duration = 5,
+                        Image = 1580567251 -- Rayfield built-in tick icon
+                    })
+                else
+                    labelObj:Set(labelText)
+                end
             end
         end
     end
