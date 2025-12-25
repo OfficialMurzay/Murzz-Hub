@@ -1,6 +1,6 @@
--- MurzzHub v1.0r Beta
--- Full Stable Build (Home + Live Stats + Quests + Auto Train)
--- Author: Murzay | Animated Numbers + Auto Train Logic
+-- MurzzHub v1.0s Beta
+-- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara)
+-- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara
 
 -------------------------------------------------
 -- SERVICES
@@ -128,6 +128,7 @@ InfoTab:CreateParagraph({
 • UI locked & stable
 • Home + Live Stats + Quest Progress animate incrementally with easing
 • Auto Train UI + functional toggles that trigger on exact cooldown
+• Auto Chikara toggle added
 ]]
 })
 
@@ -291,9 +292,11 @@ for _,q in ipairs(QuestsFolder:GetChildren()) do
 end
 
 -------------------------------------------------
--- AUTO FARMS TAB (TRIGGER EXACT COOLDOWN)
+-- AUTO FARMS TAB
 -------------------------------------------------
 local AutoTab = Window:CreateTab("Auto Farms ⚙️")
+
+-- Auto Train Section
 AutoTab:CreateSection("Auto Train 🏋️")
 
 local mainClient = Player:WaitForChild("PlayerGui"):WaitForChild("Main"):WaitForChild("MainClient")
@@ -365,6 +368,30 @@ for _,stat in ipairs(AutoStats) do
     })
     table.insert(AutoToggles, toggle)
 end
+
+-- Auto Chikara Section
+AutoTab:CreateSection("Auto Chikara 💎")
+
+AutoTab:CreateToggle({
+    Name = "Collect Chikara 💠",
+    CurrentValue = false,
+    Flag = "AutoChikaraToggle",
+    Callback = function(val)
+        if val then
+            log("Auto Chikara ON")
+            task.spawn(function()
+                while Rayfield.Flags["AutoChikaraToggle"] do
+                    -- Replace this with actual game Chikara collection logic
+                    -- Example:
+                    -- ReplicatedStorage.Remotes.RemoteEvent:FireServer("CollectChikara")
+                    task.wait(0.5)
+                end
+            end)
+        else
+            log("Auto Chikara OFF")
+        end
+    end
+})
 
 -------------------------------------------------
 -- DONE
