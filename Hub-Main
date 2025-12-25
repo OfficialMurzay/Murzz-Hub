@@ -1,4 +1,4 @@
--- MurzzHub v1.0y Beta (Fully Live Quest Updates, Nil-Safe)
+-- MurzzHub v1.0aa Beta (Info Tab Fixed + Quest Sections Live)
 -- Author: Murzay (Modified by ChatGPT)
 
 -------------------------------------------------
@@ -14,7 +14,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0y Beta"
+local VERSION = "v1.0aa Beta"
 
 -------------------------------------------------
 -- DEBUG
@@ -100,18 +100,18 @@ local StatIdToName = {
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
-InfoTab:CreateParagraph({Title="Update Log "..VERSION, Content=[[
-- Fully live updating quests
-- Nil-safe
-- Animated numbers
-- Info tab + Discord button preserved
+InfoTab:CreateParagraph({Title="MurzzHub "..VERSION.." Update Log", Content=[[
+• Fully live updating quests with animated numbers
+• Quest sections labeled with quest name
+• Info tab and Discord button fixed
+• Nil-safe and optimized
 ]]})
 
 InfoTab:CreateSection("Discord 💬")
 InfoTab:CreateParagraph({
     Title = "Dear "..tostring(Player.DisplayName or "Player"),
     Content = [[
-Thanks for using MurzzHub! Join our Discord for sneak peeks & events! ❤️
+Thanks for using MurzzHub! Your support means a lot. Join our Discord to see sneak peeks, events, and updates! ❤️
 ]]
 })
 InfoTab:CreateButton({
@@ -167,11 +167,11 @@ QuestsFolder.ChildAdded:Connect(function(child)
 end)
 
 -------------------------------------------------
--- QUESTS TAB
+-- QUESTS TAB (ONE SECTION PER QUEST)
 -------------------------------------------------
 local QuestsTab = Window:CreateTab("Quests 📜")
-QuestsTab:CreateSection("Current Quests 📌")
-local QuestParagraphs = {}
+local QuestSections = {}
+local QuestLabels = {}
 local AnimatedQuestValues = {}
 
 local function getAnimatedValue(questFolder, reqName)
@@ -182,17 +182,20 @@ local function getAnimatedValue(questFolder, reqName)
     return AnimatedQuestValues[questFolder][reqName]
 end
 
-local function updateQuestParagraph(questFolder)
+local function updateQuestSection(questFolder)
     safeRun(function()
         if not questFolder then return end
         local displayName = questFolder.Name
         local name, number = displayName:match("(%a+)(%d+)")
         if name and number then displayName = name.." No."..number end
 
+        if not QuestSections[questFolder.Name] then
+            QuestSections[questFolder.Name] = QuestsTab:CreateSection(displayName)
+        end
+
         local Requirements = questFolder:FindFirstChild("Requirements")
         if not Requirements then return end
         local ProgressFolder = questFolder:FindFirstChild("Progress")
-        local descLines = {}
         local allComplete = true
 
         for _, req in ipairs(Requirements:GetChildren()) do
@@ -207,7 +210,7 @@ local function updateQuestParagraph(questFolder)
                 end
 
                 local animVal = getAnimatedValue(questFolder, req.Name)
-                animateValue({Set=function(v) AnimatedQuestValues[questFolder][req.Name]=v end}, animVal, progVal, "", "", 0.5)
+                animateValue({Set=function(v) AnimatedQuestValues[questFolder][req.Name]=v end}, animVal, progVal, 0, "", 0.5)
 
                 local statName, emoji
                 local numId = tonumber(req.Name)
@@ -223,32 +226,38 @@ local function updateQuestParagraph(questFolder)
 
                 local complete = progVal >= req.Value
                 if not complete then allComplete = false end
-                table.insert(descLines, string.format("%s/%s %s %s%s",
-                    abbreviateNumber(progVal or 0),
-                    abbreviateNumber(req.Value or 0),
+
+                local labelText = string.format("%s/%s %s %s%s",
+                    abbreviateNumber(progVal),
+                    abbreviateNumber(req.Value),
                     tostring(statName),
                     tostring(emoji),
                     complete and " ✅" or ""
-                ))
-            end
-        end
+                )
 
-        local descText = table.concat(descLines,"\n")
-        local titleText = tostring(displayName)..(allComplete and " ✅" or "")
-        local paragraph = QuestParagraphs[questFolder.Name]
-        if not paragraph then
-            paragraph = QuestsTab:CreateParagraph({Title=titleText, Content=tostring(descText)})
-            QuestParagraphs[questFolder.Name] = paragraph
-        else
-            if paragraph and paragraph.Set then paragraph:Set(tostring(descText) or "") end
-            if paragraph and paragraph.Title ~= nil then paragraph.Title = titleText end
+                if not QuestLabels[questFolder.Name] then
+                    QuestLabels[questFolder.Name] = {}
+                end
+
+                if not QuestLabels[questFolder.Name][req.Name] then
+                    local lbl = QuestSections[questFolder.Name]:CreateLabel(labelText)
+                    QuestLabels[questFolder.Name][req.Name] = lbl
+                else
+                    local lbl = QuestLabels[questFolder.Name][req.Name]
+                    if lbl and lbl.Set then
+                        lbl:Set(labelText)
+                    elseif lbl and lbl.Text ~= nil then
+                        lbl.Text = labelText
+                    end
+                end
+            end
         end
     end)
 end
 
-for _, questFolder in ipairs(QuestsFolder:GetChildren()) do updateQuestParagraph(questFolder) end
+for _, questFolder in ipairs(QuestsFolder:GetChildren()) do updateQuestSection(questFolder) end
 QuestsFolder.ChildAdded:Connect(function(child)
-    if child:IsA("Folder") then updateQuestParagraph(child) end
+    if child:IsA("Folder") then updateQuestSection(child) end
 end)
 
 -------------------------------------------------
@@ -280,9 +289,8 @@ RunService.Heartbeat:Connect(function()
         end
 
         -- Live Quests
-        for questName, paragraph in pairs(QuestParagraphs) do
-            local questFolder = QuestsFolder:FindFirstChild(questName)
-            if questFolder then updateQuestParagraph(questFolder) end
+        for _, questFolder in ipairs(QuestsFolder:GetChildren()) do
+            updateQuestSection(questFolder)
         end
     end)
 end)
@@ -291,4 +299,4 @@ end)
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
-print("[MurzzHub] v1.0y Beta loaded successfully - Quests truly live-update without nil errors")
+print("[MurzzHub] v1.0aa Beta loaded successfully - Quest sections live-update properly")
