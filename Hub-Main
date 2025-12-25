@@ -1,12 +1,13 @@
 -- MurzzHub v1.0r Beta
--- Full Stable Build (Home + Live Stats + Quests + Auto Train UI)
--- Author: Murzay | Animated Numbers + Auto Train UI
+-- Full Stable Build (Home + Live Stats + Quests + Auto Train)
+-- Author: Murzay | Animated Numbers + Auto Train Logic
 
 -------------------------------------------------
 -- SERVICES
 -------------------------------------------------
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local OtherData = Player:WaitForChild("OtherData")
 local StatsFolder = Player:WaitForChild("Stats")
@@ -27,6 +28,10 @@ local function safeRun(fn)
         warned = true
         warn("[MurzzHub Debug] "..err)
     end
+end
+
+local function log(msg)
+    print("[MurzzHub DEBUG] "..tostring(msg))
 end
 
 -------------------------------------------------
@@ -66,8 +71,7 @@ local function abbreviate(n)
     end
 end
 
--- Smooth easing animation
-local function easeOutQuad(t) -- t = 0..1
+local function easeOutQuad(t)
     return 1 - (1 - t)^2
 end
 
@@ -123,7 +127,7 @@ InfoTab:CreateParagraph({
 • Event-based (zero loops)
 • UI locked & stable
 • Home + Live Stats + Quest Progress animate incrementally with easing
-• Auto Train UI added
+• Auto Train UI + functional toggles
 ]]
 })
 
@@ -157,7 +161,6 @@ local PowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡")
 local YenLabel = HomeTab:CreateLabel("Money: ... 💰")
 local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
--- Bind animated value
 local function bindValue(obj, label, prefix, emoji)
     if not obj then return end
     local current = obj.Value
@@ -243,7 +246,6 @@ local function setupQuest(quest)
 
                     local done = progress >= req.Value
 
-                    -- Animate only numeric part, keep rest of label
                     task.spawn(function()
                         local steps = 30
                         local duration = 0.7
@@ -294,26 +296,62 @@ end
 local AutoTab = Window:CreateTab("Auto Farms ⚙️")
 AutoTab:CreateSection("Auto Train 🏋️")
 
--- Table of stats with emojis
+-- Wait for MainClient and StatFunctions
+local mainClient = Player:WaitForChild("PlayerGui"):WaitForChild("Main"):WaitForChild("MainClient")
+local StatFunctions = require(mainClient:WaitForChild("StatFunctions"))
+local CharacterModule
+repeat
+    CharacterModule = StatFunctions.characterModule
+    task.wait(0.1)
+until CharacterModule
+
+-- Load GameData for cooldowns
+local GameData = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameData"))
+
+-- Stats table
 local AutoStats = {
-    {"Strength", "💪"},
-    {"Durability", "🛡️"},
-    {"Chakra", "🌀"},
-    {"Sword", "🗡️"},
-    {"Speed", "💨"},
-    {"Agility", "☁️"},
+    {1, "Strength", "💪"},
+    {2, "Durability", "🛡️"},
+    {3, "Chakra", "🌀"},
+    {4, "Sword", "🗡️"},
+    {5, "Agility", "☁️"},
+    {6, "Speed", "💨"},
 }
 
--- Create a switch for each stat with "Train" in front
-local AutoToggles = {} -- store toggle references
+local AutoToggles = {}
+
 for _,stat in ipairs(AutoStats) do
-    local name, emoji = unpack(stat)
+    local statID, name, emoji = unpack(stat)
     local toggle = AutoTab:CreateToggle({
         Name = "Train "..name.." "..emoji,
         CurrentValue = false,
-        Flag = name.."Toggle", -- optional, for Rayfield config
+        Flag = name.."Toggle",
         Callback = function(val)
-            print("Train "..name..": "..tostring(val))
+            if val then
+                -- Start auto train loop
+                task.spawn(function()
+                    while toggle.CurrentValue do
+                        if CharacterModule.states.Dead then
+                            task.wait(1)
+                        else
+                            CharacterModule.characterStopped = false
+                            CharacterModule:ResumeCharacter()
+                            StatFunctions.CurrentKey = statID
+                            StatFunctions[statID] = false -- unblock stat
+                            local cooldown = GameData.Stats[statID].Cooldown
+                            local success, err = pcall(function()
+                                ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train", statID)
+                            end)
+                            if success then
+                                log("TrainStat fired for "..name)
+                            else
+                                log("TrainStat error: "..tostring(err))
+                            end
+                            task.wait(cooldown)
+                        end
+                    end
+                end)
+            end
         end
     })
     table.insert(AutoToggles, toggle)
