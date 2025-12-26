@@ -1,4 +1,4 @@
--- MurzzHub v1.0s Beta
+-- MurzzHub v1.0r Beta
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara)
 -- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
 
@@ -319,13 +319,12 @@ local AutoStats = {
     {6, "Speed", "💨"},
 }
 
-local AutoToggles = {}
 local ActiveTrains = {}
 local LastFire = {}
 
 for _,stat in ipairs(AutoStats) do
     local statID, name, emoji = unpack(stat)
-    local toggle = AutoTab:CreateToggle({
+    AutoTab:CreateToggle({
         Name = "Train "..name.." "..emoji,
         CurrentValue = false,
         Flag = name.."Toggle",
@@ -367,10 +366,9 @@ for _,stat in ipairs(AutoStats) do
             end
         end
     })
-    table.insert(AutoToggles, toggle)
 end
 
--- Auto Chikara Section (Auto Click + Dynamic Cooldown)
+-- Auto Chikara Section (Fixed)
 AutoTab:CreateSection("Auto Chikara 💎")
 
 AutoTab:CreateToggle({
@@ -380,15 +378,16 @@ AutoTab:CreateToggle({
     Callback = function(val)
         if val then
             log("Auto Chikara ON")
+            local active = true
             task.spawn(function()
                 local lastCollected = {}
-                while Rayfield.Flags["AutoChikaraToggle"] do
+                while active and Rayfield.Flags["AutoChikaraToggle"] do
                     local cratesFolder = workspace:FindFirstChild("Scriptable") and workspace.Scriptable:FindFirstChild("ChikaraBoxes")
                     if cratesFolder then
                         local crates = cratesFolder:GetChildren()
-                        for i = 1, #crates do
-                            if not Rayfield.Flags["AutoChikaraToggle"] then break end
-                            local crate = crates[i]
+                        local hasCollected = false
+                        for _, crate in ipairs(crates) do
+                            if not active or not Rayfield.Flags["AutoChikaraToggle"] then break end
                             if crate and crate:IsA("BasePart") then
                                 local now = tick()
                                 if not lastCollected[crate] or now - lastCollected[crate] >= 10 then
@@ -397,7 +396,7 @@ AutoTab:CreateToggle({
                                         Player.Character:SetPrimaryPartCFrame(crate.CFrame + Vector3.new(0,3,0))
                                     end
                                     task.wait(0.1)
-                                    -- Fire server to click/collect
+                                    -- Fire click / server
                                     local success, err = pcall(function()
                                         local clickDetector = crate:FindFirstChildWhichIsA("ClickDetector")
                                         if clickDetector then
@@ -406,18 +405,23 @@ AutoTab:CreateToggle({
                                             ReplicatedStorage.Remotes.RemoteEvent:FireServer("CollectChikara", crate)
                                         end
                                     end)
-                                    if not success then
+                                    if success then
+                                        lastCollected[crate] = tick()
+                                        hasCollected = true
+                                        log("[AutoChikara] Collected crate")
+                                    else
                                         warn("[AutoChikara] Failed to collect: "..tostring(err))
                                     end
-                                    lastCollected[crate] = tick()
                                     task.wait(10)
                                 end
                             end
                         end
+                        if not hasCollected then
+                            task.wait(1) -- No crates available or all on cooldown
+                        end
                     else
-                        task.wait(1) -- No crates found, wait a second to reduce lag
+                        task.wait(1) -- No crates folder, wait to reduce lag
                     end
-                    task.wait(0.1)
                 end
             end)
         else
