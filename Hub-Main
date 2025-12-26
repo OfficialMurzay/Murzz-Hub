@@ -368,7 +368,7 @@ for _,stat in ipairs(AutoStats) do
     })
 end
 
--- Auto Chikara Section (Fixed)
+-- Auto Chikara Section (ClickBox + ClickDetector)
 AutoTab:CreateSection("Auto Chikara 💎")
 
 AutoTab:CreateToggle({
@@ -378,49 +378,47 @@ AutoTab:CreateToggle({
     Callback = function(val)
         if val then
             log("Auto Chikara ON")
-            local active = true
             task.spawn(function()
                 local lastCollected = {}
-                while active and Rayfield.Flags["AutoChikaraToggle"] do
+                while Rayfield.Flags["AutoChikaraToggle"] do
                     local cratesFolder = workspace:FindFirstChild("Scriptable") and workspace.Scriptable:FindFirstChild("ChikaraBoxes")
                     if cratesFolder then
                         local crates = cratesFolder:GetChildren()
                         local hasCollected = false
                         for _, crate in ipairs(crates) do
-                            if not active or not Rayfield.Flags["AutoChikaraToggle"] then break end
+                            if not Rayfield.Flags["AutoChikaraToggle"] then break end
                             if crate and crate:IsA("BasePart") then
-                                local now = tick()
-                                if not lastCollected[crate] or now - lastCollected[crate] >= 10 then
-                                    -- Teleport above crate
-                                    if Player.Character and Player.Character.PrimaryPart then
-                                        Player.Character:SetPrimaryPartCFrame(crate.CFrame + Vector3.new(0,3,0))
-                                    end
-                                    task.wait(0.1)
-                                    -- Fire click / server
-                                    local success, err = pcall(function()
-                                        local clickDetector = crate:FindFirstChildWhichIsA("ClickDetector")
-                                        if clickDetector then
-                                            clickDetector:FireClick(Player)
-                                        else
-                                            ReplicatedStorage.Remotes.RemoteEvent:FireServer("CollectChikara", crate)
+                                local clickBox = crate:FindFirstChild("ClickBox")
+                                if clickBox then
+                                    local clickDetector = clickBox:FindFirstChildWhichIsA("ClickDetector")
+                                    local now = tick()
+                                    if clickDetector and (not lastCollected[crate] or now - lastCollected[crate] >= 10) then
+                                        -- Teleport above crate
+                                        if Player.Character and Player.Character.PrimaryPart then
+                                            Player.Character:SetPrimaryPartCFrame(crate.CFrame + Vector3.new(0,3,0))
                                         end
-                                    end)
-                                    if success then
-                                        lastCollected[crate] = tick()
-                                        hasCollected = true
-                                        log("[AutoChikara] Collected crate")
-                                    else
-                                        warn("[AutoChikara] Failed to collect: "..tostring(err))
+                                        task.wait(0.1)
+                                        -- Fire Click
+                                        local success, err = pcall(function()
+                                            clickDetector:FireClick(Player)
+                                        end)
+                                        if success then
+                                            lastCollected[crate] = tick()
+                                            hasCollected = true
+                                            log("[AutoChikara] Collected crate")
+                                        else
+                                            warn("[AutoChikara] Failed to collect: "..tostring(err))
+                                        end
+                                        task.wait(10)
                                     end
-                                    task.wait(10)
                                 end
                             end
                         end
                         if not hasCollected then
-                            task.wait(1) -- No crates available or all on cooldown
+                            task.wait(1) -- No crates or all on cooldown
                         end
                     else
-                        task.wait(1) -- No crates folder, wait to reduce lag
+                        task.wait(1) -- Folder missing
                     end
                 end
             end)
