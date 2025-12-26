@@ -514,40 +514,84 @@ AutoTab:CreateToggle({
 -- TELEPORTS TAB
 -------------------------------------------------
 local TeleportsTab = Window:CreateTab("Teleports 📍")
-
 TeleportsTab:CreateSection("Stat-Based Zones")
 
-TeleportsTab:CreateButton({
-    Name = "Strength 💪",
-    Callback = function()
-        -- intentionally empty (to be added later)
-    end
-})
+local function getCharacter()
+    return Player.Character or Player.CharacterAdded:Wait()
+end
 
-TeleportsTab:CreateButton({
-    Name = "Durability 🛡️",
-    Callback = function()
-        -- intentionally empty (to be added later)
+local function teleportTo(position)
+    local char = getCharacter()
+    if char and char.PrimaryPart then
+        char:SetPrimaryPartCFrame(CFrame.new(position + Vector3.new(0, 5, 0)))
     end
-})
+end
 
-TeleportsTab:CreateButton({
-    Name = "Chakra 🌀",
-    Callback = function()
-        -- intentionally empty (to be added later)
-    end
-})
+-- parse zone keys like "10K", "5T", "150Qd"
+local function parseZoneValue(text)
+    local number, suffix = text:match("([%d%.]+)(%a*)")
+    number = tonumber(number)
+    if not number then return 0 end
 
-TeleportsTab:CreateButton({
-    Name = "Speed 💨",
-    Callback = function()
-        -- intentionally empty (to be added later)
-    end
-})
+    local mult = {
+        K  = 1e3,
+        M  = 1e6,
+        B  = 1e9,
+        T  = 1e12,
+        Qd = 1e15,
+        Qn = 1e18,
+        Sx = 1e21,
+    }
 
-TeleportsTab:CreateButton({
-    Name = "Agility ☁️",
-    Callback = function()
-        -- intentionally empty (to be added later)
+    return number * (mult[suffix] or 1)
+end
+
+local function getBestZone(statName, statValue)
+    local zones = ZonePositions[statName]
+    if not zones then return nil end
+
+    local bestRequirement = 0
+    local bestPosition = nil
+
+    for requirement, position in pairs(zones) do
+        local needed = parseZoneValue(requirement)
+        if statValue >= needed and needed >= bestRequirement then
+            bestRequirement = needed
+            bestPosition = position
+        end
     end
-})
+
+    return bestPosition
+end
+
+local StatButtons = {
+    Strength   = {id = "1", emoji = "💪"},
+    Durability = {id = "2", emoji = "🛡️"},
+    Chakra     = {id = "3", emoji = "🌀"},
+    Agility    = {id = "5", emoji = "☁️"},
+    Speed      = {id = "6", emoji = "💨"},
+}
+
+for statName, data in pairs(StatButtons) do
+    local stat = Player.Stats:FindFirstChild(data.id)
+    if stat then
+        local currentZone
+
+        TeleportsTab:CreateButton({
+            Name = statName.." "..data.emoji,
+            Callback = function()
+                if currentZone then
+                    teleportTo(currentZone)
+                end
+            end
+        })
+
+        local function updateZone()
+            currentZone = getBestZone(statName, stat.Value)
+        end
+
+        updateZone()
+        stat:GetPropertyChangedSignal("Value"):Connect(updateZone)
+    end
+end
+
