@@ -369,12 +369,12 @@ for _,stat in ipairs(AutoStats) do
 end
 
 -- Auto Chikara Section (ClickBox + ClickDetector)
-AutoTab:CreateSection("Auto Chikara 💎")
+AutoTab:CreateSection("Auto Chikara 💎 | AUTOCLICKER NEEDED")
 
 local AutoChikaraActive = false
 
 AutoTab:CreateToggle({
-    Name = "Collect Chikara 💠",
+    Name = "Collect Chikara ⚠️",
     CurrentValue = false,
     Flag = "AutoChikaraToggle",
     Callback = function(val)
