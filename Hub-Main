@@ -564,21 +564,22 @@ local function getBestZone(statName, statValue)
     return bestPosition
 end
 
-local StatButtons = {
-    Strength   = {id = "1", emoji = "💪"},
-    Durability = {id = "2", emoji = "🛡️"},
-    Chakra     = {id = "3", emoji = "🌀"},
-    Agility    = {id = "5", emoji = "☁️"},
-    Speed      = {id = "6", emoji = "💨"},
+-- Ordered Stat Buttons (list ensures order)
+local StatButtonsOrdered = {
+    {Name = "Strength",   id = "1", emoji = "💪"},
+    {Name = "Durability", id = "2", emoji = "🛡️"},
+    {Name = "Chakra",     id = "3", emoji = "🌀"},
+    {Name = "Speed",      id = "6", emoji = "💨"},
+    {Name = "Agility",    id = "5", emoji = "☁️"},
 }
 
-for statName, data in pairs(StatButtons) do
+for _, data in ipairs(StatButtonsOrdered) do
     local stat = Player.Stats:FindFirstChild(data.id)
     if stat then
         local currentZone
 
         TeleportsTab:CreateButton({
-            Name = statName.." "..data.emoji,
+            Name = data.Name.." "..data.emoji,
             Callback = function()
                 if currentZone then
                     teleportTo(currentZone)
@@ -587,11 +588,10 @@ for statName, data in pairs(StatButtons) do
         })
 
         local function updateZone()
-            currentZone = getBestZone(statName, stat.Value)
+            currentZone = getBestZone(data.Name, stat.Value)
         end
 
         updateZone()
         stat:GetPropertyChangedSignal("Value"):Connect(updateZone)
     end
 end
-
