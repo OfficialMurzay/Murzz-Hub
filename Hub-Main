@@ -371,22 +371,25 @@ end
 -- Auto Chikara Section (ClickBox + ClickDetector)
 AutoTab:CreateSection("Auto Chikara 💎")
 
+local AutoChikaraActive = false
+
 AutoTab:CreateToggle({
     Name = "Collect Chikara 💠",
     CurrentValue = false,
     Flag = "AutoChikaraToggle",
     Callback = function(val)
+        AutoChikaraActive = val
         if val then
             log("Auto Chikara ON")
             task.spawn(function()
                 local lastCollected = {}
-                while Rayfield.Flags["AutoChikaraToggle"] do
+                while AutoChikaraActive do
                     local cratesFolder = workspace:FindFirstChild("Scriptable") and workspace.Scriptable:FindFirstChild("ChikaraBoxes")
                     if cratesFolder then
                         local crates = cratesFolder:GetChildren()
                         local hasCollected = false
                         for _, crate in ipairs(crates) do
-                            if not Rayfield.Flags["AutoChikaraToggle"] then break end
+                            if not AutoChikaraActive then break end
                             if crate and crate:IsA("BasePart") then
                                 local clickBox = crate:FindFirstChild("ClickBox")
                                 if clickBox then
@@ -409,7 +412,7 @@ AutoTab:CreateToggle({
                                         else
                                             warn("[AutoChikara] Failed to collect: "..tostring(err))
                                         end
-                                        task.wait(10)
+                                        task.wait(10) -- wait 10 seconds after collecting
                                     end
                                 end
                             end
@@ -421,6 +424,7 @@ AutoTab:CreateToggle({
                         task.wait(1) -- Folder missing
                     end
                 end
+                log("Auto Chikara OFF")
             end)
         else
             log("Auto Chikara OFF")
