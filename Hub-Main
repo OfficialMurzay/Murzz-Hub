@@ -1,4 +1,4 @@
--- MurzzHub v1.0s Beta
+-- MurzzHub v1.0r Beta
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara)
 -- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
 
@@ -433,12 +433,14 @@ AutoTab:CreateToggle({
 })
 
 -------------------------------------------------
--- AUTO QUEST SECTION (STATS ONLY)
+-- AUTO QUEST SECTION (STATS ONLY, DYNAMIC)
 -------------------------------------------------
 AutoTab:CreateSection("Auto Quest 📜")
 
 local AutoQuestToggles = {}
+local QuestTogglesUI = {}
 
+-- Check if quest uses only stats (no kills, known stats only)
 local function questUsesOnlyStats(quest)
     local reqs = quest:FindFirstChild("Requirements")
     if not reqs then return false end
@@ -455,23 +457,54 @@ local function questUsesOnlyStats(quest)
     return true
 end
 
-for _, quest in ipairs(QuestsFolder:GetChildren()) do
-    if quest:IsA("Folder") and questUsesOnlyStats(quest) then
-        local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
+-- Add a toggle for a quest
+local function addQuestToggle(quest)
+    if not quest:IsA("Folder") then return end
+    if not questUsesOnlyStats(quest) then return end
+    if QuestTogglesUI[quest.Name] then return end -- already exists
 
-        AutoQuestToggles[quest.Name] = false
+    local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
+    AutoQuestToggles[quest.Name] = false
 
-        AutoTab:CreateToggle({
-            Name = display,
-            CurrentValue = false,
-            Flag = "AutoQuest_"..quest.Name,
-            Callback = function(val)
-                AutoQuestToggles[quest.Name] = val
-                log("[AutoQuest] "..display.." = "..tostring(val))
-            end
-        })
+    local toggle = AutoTab:CreateToggle({
+        Name = display,
+        CurrentValue = false,
+        Flag = "AutoQuest_"..quest.Name,
+        Callback = function(val)
+            AutoQuestToggles[quest.Name] = val
+            log("[AutoQuest] "..display.." = "..tostring(val))
+        end
+    })
+
+    QuestTogglesUI[quest.Name] = toggle
+end
+
+-- Remove a toggle if quest folder is destroyed
+local function removeQuestToggle(questName)
+    local toggle = QuestTogglesUI[questName]
+    if toggle then
+        -- Assuming Rayfield supports destroy/remove
+        toggle:Destroy()
+        QuestTogglesUI[questName] = nil
+        AutoQuestToggles[questName] = nil
+        log("[AutoQuest] Removed toggle for "..questName)
     end
 end
+
+-- Initial population
+for _, quest in ipairs(QuestsFolder:GetChildren()) do
+    addQuestToggle(quest)
+end
+
+-- Listen for new quests
+QuestsFolder.ChildAdded:Connect(function(quest)
+    addQuestToggle(quest)
+end)
+
+-- Listen for completed/removed quests
+QuestsFolder.ChildRemoved:Connect(function(quest)
+    removeQuestToggle(quest.Name)
+end)
 
 -------------------------------------------------
 -- DONE
