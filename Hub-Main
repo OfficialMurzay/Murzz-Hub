@@ -1,4 +1,4 @@
--- MurzzHub v1.0r Beta
+-- MurzzHub v1.0 Beta
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara + Auto Quest)
 -- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
 
@@ -17,7 +17,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0r Beta"
+local VERSION = "v1.0 Beta"
 
 -------------------------------------------------
 -- SAFE DEBUG
@@ -54,7 +54,7 @@ until Rayfield
 local Window = Rayfield:CreateWindow({
     Name = "MurzzHub "..VERSION,
     LoadingTitle = "MurzzHub "..VERSION,
-    LoadingSubtitle = "Stable Live Player Data & Quests",
+    LoadingSubtitle = "Auto Train, Chikara and more!",
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "MurzzHub",
