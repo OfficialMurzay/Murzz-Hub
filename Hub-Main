@@ -462,7 +462,7 @@ for _, quest in ipairs(QuestsFolder:GetChildren()) do
         AutoQuestToggles[quest.Name] = false
 
         AutoTab:CreateToggle({
-            Name = display.." 📜",
+            Name = display,
             CurrentValue = false,
             Flag = "AutoQuest_"..quest.Name,
             Callback = function(val)
