@@ -433,6 +433,47 @@ AutoTab:CreateToggle({
 })
 
 -------------------------------------------------
+-- AUTO QUEST SECTION (STATS ONLY)
+-------------------------------------------------
+AutoTab:CreateSection("Auto Quest 📜")
+
+local AutoQuestToggles = {}
+
+local function questUsesOnlyStats(quest)
+    local reqs = quest:FindFirstChild("Requirements")
+    if not reqs then return false end
+
+    for _, req in ipairs(reqs:GetChildren()) do
+        if req.Name == "Kill" then
+            return false -- exclude kill quests
+        end
+        if not StatMap[req.Name] then
+            return false -- unknown requirement, exclude
+        end
+    end
+
+    return true
+end
+
+for _, quest in ipairs(QuestsFolder:GetChildren()) do
+    if quest:IsA("Folder") and questUsesOnlyStats(quest) then
+        local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
+
+        AutoQuestToggles[quest.Name] = false
+
+        AutoTab:CreateToggle({
+            Name = display.." 📜",
+            CurrentValue = false,
+            Flag = "AutoQuest_"..quest.Name,
+            Callback = function(val)
+                AutoQuestToggles[quest.Name] = val
+                log("[AutoQuest] "..display.." = "..tostring(val))
+            end
+        })
+    end
+end
+
+-------------------------------------------------
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
