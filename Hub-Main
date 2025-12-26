@@ -128,6 +128,78 @@ local StatMap = {
 }
 
 -------------------------------------------------
+-- ZONE POSITIONS (ALL STATS)
+-------------------------------------------------
+local ZonePositions = {
+
+    Strength = {
+        ["100"]     = Vector3.new(-1.902, 65.000, 127.968),
+        ["10K"]     = Vector3.new(1341.747, 153.963, -137.436),
+        ["100K"]    = Vector3.new(-1238.425, 59.000, 476.596),
+        ["1M"]      = Vector3.new(-915.294, 83.520, 166.473),
+        ["10M"]     = Vector3.new(-2305.319, 617.492, 527.046),
+        ["100M"]    = Vector3.new(-39.747, 64.289, -1307.120),
+        ["1B"]      = Vector3.new(718.492, 151.251, 924.886),
+        ["100B"]    = Vector3.new(1846.949, 141.200, 92.585),
+        ["5T"]      = Vector3.new(626.400, 696.623, 429.320),
+        ["250T"]    = Vector3.new(4340.031, 60.000, -631.732),
+        ["150Qd"]   = Vector3.new(812.393, 207.000, -1001.867),
+        ["25Qn"]    = Vector3.new(3873.903, 136.015, 890.458),
+        ["10Sx"]    = Vector3.new(3869.009, 1110.712, -1254.075),
+    },
+
+    Durability = {
+        ["100"]     = Vector3.new(112.002, 56.026, 881.742),
+        ["10K"]     = Vector3.new(-1606.842, 61.615, -541.502),
+        ["100K"]    = Vector3.new(-72.535, 61.008, 2055.987),
+        ["1M"]      = Vector3.new(-619.584, 179.000, 731.073),
+        ["10M"]     = Vector3.new(-1119.864, 212.630, -949.097),
+        ["100M"]    = Vector3.new(-338.338, 72.620, -1651.415),
+        ["1B"]      = Vector3.new(2495.594, 1543.135, -383.322),
+        ["100B"]    = Vector3.new(-2678.021, -229.855, 358.415),
+        ["5T"]      = Vector3.new(2175.640, 519.579, 571.121),
+        ["250T"]    = Vector3.new(1669.455, 432.897, -1345.698),
+        ["150Qd"]   = Vector3.new(194.019, 773.591, -701.855),
+        ["25Qn"]    = Vector3.new(2564.930, 91.790, 1756.254),
+        ["10Sx"]    = Vector3.new(1718.871, 2305.067, -22.188),
+    },
+
+    Chakra = {
+        ["100"]     = Vector3.new(-6.479, 65.000, -119.760),
+        ["10K"]     = Vector3.new(1425.668, 147.000, -581.487),
+        ["100K"]    = Vector3.new(915.292, 141.000, 783.253),
+        ["1M"]      = Vector3.new(1628.384, 388.750, 591.066),
+        ["10M"]     = Vector3.new(336.626, -156.000, -1802.547),
+        ["100M"]    = Vector3.new(1027.624, 251.000, -630.809),
+        ["1B"]      = Vector3.new(3053.817, 110.900, 1105.384),
+        ["100B"]    = Vector3.new(1663.124, 556.154, 1779.387),
+        ["5T"]      = Vector3.new(-6.211, 101.133, -480.247),
+        ["250T"]    = Vector3.new(-402.687, 1252.990, 668.177),
+        ["150Qd"]   = Vector3.new(-768.222, 2792.676, 591.147),
+        ["25Qn"]    = Vector3.new(3226.973, -440.978, -244.406),
+        ["10Sx"]    = Vector3.new(337.880, 61.008, 1917.442),
+    },
+
+    Agility = {
+        ["100"]     = Vector3.new(41.676, 69.183, 453.424),
+        ["10K"]     = Vector3.new(-424.448, 121.923, -78.950),
+        ["100K"]    = Vector3.new(3482.918, 60.000, 130.891),
+        ["5M"]      = Vector3.new(4111.682, 60.922, 844.187),
+    },
+
+    Speed = {
+        ["100"]     = Vector3.new(-109.675, 61.000, -508.852),
+        ["10K"]     = Vector3.new(-424.448, 121.923, -78.950),
+        ["100K"]    = Vector3.new(3482.918, 60.000, 130.891),
+        ["5M"]      = Vector3.new(4111.682, 60.922, 844.187),
+    },
+
+    Sword = {
+        -- intentionally empty (no zones)
+    }
+}
+
+-------------------------------------------------
 -- INFO TAB
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
@@ -445,126 +517,9 @@ AutoTab:CreateToggle({
 })
 
 -------------------------------------------------
--- AUTO QUEST INTEGRATION
+-- TELEPORTS TAB
 -------------------------------------------------
--- Restored and integrated full Auto Quest system with stat-based priority
--- Will disable conflicting Auto Train toggles automatically
+local TeleportsTab = Window:CreateTab("Teleports 📍")
 
-local AutoQuestToggles = {}
-local QuestTogglesUI = {}
-local AutoQuestRunning = {}
-
--- Example zone positions; replace/add all positions from your table
-local ZonePositions = {
-    [1] = {Vector3.new(-1.902, 65.000, 127.968)}, -- Strength
-    [2] = {Vector3.new(112.002, 56.026, 881.742)}, -- Durability
-    [3] = {Vector3.new(-6.479, 65.000, -119.760)}, -- Chakra
-    [4] = {}, -- Sword
-    [5] = {Vector3.new(41.676, 69.183, 453.424)}, -- Agility
-    [6] = {Vector3.new(-109.675, 61.000, -508.852)}, -- Speed
-}
-
-local function questUsesOnlyStats(quest)
-    local reqs = quest:FindFirstChild("Requirements")
-    if not reqs then return false end
-    for _, req in ipairs(reqs:GetChildren()) do
-        if req.Name == "Kill" then return false end
-        if not StatMap[req.Name] then return false end
-    end
-    return true
-end
-
-local function addQuestToggle(quest)
-    if not quest:IsA("Folder") then return end
-    if not questUsesOnlyStats(quest) then return end
-    if QuestTogglesUI[quest.Name] then return end
-    local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
-    AutoQuestToggles[quest.Name] = false
-    local toggle = AutoTab:CreateToggle({
-        Name = display,
-        CurrentValue = false,
-        Flag = "AutoQuest_"..quest.Name,
-        Callback = function(val)
-            AutoQuestToggles[quest.Name] = val
-            if val then
-                -- auto disable conflicting Auto Train
-                for i=1,6 do ActiveTrains[i] = false end
-                runAutoQuest(quest)
-            else
-                AutoQuestRunning[quest.Name] = false
-            end
-        end
-    })
-    QuestTogglesUI[quest.Name] = toggle
-end
-
-local function removeQuestToggle(questName)
-    local toggle = QuestTogglesUI[questName]
-    if toggle then
-        if toggle.Destroy then toggle:Destroy() end
-        QuestTogglesUI[questName] = nil
-        AutoQuestToggles[questName] = nil
-    end
-end
-
-for _, quest in ipairs(QuestsFolder:GetChildren()) do addQuestToggle(quest) end
-QuestsFolder.ChildAdded:Connect(addQuestToggle)
-QuestsFolder.ChildRemoved:Connect(function(q) removeQuestToggle(q.Name) end)
-
-local function getIncompleteStats(quest)
-    local incomplete = {}
-    local progressFolder = quest:FindFirstChild("Progress")
-    if not progressFolder then return incomplete end
-    for i=1,6 do
-        local prog = progressFolder:FindFirstChild(tostring(i))
-        local reqVal = quest:FindFirstChild("Requirements") and quest.Requirements:FindFirstChild(tostring(i)) or {Value=0}
-        if prog and prog.Value < reqVal.Value then
-            table.insert(incomplete, i)
-        end
-    end
-    table.sort(incomplete)
-    return incomplete
-end
-
-local function teleportToStat(statID)
-    local positions = ZonePositions[statID]
-    if #positions == 0 then return end
-    local target = positions[1]
-    if Player.Character and Player.Character.PrimaryPart then
-        Player.Character:SetPrimaryPartCFrame(CFrame.new(target))
-    end
-end
-
-function runAutoQuest(quest)
-    if AutoQuestRunning[quest.Name] then return end
-    AutoQuestRunning[quest.Name] = true
-    task.spawn(function()
-        local progressFolder = quest:FindFirstChild("Progress")
-        if not progressFolder then return end
-        local requirements = quest:FindFirstChild("Requirements")
-        if not requirements then return end
-
-        local backupTrains = {}
-        for i=1,6 do backupTrains[i] = ActiveTrains[i]; ActiveTrains[i] = false end
-
-        while AutoQuestRunning[quest.Name] do
-            local incomplete = getIncompleteStats(quest)
-            if #incomplete == 0 then break end
-            local statID = incomplete[1]
-            teleportToStat(statID)
-            ActiveTrains[statID] = true
-            while AutoQuestRunning[quest.Name] and table.find(getIncompleteStats(quest), statID) do
-                task.wait(0.2)
-            end
-            ActiveTrains[statID] = false
-        end
-
-        for i=1,6 do ActiveTrains[i] = backupTrains[i] end
-        AutoQuestRunning[quest.Name] = false
-        log("[AutoQuest] "..quest.Name.." completed!")
-    end)
-end
-
--------------------------------------------------
--- DONE
--------------------------------------------------
+-- Intentionally empty
+-- Zones will be populated later
