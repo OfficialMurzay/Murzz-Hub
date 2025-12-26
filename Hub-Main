@@ -1,6 +1,6 @@
 -- MurzzHub v1.0r Beta
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara)
--- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara
+-- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
 
 -------------------------------------------------
 -- SERVICES
@@ -8,6 +8,7 @@
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local OtherData = Player:WaitForChild("OtherData")
 local StatsFolder = Player:WaitForChild("Stats")
@@ -128,7 +129,7 @@ InfoTab:CreateParagraph({
 • UI locked & stable
 • Home + Live Stats + Quest Progress animate incrementally with easing
 • Auto Train UI + functional toggles that trigger on exact cooldown
-• Auto Chikara toggle added (teleport + click + 10s wait)
+• Auto Chikara toggle added (auto-click + dynamic cooldown)
 ]]
 })
 
@@ -369,7 +370,7 @@ for _,stat in ipairs(AutoStats) do
     table.insert(AutoToggles, toggle)
 end
 
--- Auto Chikara Section
+-- Auto Chikara Section (Auto Click + Dynamic Cooldown)
 AutoTab:CreateSection("Auto Chikara 💎")
 
 AutoTab:CreateToggle({
@@ -380,28 +381,43 @@ AutoTab:CreateToggle({
         if val then
             log("Auto Chikara ON")
             task.spawn(function()
+                local lastCollected = {}
                 while Rayfield.Flags["AutoChikaraToggle"] do
-                    local crates = workspace:WaitForChild("Scriptable"):WaitForChild("ChikaraBoxes"):GetChildren()
-                    for i = 1, #crates do
-                        if not Rayfield.Flags["AutoChikaraToggle"] then break end
-                        local crate = crates[i]
-                        if crate and crate:IsA("BasePart") then
-                            -- Teleport player slightly above crate
-                            Player.Character:SetPrimaryPartCFrame(crate.CFrame + Vector3.new(0, 3, 0))
-                            task.wait(0.1)
-
-                            -- Fire server to collect
-                            local success, err = pcall(function()
-                                ReplicatedStorage.Remotes.RemoteEvent:FireServer("CollectChikara", crate)
-                            end)
-                            if not success then
-                                warn("[AutoChikara] Failed to collect: "..tostring(err))
+                    local cratesFolder = workspace:FindFirstChild("Scriptable") and workspace.Scriptable:FindFirstChild("ChikaraBoxes")
+                    if cratesFolder then
+                        local crates = cratesFolder:GetChildren()
+                        for i = 1, #crates do
+                            if not Rayfield.Flags["AutoChikaraToggle"] then break end
+                            local crate = crates[i]
+                            if crate and crate:IsA("BasePart") then
+                                local now = tick()
+                                if not lastCollected[crate] or now - lastCollected[crate] >= 10 then
+                                    -- Teleport above crate
+                                    if Player.Character and Player.Character.PrimaryPart then
+                                        Player.Character:SetPrimaryPartCFrame(crate.CFrame + Vector3.new(0,3,0))
+                                    end
+                                    task.wait(0.1)
+                                    -- Fire server to click/collect
+                                    local success, err = pcall(function()
+                                        local clickDetector = crate:FindFirstChildWhichIsA("ClickDetector")
+                                        if clickDetector then
+                                            clickDetector:FireClick(Player)
+                                        else
+                                            ReplicatedStorage.Remotes.RemoteEvent:FireServer("CollectChikara", crate)
+                                        end
+                                    end)
+                                    if not success then
+                                        warn("[AutoChikara] Failed to collect: "..tostring(err))
+                                    end
+                                    lastCollected[crate] = tick()
+                                    task.wait(10)
+                                end
                             end
-
-                            -- Wait 10 seconds before next
-                            task.wait(10)
                         end
+                    else
+                        task.wait(1) -- No crates found, wait a second to reduce lag
                     end
+                    task.wait(0.1)
                 end
             end)
         else
