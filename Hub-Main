@@ -507,6 +507,99 @@ QuestsFolder.ChildRemoved:Connect(function(quest)
 end)
 
 -------------------------------------------------
+-- AUTO QUEST FUNCTIONALITY
+-------------------------------------------------
+local AutoQuestRunning = {}
+local ZonePositions = {
+    [1] = {Vector3.new(-1.902, 65.000, 127.968), Vector3.new(1341.747, 153.963, -137.436)}, -- Strength
+    [2] = {Vector3.new(112.002, 56.026, 881.742), Vector3.new(-1606.842, 61.615, -541.502)}, -- Durability
+    [3] = {Vector3.new(-6.479, 65.000, -119.760), Vector3.new(1425.668, 147.000, -581.487)}, -- Chakra
+    [4] = {}, -- Sword (empty)
+    [5] = {Vector3.new(41.676, 69.183, 453.424), Vector3.new(-424.448, 121.923, -78.950)}, -- Agility
+    [6] = {Vector3.new(-109.675, 61.000, -508.852), Vector3.new(-424.448, 121.923, -78.950)}, -- Speed
+}
+
+local function getIncompleteStats(quest)
+    local incomplete = {}
+    local progressFolder = quest:FindFirstChild("Progress")
+    if not progressFolder then return incomplete end
+    for i = 1,6 do
+        local prog = progressFolder:FindFirstChild(tostring(i))
+        if prog and prog.Value < (quest:FindFirstChild("Requirements") and quest.Requirements:FindFirstChild(tostring(i)) or {Value=0}).Value then
+            table.insert(incomplete, i)
+        end
+    end
+    table.sort(incomplete) -- prioritize lowest stat number first
+    return incomplete
+end
+
+local function teleportToStat(statID)
+    local positions = ZonePositions[statID]
+    if #positions == 0 then return end
+    local target = positions[1] -- just pick first for simplicity
+    if Player.Character and Player.Character.PrimaryPart then
+        Player.Character:SetPrimaryPartCFrame(CFrame.new(target))
+    end
+end
+
+local function runAutoQuest(quest)
+    if AutoQuestRunning[quest.Name] then return end
+    AutoQuestRunning[quest.Name] = true
+    task.spawn(function()
+        local requirements = quest:FindFirstChild("Requirements")
+        local progressFolder = quest:FindFirstChild("Progress")
+        if not requirements or not progressFolder then return end
+
+        local statTogglesBackup = {}
+        for i=1,6 do
+            statTogglesBackup[i] = ActiveTrains[i]
+            ActiveTrains[i] = false -- disable manual Auto Train
+        end
+
+        while AutoQuestRunning[quest.Name] do
+            local incomplete = getIncompleteStats(quest)
+            if #incomplete == 0 then break end
+
+            local statID = incomplete[1]
+            teleportToStat(statID)
+            ActiveTrains[statID] = true
+
+            -- wait until stat is complete
+            while AutoQuestRunning[quest.Name] and table.find(getIncompleteStats(quest), statID) do
+                task.wait(0.2)
+            end
+
+            ActiveTrains[statID] = false
+        end
+
+        -- restore previous Auto Train toggles
+        for i=1,6 do
+            ActiveTrains[i] = statTogglesBackup[i]
+        end
+
+        AutoQuestRunning[quest.Name] = false
+        log("[AutoQuest] "..quest.Name.." completed!")
+    end)
+end
+
+-- Hook Auto Quest toggles
+for _, quest in ipairs(QuestsFolder:GetChildren()) do
+    if quest:IsA("Folder") and questUsesOnlyStats(quest) then
+        local toggleFlag = "AutoQuest_"..quest.Name
+        local toggle = AutoTab.Flags[toggleFlag]
+        if toggle then
+            toggle:OnChanged(function(val)
+                if val then
+                    runAutoQuest(quest)
+                else
+                    AutoQuestRunning[quest.Name] = false
+                end
+            end)
+        end
+    end
+end
+
+-------------------------------------------------
 -- DONE
 -------------------------------------------------
 Rayfield:LoadConfiguration()
