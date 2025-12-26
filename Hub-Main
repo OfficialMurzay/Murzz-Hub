@@ -1,6 +1,6 @@
--- MurzzHub v1.0s Beta
+-- MurzzHub v1.0r Beta
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara + Auto Quest)
--- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara + Auto Quest
+-- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
 
 -------------------------------------------------
 -- SERVICES
@@ -38,7 +38,18 @@ end
 -------------------------------------------------
 -- RAYFIELD
 -------------------------------------------------
-local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+local Rayfield
+repeat
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+    end)
+    if success then
+        Rayfield = result
+    else
+        warn("[MurzzHub] Rayfield load failed, retrying...")
+        task.wait(0.5)
+    end
+until Rayfield
 
 local Window = Rayfield:CreateWindow({
     Name = "MurzzHub "..VERSION,
@@ -52,16 +63,23 @@ local Window = Rayfield:CreateWindow({
 })
 
 -------------------------------------------------
--- UTIL (ABBREVIATIONS & ANIMATIONS)
+-- UTIL (FIXED ABBREVIATION)
 -------------------------------------------------
 local function abbreviate(n)
-    if n >= 1e18 then return string.format("%.2fQn", n/1e18)
-    elseif n >= 1e15 then return string.format("%.2fQd", n/1e15)
-    elseif n >= 1e12 then return string.format("%.2fT", n/1e12)
-    elseif n >= 1e9 then return string.format("%.2fB", n/1e9)
-    elseif n >= 1e6 then return string.format("%.2fM", n/1e6)
-    elseif n >= 1e3 then return string.format("%.2fK", n/1e3)
-    else return tostring(n)
+    if n >= 1e18 then
+        return string.format("%.2fQn", n/1e18)
+    elseif n >= 1e15 then
+        return string.format("%.2fQd", n/1e15)
+    elseif n >= 1e12 then
+        return string.format("%.2fT", n/1e12)
+    elseif n >= 1e9 then
+        return string.format("%.2fB", n/1e9)
+    elseif n >= 1e6 then
+        return string.format("%.2fM", n/1e6)
+    elseif n >= 1e3 then
+        return string.format("%.2fK", n/1e3)
+    else
+        return tostring(n)
     end
 end
 
@@ -76,10 +94,14 @@ local function animateNumber(label, startValue, endValue, prefix, emoji, duratio
     for i = 1, steps do
         local t = easeOutQuad(i/steps)
         local val = startValue + (endValue - startValue) * t
-        label:Set(prefix..abbreviate(math.floor(val)).." "..emoji)
+        if label and label.Set then
+            label:Set(prefix..abbreviate(math.floor(val)).." "..emoji)
+        end
         task.wait(duration/steps)
     end
-    label:Set(prefix..abbreviate(endValue).." "..emoji)
+    if label and label.Set then
+        label:Set(prefix..abbreviate(endValue).." "..emoji)
+    end
 end
 
 -------------------------------------------------
@@ -100,8 +122,8 @@ local StatMap = {
     ["2"]={"Durability","🛡️"},
     ["3"]={"Chakra","🌀"},
     ["4"]={"Sword","🗡️"},
-    ["5"]={"Speed","💨"},
-    ["6"]={"Agility","☁️"},
+    ["5"]={"Agility","☁️"},
+    ["6"]={"Speed","💨"},
     ["Kill"]={"Kill","🔪"},
 }
 
@@ -109,65 +131,98 @@ local StatMap = {
 -- INFO TAB
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
+
 InfoTab:CreateSection("Update Log 📝")
-InfoTab:CreateParagraph({Title = VERSION, Content = [[
+InfoTab:CreateParagraph({
+    Title = VERSION,
+    Content = [[
 • Quests Tab added
 • Live % tracking per quest
-• Emojis standardized
+• Emojis standardized (right-side)
 • Kill quests fully supported
 • Event-based (zero loops)
 • UI locked & stable
-• Auto Train + Auto Chikara + Auto Quest
-]]})
+• Home + Live Stats + Quest Progress animate incrementally with easing
+• Auto Train UI + functional toggles that trigger on exact cooldown
+• Auto Chikara toggle added (auto-click + dynamic cooldown)
+• Auto Quest added (dynamic stat-based)
+]]
+})
+
 InfoTab:CreateSection("Discord 💬")
-InfoTab:CreateParagraph({Title = "Dear @"..Player.DisplayName, Content = [[Thanks for using MurzzHub ❤️]]})
-InfoTab:CreateButton({Name="Join Discord", Callback=function() setclipboard("DISCORD_LINK_HERE") end})
+InfoTab:CreateParagraph({
+    Title = "Dear @"..Player.DisplayName,
+    Content = [[
+Thank you for using MurzzHub ❤️  
+Every use motivates future updates!
+
+Suggestions, sneak peeks & events:
+]]
+})
+
+InfoTab:CreateButton({
+    Name = "Join Discord",
+    Callback = function()
+        setclipboard("DISCORD_LINK_HERE")
+    end
+})
 
 -------------------------------------------------
--- HOME TAB (LIVE STATS)
+-- HOME TAB
 -------------------------------------------------
 local HomeTab = Window:CreateTab("Home 🏠")
+
 HomeTab:CreateSection("Player Data 👤")
+
 local ClassLabel = HomeTab:CreateLabel("Class: ...")
 local PowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡")
 local YenLabel = HomeTab:CreateLabel("Money: ... 💰")
 local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
 
-local function bindValue(obj,label,prefix,emoji)
-    if not obj then return end
+local function bindValue(obj, label, prefix, emoji)
+    if not obj or not label then return end
     local current = obj.Value
     local function update()
         local newVal = obj.Value
         task.spawn(function()
-            animateNumber(label,current,newVal,prefix,emoji,0.7)
-            current=newVal
+            animateNumber(label, current, newVal, prefix, emoji, 0.7)
+            current = newVal
         end)
     end
     update()
     obj:GetPropertyChangedSignal("Value"):Connect(update)
 end
 
-bindValue(OtherData:FindFirstChild("TotalPower"),PowerLabel,"Total Power: ","⚡")
-bindValue(OtherData:FindFirstChild("Yen"),YenLabel,"Money: ","💰")
-bindValue(OtherData:FindFirstChild("Chikara"),ChikaraLabel,"Chikara: ","💎")
+bindValue(OtherData:FindFirstChild("TotalPower"), PowerLabel, "Total Power: ", "⚡")
+bindValue(OtherData:FindFirstChild("Yen"), YenLabel, "Money: ", "💰")
+bindValue(OtherData:FindFirstChild("Chikara"), ChikaraLabel, "Chikara: ", "💎")
 
 if OtherData:FindFirstChild("Class") then
-    local function update() ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓")) end
+    local function update()
+        ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓"))
+    end
     update()
     OtherData.Class:GetPropertyChangedSignal("Value"):Connect(update)
 end
 
+-------------------------------------------------
+-- LIVE STATS
+-------------------------------------------------
 HomeTab:CreateSection("Live Stats 📊")
+
 for id,data in pairs(StatMap) do
     if tonumber(id) then
-        local name,emoji=unpack(data)
-        local label=HomeTab:CreateLabel(name..": ... "..emoji)
-        local stat=StatsFolder:FindFirstChild(id)
+        local name, emoji = unpack(data)
+        local label = HomeTab:CreateLabel(name..": ... "..emoji)
+        local stat = StatsFolder:FindFirstChild(id)
         if stat then
-            local current=stat.Value
+            local current = stat.Value
             local function update()
-                local newVal=stat.Value
-                task.spawn(function() animateNumber(label,current,newVal,name..": ",emoji,0.7) current=newVal end)
+                local newVal = stat.Value
+                task.spawn(function()
+                    animateNumber(label, current, newVal, name..": ", emoji, 0.7)
+                    current = newVal
+                end)
             end
             update()
             stat:GetPropertyChangedSignal("Value"):Connect(update)
@@ -179,41 +234,69 @@ end
 -- QUESTS TAB
 -------------------------------------------------
 local QuestsTab = Window:CreateTab("Quests 📜")
+
 local function setupQuest(quest)
     safeRun(function()
-        local display=quest.Name:gsub("(%a+)(%d+)","%1 No.%2")
+        local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
         QuestsTab:CreateSection(display.." 📜")
-        local reqs=quest:FindFirstChild("Requirements")
+
+        local reqs = quest:FindFirstChild("Requirements")
         if not reqs then return end
+
         for _,req in ipairs(reqs:GetChildren()) do
             if req:IsA("IntValue") or req:IsA("NumberValue") then
-                local label=QuestsTab:CreateLabel("...")
-                local current=0
+                local label = QuestsTab:CreateLabel("...")
+
+                local current = 0
                 local function update()
-                    local progress=0
+                    local progress = 0
                     if quest:FindFirstChild(req.Name) then
-                        progress=quest[req.Name].Value
-                    elseif quest:FindFirstChild("Progress") and quest.Progress:FindFirstChild(req.Name) then
-                        progress=quest.Progress[req.Name].Value
+                        progress = quest[req.Name].Value
+                    elseif quest:FindFirstChild("Progress")
+                        and quest.Progress:FindFirstChild(req.Name) then
+                        progress = quest.Progress[req.Name].Value
                     end
-                    local name,emoji=req.Name,""
-                    if StatMap[req.Name] then name,emoji=unpack(StatMap[req.Name]) end
-                    local done=progress>=req.Value
+
+                    local name, emoji = req.Name, ""
+                    if StatMap[req.Name] then
+                        name, emoji = unpack(StatMap[req.Name])
+                    end
+
+                    local done = progress >= req.Value
+
                     task.spawn(function()
-                        local steps, duration=30,0.7
-                        for i=1,steps do
-                            local t=easeOutQuad(i/steps)
-                            local val=current+(progress-current)*t
-                            label:Set(string.format("%s/%s %s %s%s",abbreviate(math.floor(val)),abbreviate(req.Value),name,emoji,done and " ✅" or ""))
+                        local steps = 30
+                        local duration = 0.7
+                        for i = 1, steps do
+                            local t = easeOutQuad(i/steps)
+                            local val = current + (progress - current) * t
+                            label:Set(string.format("%s/%s %s %s%s",
+                                abbreviate(math.floor(val)),
+                                abbreviate(req.Value),
+                                name,
+                                emoji,
+                                done and " ✅" or ""
+                            ))
                             task.wait(duration/steps)
                         end
-                        label:Set(string.format("%s/%s %s %s%s",abbreviate(progress),abbreviate(req.Value),name,emoji,done and " ✅" or ""))
-                        current=progress
+                        label:Set(string.format("%s/%s %s %s%s",
+                            abbreviate(progress),
+                            abbreviate(req.Value),
+                            name,
+                            emoji,
+                            done and " ✅" or ""
+                        ))
+                        current = progress
                     end)
                 end
+
                 update()
-                if quest:FindFirstChild(req.Name) then quest[req.Name]:GetPropertyChangedSignal("Value"):Connect(update) end
-                if quest:FindFirstChild("Progress") and quest.Progress:FindFirstChild(req.Name) then
+
+                if quest:FindFirstChild(req.Name) then
+                    quest[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
+                end
+                if quest:FindFirstChild("Progress")
+                    and quest.Progress:FindFirstChild(req.Name) then
                     quest.Progress[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
                 end
             end
@@ -226,119 +309,166 @@ for _,q in ipairs(QuestsFolder:GetChildren()) do
 end
 
 -------------------------------------------------
--- AUTO FARMS TAB (Auto Train + Auto Chikara + Auto Quest)
+-- AUTO FARMS TAB
 -------------------------------------------------
-local AutoTab=Window:CreateTab("Auto Farms ⚙️")
+local AutoTab = Window:CreateTab("Auto Farms ⚙️")
+
+-- Auto Train Section
 AutoTab:CreateSection("Auto Train 🏋️")
 
-local mainClient=Player:WaitForChild("PlayerGui"):WaitForChild("Main"):WaitForChild("MainClient")
-local StatFunctions=require(mainClient:WaitForChild("StatFunctions"))
+local mainClient = Player:WaitForChild("PlayerGui"):WaitForChild("Main"):WaitForChild("MainClient")
+local StatFunctions = require(mainClient:WaitForChild("StatFunctions"))
 local CharacterModule
-repeat CharacterModule=StatFunctions.characterModule task.wait(0.1) until CharacterModule
-local GameData=require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameData"))
+repeat
+    CharacterModule = StatFunctions.characterModule
+    task.wait(0.1)
+until CharacterModule
 
-local AutoStats={{1,"Strength","💪"},{2,"Durability","🛡️"},{3,"Chakra","🌀"},{4,"Sword","🗡️"},{5,"Agility","☁️"},{6,"Speed","💨"}}
-local ActiveTrains={}, LastFire={}
+local GameData = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameData"))
+
+local AutoStats = {
+    {1, "Strength", "💪"},
+    {2, "Durability", "🛡️"},
+    {3, "Chakra", "🌀"},
+    {4, "Sword", "🗡️"},
+    {5, "Agility", "☁️"},
+    {6, "Speed", "💨"},
+}
+
+local ActiveTrains = {}
+local LastFire = {}
 
 for _,stat in ipairs(AutoStats) do
-    local statID,name,emoji=unpack(stat)
+    local statID, name, emoji = unpack(stat)
     AutoTab:CreateToggle({
-        Name="Train "..name.." "..emoji,
-        CurrentValue=false,
-        Flag=name.."Toggle",
-        Callback=function(val)
+        Name = "Train "..name.." "..emoji,
+        CurrentValue = false,
+        Flag = name.."Toggle",
+        Callback = function(val)
             if val then
                 if ActiveTrains[statID] then return end
-                ActiveTrains[statID]=true
-                LastFire[statID]=0
+                ActiveTrains[statID] = true
+                LastFire[statID] = 0
                 task.spawn(function()
                     while ActiveTrains[statID] do
-                        if CharacterModule.states.Dead then task.wait(1)
+                        if CharacterModule.states.Dead then
+                            task.wait(1)
                         else
-                            CharacterModule.characterStopped=false
+                            CharacterModule.characterStopped = false
                             CharacterModule:ResumeCharacter()
-                            StatFunctions.CurrentKey=statID
-                            StatFunctions[statID]=false
-                            local cooldown=GameData.Stats[statID].Cooldown or 0.1
-                            local now=tick()
-                            if now-LastFire[statID]>=cooldown then
-                                local success,err=pcall(function() ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train",statID) end)
-                                if success then log("TrainStat fired for "..name) else log("TrainStat error: "..tostring(err)) end
-                                LastFire[statID]=tick()
+                            StatFunctions.CurrentKey = statID
+                            StatFunctions[statID] = false
+
+                            local cooldown = GameData.Stats[statID].Cooldown or 0.1
+                            local now = tick()
+                            if now - LastFire[statID] >= cooldown then
+                                local success, err = pcall(function()
+                                    ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train", statID)
+                                end)
+                                if success then
+                                    log("TrainStat fired for "..name)
+                                else
+                                    log("TrainStat error: "..tostring(err))
+                                end
+                                LastFire[statID] = tick()
                             end
                             task.wait(0.05)
                         end
                     end
-                    ActiveTrains[statID]=nil
+                    ActiveTrains[statID] = nil
                 end)
             else
-                ActiveTrains[statID]=false
+                ActiveTrains[statID] = false
             end
         end
     })
 end
 
--- Auto Chikara
+-- Auto Chikara Section (ClickBox + ClickDetector)
 AutoTab:CreateSection("Auto Chikara 💎 | AUTOCLICKER NEEDED")
-local AutoChikaraActive=false
-AutoTab:CreateToggle({Name="Collect Chikara ⚠️",CurrentValue=false,Flag="AutoChikaraToggle",
-Callback=function(val)
-    AutoChikaraActive=val
-    if val then
-        log("Auto Chikara ON")
-        task.spawn(function()
-            local lastCollected={}
-            while AutoChikaraActive do
-                local cratesFolder=workspace:FindFirstChild("Scriptable") and workspace.Scriptable:FindFirstChild("ChikaraBoxes")
-                if cratesFolder then
-                    local crates=cratesFolder:GetChildren()
-                    local hasCollected=false
-                    for _,crate in ipairs(crates) do
-                        if not AutoChikaraActive then break end
-                        if crate and crate:IsA("BasePart") then
-                            local clickBox=crate:FindFirstChild("ClickBox")
-                            if clickBox then
-                                local clickDetector=clickBox:FindFirstChildWhichIsA("ClickDetector")
-                                local now=tick()
-                                if clickDetector and (not lastCollected[crate] or now-lastCollected[crate]>=10) then
-                                    if Player.Character and Player.Character.PrimaryPart then
-                                        Player.Character:SetPrimaryPartCFrame(crate.CFrame + Vector3.new(0,3,0))
+
+local AutoChikaraActive = false
+
+AutoTab:CreateToggle({
+    Name = "Collect Chikara ⚠️",
+    CurrentValue = false,
+    Flag = "AutoChikaraToggle",
+    Callback = function(val)
+        AutoChikaraActive = val
+        if val then
+            log("Auto Chikara ON")
+            task.spawn(function()
+                local lastCollected = {}
+                while AutoChikaraActive do
+                    local cratesFolder = workspace:FindFirstChild("Scriptable") and workspace.Scriptable:FindFirstChild("ChikaraBoxes")
+                    if cratesFolder then
+                        local crates = cratesFolder:GetChildren()
+                        local hasCollected = false
+                        for _, crate in ipairs(crates) do
+                            if not AutoChikaraActive then break end
+                            if crate and crate:IsA("BasePart") then
+                                local clickBox = crate:FindFirstChild("ClickBox")
+                                if clickBox then
+                                    local clickDetector = clickBox:FindFirstChildWhichIsA("ClickDetector")
+                                    local now = tick()
+                                    if clickDetector and (not lastCollected[crate] or now - lastCollected[crate] >= 10) then
+                                        if Player.Character and Player.Character.PrimaryPart then
+                                            Player.Character:SetPrimaryPartCFrame(crate.CFrame + Vector3.new(0,3,0))
+                                        end
+                                        task.wait(0.1)
+                                        local success, err = pcall(function()
+                                            clickDetector:FireClick(Player)
+                                        end)
+                                        if success then
+                                            lastCollected[crate] = tick()
+                                            hasCollected = true
+                                            log("[AutoChikara] Collected crate")
+                                        else
+                                            warn("[AutoChikara] Failed to collect: "..tostring(err))
+                                        end
+                                        task.wait(10)
                                     end
-                                    task.wait(0.1)
-                                    pcall(function() clickDetector:FireClick(Player) end)
-                                    lastCollected[crate]=tick()
-                                    hasCollected=true
-                                    task.wait(10)
                                 end
                             end
                         end
+                        if not hasCollected then task.wait(1) end
+                    else
+                        task.wait(1)
                     end
-                    if not hasCollected then task.wait(1) end
-                else task.wait(1) end
-            end
+                end
+                log("Auto Chikara OFF")
+            end)
+        else
             log("Auto Chikara OFF")
-        end)
-    else log("Auto Chikara OFF") end
-end})
+        end
+    end
+})
 
 -------------------------------------------------
--- AUTO QUEST SYSTEM (FIXED & INTEGRATED)
+-- AUTO QUEST INTEGRATION
 -------------------------------------------------
-AutoTab:CreateSection("Auto Quest 📜")
-local AutoQuestToggles, QuestTogglesUI={}, {}
-local AutoQuestRunning={}
+-- Restored and integrated full Auto Quest system with stat-based priority
+-- Will disable conflicting Auto Train toggles automatically
 
-local ZonePositions={
-    [1]={Vector3.new(-1.902,65.0,127.968)}, [2]={Vector3.new(112.002,56.026,881.742)},
-    [3]={Vector3.new(-6.479,65.0,-119.760)}, [4]={}, [5]={Vector3.new(41.676,69.183,453.424)},
-    [6]={Vector3.new(-109.675,61.0,-508.852)}
+local AutoQuestToggles = {}
+local QuestTogglesUI = {}
+local AutoQuestRunning = {}
+
+-- Example zone positions; replace/add all positions from your table
+local ZonePositions = {
+    [1] = {Vector3.new(-1.902, 65.000, 127.968)}, -- Strength
+    [2] = {Vector3.new(112.002, 56.026, 881.742)}, -- Durability
+    [3] = {Vector3.new(-6.479, 65.000, -119.760)}, -- Chakra
+    [4] = {}, -- Sword
+    [5] = {Vector3.new(41.676, 69.183, 453.424)}, -- Agility
+    [6] = {Vector3.new(-109.675, 61.000, -508.852)}, -- Speed
 }
 
 local function questUsesOnlyStats(quest)
-    local reqs=quest:FindFirstChild("Requirements")
+    local reqs = quest:FindFirstChild("Requirements")
     if not reqs then return false end
-    for _,req in ipairs(reqs:GetChildren()) do
-        if req.Name=="Kill" then return false end
+    for _, req in ipairs(reqs:GetChildren()) do
+        if req.Name == "Kill" then return false end
         if not StatMap[req.Name] then return false end
     end
     return true
@@ -348,69 +478,93 @@ local function addQuestToggle(quest)
     if not quest:IsA("Folder") then return end
     if not questUsesOnlyStats(quest) then return end
     if QuestTogglesUI[quest.Name] then return end
-    local display=quest.Name:gsub("(%a+)(%d+)","%1 No.%2")
-    AutoQuestToggles[quest.Name]=false
-    local toggle=AutoTab:CreateToggle({
-        Name=display,
-        CurrentValue=false,
-        Flag="AutoQuest_"..quest.Name,
-        Callback=function(val)
-            AutoQuestToggles[quest.Name]=val
+    local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
+    AutoQuestToggles[quest.Name] = false
+    local toggle = AutoTab:CreateToggle({
+        Name = display,
+        CurrentValue = false,
+        Flag = "AutoQuest_"..quest.Name,
+        Callback = function(val)
+            AutoQuestToggles[quest.Name] = val
             if val then
-                -- turn off Auto Train toggles
-                for i=1,6 do ActiveTrains[i]=false end
-                AutoQuestRunning[quest.Name]=true
-                task.spawn(function()
-                    local requirements=quest:FindFirstChild("Requirements")
-                    local progressFolder=quest:FindFirstChild("Progress")
-                    if not requirements or not progressFolder then return end
-                    local function getIncomplete()
-                        local inc={}
-                        for i=1,6 do
-                            local prog=progressFolder:FindFirstChild(tostring(i))
-                            local req=requirements:FindFirstChild(tostring(i))
-                            if prog and req and prog.Value<req.Value then table.insert(inc,i) end
-                        end
-                        table.sort(inc)
-                        return inc
-                    end
-                    while AutoQuestRunning[quest.Name] do
-                        local incomplete=getIncomplete()
-                        if #incomplete==0 then break end
-                        local statID=incomplete[1]
-                        if #ZonePositions[statID]>0 and Player.Character and Player.Character.PrimaryPart then
-                            Player.Character:SetPrimaryPartCFrame(CFrame.new(ZonePositions[statID][1]))
-                        end
-                        ActiveTrains[statID]=true
-                        while table.find(getIncomplete(),statID) do task.wait(0.2) end
-                        ActiveTrains[statID]=false
-                    end
-                    AutoQuestRunning[quest.Name]=false
-                    log("[AutoQuest] "..quest.Name.." completed!")
-                end)
+                -- auto disable conflicting Auto Train
+                for i=1,6 do ActiveTrains[i] = false end
+                runAutoQuest(quest)
             else
-                AutoQuestRunning[quest.Name]=false
+                AutoQuestRunning[quest.Name] = false
             end
         end
     })
-    QuestTogglesUI[quest.Name]=toggle
+    QuestTogglesUI[quest.Name] = toggle
 end
 
 local function removeQuestToggle(questName)
-    local toggle=QuestTogglesUI[questName]
+    local toggle = QuestTogglesUI[questName]
     if toggle then
-        toggle:Destroy()
-        QuestTogglesUI[questName]=nil
-        AutoQuestToggles[questName]=nil
+        if toggle.Destroy then toggle:Destroy() end
+        QuestTogglesUI[questName] = nil
+        AutoQuestToggles[questName] = nil
     end
 end
 
-for _,q in ipairs(QuestsFolder:GetChildren()) do addQuestToggle(q) end
+for _, quest in ipairs(QuestsFolder:GetChildren()) do addQuestToggle(quest) end
 QuestsFolder.ChildAdded:Connect(addQuestToggle)
 QuestsFolder.ChildRemoved:Connect(function(q) removeQuestToggle(q.Name) end)
+
+local function getIncompleteStats(quest)
+    local incomplete = {}
+    local progressFolder = quest:FindFirstChild("Progress")
+    if not progressFolder then return incomplete end
+    for i=1,6 do
+        local prog = progressFolder:FindFirstChild(tostring(i))
+        local reqVal = quest:FindFirstChild("Requirements") and quest.Requirements:FindFirstChild(tostring(i)) or {Value=0}
+        if prog and prog.Value < reqVal.Value then
+            table.insert(incomplete, i)
+        end
+    end
+    table.sort(incomplete)
+    return incomplete
+end
+
+local function teleportToStat(statID)
+    local positions = ZonePositions[statID]
+    if #positions == 0 then return end
+    local target = positions[1]
+    if Player.Character and Player.Character.PrimaryPart then
+        Player.Character:SetPrimaryPartCFrame(CFrame.new(target))
+    end
+end
+
+function runAutoQuest(quest)
+    if AutoQuestRunning[quest.Name] then return end
+    AutoQuestRunning[quest.Name] = true
+    task.spawn(function()
+        local progressFolder = quest:FindFirstChild("Progress")
+        if not progressFolder then return end
+        local requirements = quest:FindFirstChild("Requirements")
+        if not requirements then return end
+
+        local backupTrains = {}
+        for i=1,6 do backupTrains[i] = ActiveTrains[i]; ActiveTrains[i] = false end
+
+        while AutoQuestRunning[quest.Name] do
+            local incomplete = getIncompleteStats(quest)
+            if #incomplete == 0 then break end
+            local statID = incomplete[1]
+            teleportToStat(statID)
+            ActiveTrains[statID] = true
+            while AutoQuestRunning[quest.Name] and table.find(getIncompleteStats(quest), statID) do
+                task.wait(0.2)
+            end
+            ActiveTrains[statID] = false
+        end
+
+        for i=1,6 do ActiveTrains[i] = backupTrains[i] end
+        AutoQuestRunning[quest.Name] = false
+        log("[AutoQuest] "..quest.Name.." completed!")
+    end)
+end
 
 -------------------------------------------------
 -- DONE
 -------------------------------------------------
-Rayfield:LoadConfiguration()
-print("[MurzzHub] "..VERSION.." loaded successfully")
