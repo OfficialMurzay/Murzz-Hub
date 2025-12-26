@@ -208,34 +208,28 @@ InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
     Title = VERSION,
     Content = [[
-• Quests Tab added
-• Live % tracking per quest
-• Emojis standardized (right-side)
-• Kill quests fully supported
-• Event-based (zero loops)
-• UI locked & stable
-• Home + Live Stats + Quest Progress animate incrementally with easing
-• Auto Train UI + functional toggles that trigger on exact cooldown
-• Auto Chikara toggle added (auto-click + dynamic cooldown)
-• Auto Quest added (dynamic stat-based)
+• Auto Farms complete
+• Teleports Tab in progress
+• Added basic debugging
+• Nearly ready for release!
 ]]
 })
 
 InfoTab:CreateSection("Discord 💬")
 InfoTab:CreateParagraph({
-    Title = "Dear @"..Player.DisplayName,
+    Title = "Dear @"..Player.DisplayName..",",
     Content = [[
-Thank you for using MurzzHub ❤️  
-Every use motivates future updates!
-
-Suggestions, sneak peeks & events:
+Thank you for using Murzzhub!
+I appreciate every second of you using my script!
+If you have any suggestions, or want to see sneak peeks,
+Join the discord! (None for now srry!)
 ]]
 })
 
 InfoTab:CreateButton({
     Name = "Join Discord",
     Callback = function()
-        setclipboard("DISCORD_LINK_HERE")
+        setclipboard("No Discord For Now Sorry :(")
     end
 })
 
@@ -521,5 +515,39 @@ AutoTab:CreateToggle({
 -------------------------------------------------
 local TeleportsTab = Window:CreateTab("Teleports 📍")
 
--- Intentionally empty
--- Zones will be populated later
+TeleportsTab:CreateSection("Stat-Based Zones")
+
+TeleportsTab:CreateButton({
+    Name = "Strength 💪",
+    Callback = function()
+        -- intentionally empty (to be added later)
+    end
+})
+
+TeleportsTab:CreateButton({
+    Name = "Durability 🛡️",
+    Callback = function()
+        -- intentionally empty (to be added later)
+    end
+})
+
+TeleportsTab:CreateButton({
+    Name = "Chakra 🌀",
+    Callback = function()
+        -- intentionally empty (to be added later)
+    end
+})
+
+TeleportsTab:CreateButton({
+    Name = "Speed 💨",
+    Callback = function()
+        -- intentionally empty (to be added later)
+    end
+})
+
+TeleportsTab:CreateButton({
+    Name = "Agility ☁️",
+    Callback = function()
+        -- intentionally empty (to be added later)
+    end
+})
