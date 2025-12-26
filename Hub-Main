@@ -276,23 +276,31 @@ end
 -------------------------------------------------
 HomeTab:CreateSection("Live Stats 📊")
 
-for id,data in pairs(StatMap) do
-    if tonumber(id) then
-        local name, emoji = unpack(data)
-        local label = HomeTab:CreateLabel(name..": ... "..emoji)
-        local stat = StatsFolder:FindFirstChild(id)
-        if stat then
-            local current = stat.Value
-            local function update()
-                local newVal = stat.Value
-                task.spawn(function()
-                    animateNumber(label, current, newVal, name..": ", emoji, 0.7)
-                    current = newVal
-                end)
-            end
-            update()
-            stat:GetPropertyChangedSignal("Value"):Connect(update)
+-- Ordered stats
+local OrderedStats = {
+    {id = "1", name = "Strength",   emoji = "💪"},
+    {id = "2", name = "Durability", emoji = "🛡️"},
+    {id = "3", name = "Chakra",     emoji = "🌀"},
+    {id = "6", name = "Speed",      emoji = "💨"},
+    {id = "5", name = "Agility",    emoji = "☁️"},
+}
+
+for _, data in ipairs(OrderedStats) do
+    local stat = StatsFolder:FindFirstChild(data.id)
+    if stat then
+        local current = stat.Value
+        local label = HomeTab:CreateLabel(data.name..": ... "..data.emoji)
+
+        local function update()
+            local newVal = stat.Value
+            task.spawn(function()
+                animateNumber(label, current, newVal, data.name..": ", data.emoji, 0.7)
+                current = newVal
+            end)
         end
+
+        update()
+        stat:GetPropertyChangedSignal("Value"):Connect(update)
     end
 end
 
