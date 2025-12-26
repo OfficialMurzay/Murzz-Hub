@@ -573,12 +573,15 @@ local StatButtonsOrdered = {
     {Name = "Agility",    id = "5", emoji = "☁️"},
 }
 
-for _, data in ipairs(StatButtonsOrdered) do
+-- Create buttons in exact order
+for i = 1, #StatButtonsOrdered do
+    local data = StatButtonsOrdered[i]
     local stat = Player.Stats:FindFirstChild(data.id)
     if stat then
         local currentZone
 
-        TeleportsTab:CreateButton({
+        -- Create button
+        local button = TeleportsTab:CreateButton({
             Name = data.Name.." "..data.emoji,
             Callback = function()
                 if currentZone then
@@ -587,6 +590,7 @@ for _, data in ipairs(StatButtonsOrdered) do
             end
         })
 
+        -- Update zone when stat changes
         local function updateZone()
             currentZone = getBestZone(data.Name, stat.Value)
         end
