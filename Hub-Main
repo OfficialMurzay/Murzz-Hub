@@ -312,7 +312,7 @@ end
 -------------------------------------------------
 -- AUTO FARMS TAB
 -------------------------------------------------
-local AutoTab = Window:CreateTab("Auto Farms ⚙️")
+local AutoTab = Window:CreateTab("Auto Farms 🌾")
 
 -- Auto Train Section
 AutoTab:CreateSection("Auto Train 🏋️")
