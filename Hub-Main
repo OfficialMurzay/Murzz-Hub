@@ -415,13 +415,15 @@ for statName, zones in pairs(ZonePositions) do
     local playerStat = StatsFolder:FindFirstChild(StatIndexMap[statName])
     if playerStat then
         local currentZone
-
-        -- pre-sort thresholds numerically
         local sorted = {}
+
         for k, v in pairs(zones) do
-            local num = tonumber(tostring(k):gsub("[^%d]", ""))
-            table.insert(sorted, { req = num, pos = v })
+            local req = tonumber(tostring(k):match("%d+"))
+            if req then
+                table.insert(sorted, { req = req, pos = v })
+            end
         end
+
         table.sort(sorted, function(a, b)
             return a.req < b.req
         end)
@@ -460,9 +462,12 @@ for statName, zones in pairs(ZonePositions) do
 
     local sorted = {}
     for k, v in pairs(zones) do
-        local num = tonumber(tostring(k):gsub("[^%d]", ""))
-        table.insert(sorted, { req = num, pos = v })
+        local req = tonumber(tostring(k):match("%d+"))
+        if req then
+            table.insert(sorted, { req = req, pos = v })
+        end
     end
+
     table.sort(sorted, function(a, b)
         return a.req < b.req
     end)
