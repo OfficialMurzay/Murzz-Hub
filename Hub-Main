@@ -372,6 +372,95 @@ for _,q in ipairs(QuestsFolder:GetChildren()) do
         })
     end
 end
+-------------------------------------------------
+-- TELEPORTS TAB
+-------------------------------------------------
+local TeleportsTab = Window:CreateTab("Teleports 📍")
+
+local function getCharacter()
+    return Player.Character or Player.CharacterAdded:Wait()
+end
+
+local function teleportTo(pos)
+    local char = getCharacter()
+    if char and char.PrimaryPart then
+        char:SetPrimaryPartCFrame(CFrame.new(pos + Vector3.new(0,5,0)))
+    end
+end
+
+-- Best Stat Zones
+TeleportsTab:CreateSection("Best Stat Zones 📊")
+
+for statName, zones in pairs(ZonePositions) do
+    local statIndexMap = {
+        Strength = "1",
+        Durability = "2",
+        Chakra = "3",
+        Sword = "4",
+        Agility = "5",
+        Speed = "6"
+    }
+
+    local playerStat = StatsFolder:FindFirstChild(statIndexMap[statName])
+    if playerStat then
+        local currentZone
+
+        local function updateZone()
+            local value = playerStat.Value
+            currentZone = nil
+            for k, v in pairs(zones) do
+                local required = tonumber(tostring(k):gsub("[^%d]", ""))
+                if value >= required then
+                    currentZone = v
+                end
+            end
+        end
+
+        updateZone()
+        playerStat:GetPropertyChangedSignal("Value"):Connect(updateZone)
+
+        TeleportsTab:CreateButton({
+            Name = statName.." "..({
+                Strength="💪",
+                Durability="🛡️",
+                Chakra="🌀",
+                Sword="⚔️",
+                Agility="☁️",
+                Speed="💨"
+            })[statName],
+            Callback = function()
+                if currentZone then
+                    teleportTo(currentZone)
+                end
+            end
+        })
+    end
+end
+
+-- Individual Stat Sections
+for statName, zones in pairs(ZonePositions) do
+    TeleportsTab:CreateSection(
+        statName.." "..({
+            Strength="💪",
+            Durability="🛡️",
+            Chakra="🌀",
+            Sword="⚔️",
+            Agility="☁️",
+            Speed="💨"
+        })[statName]
+    )
+
+    for k, v in pairs(zones) do
+        TeleportsTab:CreateButton({
+            Name = formatNumber(
+                tonumber(tostring(k):gsub("[^%d]", ""))
+            ).." "..statName.." 📁",
+            Callback = function()
+                teleportTo(v)
+            end
+        })
+    end
+end
 
 -------------------------------------------------
 -- SETTINGS TAB
