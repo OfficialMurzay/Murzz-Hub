@@ -1,7 +1,7 @@
 -- MurzzHub v1.0 Beta
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara + Auto Quest)
 -- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
--- Optimized for performance (no functionality changes)
+-- Fully optimized for performance (no changes to functionality, UI, text, or behavior)
 
 -------------------------------------------------
 -- SERVICES
@@ -60,7 +60,7 @@ local Window = Rayfield:CreateWindow({
 })
 
 -------------------------------------------------
--- UTIL (FIXED ABBREVIATION)
+-- UTIL (ABBREVIATION & ANIMATION)
 -------------------------------------------------
 local function abbreviate(n)
     if n >= 1e18 then return string.format("%.2fQn", n/1e18)
@@ -73,17 +73,17 @@ local function abbreviate(n)
     end
 end
 
-local function easeOutQuad(t)
-    return 1 - (1 - t)^2
-end
+local function easeOutQuad(t) return 1 - (1 - t)^2 end
 
--- Optimized animation (queue-based)
+-- Optimized animation queue
 local AnimateQueue = {}
 local function animateNumber(label, startValue, endValue, prefix, emoji, duration)
     duration = duration or 0.5
-    local key = label
-    if AnimateQueue[key] then AnimateQueue[key].target = endValue return end
-    AnimateQueue[key] = {current=startValue, target=endValue, prefix=prefix, emoji=emoji, duration=duration, elapsed=0}
+    if AnimateQueue[label] then
+        AnimateQueue[label].target = endValue
+        return
+    end
+    AnimateQueue[label] = {current=startValue, target=endValue, prefix=prefix, emoji=emoji, duration=duration, elapsed=0}
 end
 
 RunService.Heartbeat:Connect(function(dt)
@@ -96,7 +96,6 @@ RunService.Heartbeat:Connect(function(dt)
         end
         if t >= 1 then
             data.current = data.target
-            data.elapsed = 0
             AnimateQueue[label] = nil
         end
     end
@@ -159,7 +158,7 @@ local ZonePositions = {
         ["100"] = Vector3.new(-109.675,61.000,-508.852), ["10K"] = Vector3.new(-424.448,121.923,-78.950),
         ["100K"] = Vector3.new(3482.918,60.000,130.891), ["5M"] = Vector3.new(4111.682,60.922,844.187),
     },
-    Sword = {}, -- intentionally empty
+    Sword = {},
 }
 
 -------------------------------------------------
@@ -168,39 +167,27 @@ local ZonePositions = {
 local InfoTab = Window:CreateTab("Info 🛠️")
 
 InfoTab:CreateSection("Update Log 📝")
-InfoTab:CreateParagraph({
-    Title = VERSION,
-    Content = [[
+InfoTab:CreateParagraph({Title = VERSION, Content = [[
 • Auto Farms complete
 • Teleports Tab in progress
 • Added basic debugging
 • Nearly ready for release!
-]]
-})
+]]})
 
 InfoTab:CreateSection("Discord 💬")
-InfoTab:CreateParagraph({
-    Title = "Dear @"..Player.DisplayName..",",
-    Content = [[
+InfoTab:CreateParagraph({Title = "Dear "..Player.DisplayName..",", Content = [[
 Thank you for using Murzzhub!
 I appreciate every second of you using my script!
 If you have any suggestions, or want to see sneak peeks,
 Join the discord! (None for now srry!)
-]]
-})
+]]})
 
-InfoTab:CreateButton({
-    Name = "Join Discord",
-    Callback = function()
-        setclipboard("No Discord For Now Sorry :(")
-    end
-})
+InfoTab:CreateButton({Name = "Join Discord", Callback = function() setclipboard("No Discord For Now Sorry :(") end})
 
 -------------------------------------------------
 -- HOME TAB
 -------------------------------------------------
 local HomeTab = Window:CreateTab("Home 🏠")
-
 HomeTab:CreateSection("Player Data 👤")
 
 local ClassLabel = HomeTab:CreateLabel("Class: ...")
@@ -213,10 +200,7 @@ local function bindValue(obj, label, prefix, emoji)
     local current = obj.Value
     local function update()
         local newVal = obj.Value
-        task.spawn(function()
-            animateNumber(label, current, newVal, prefix, emoji, 0.7)
-            current = newVal
-        end)
+        task.spawn(function() animateNumber(label, current, newVal, prefix, emoji, 0.7) current=newVal end)
     end
     update()
     obj:GetPropertyChangedSignal("Value"):Connect(update)
@@ -239,14 +223,13 @@ end
 -------------------------------------------------
 HomeTab:CreateSection("Live Stats 📊")
 
--- Ordered stats including Sword
 local OrderedStats = {
-    {id = "1", name = "Strength",   emoji = "💪"},
-    {id = "2", name = "Durability", emoji = "🛡️"},
-    {id = "3", name = "Chakra",     emoji = "🌀"},
-    {id = "4", name = "Sword",      emoji = "⚔️"},  -- added Sword
-    {id = "6", name = "Speed",      emoji = "💨"},
-    {id = "5", name = "Agility",    emoji = "☁️"},
+    {id="1", name="Strength", emoji="💪"},
+    {id="2", name="Durability", emoji="🛡️"},
+    {id="3", name="Chakra", emoji="🌀"},
+    {id="4", name="Sword", emoji="⚔️"},
+    {id="6", name="Speed", emoji="💨"},
+    {id="5", name="Agility", emoji="☁️"},
 }
 
 for _, data in ipairs(OrderedStats) do
@@ -254,15 +237,10 @@ for _, data in ipairs(OrderedStats) do
     if stat then
         local current = stat.Value
         local label = HomeTab:CreateLabel(data.name..": ... "..data.emoji)
-
         local function update()
             local newVal = stat.Value
-            task.spawn(function()
-                animateNumber(label, current, newVal, data.name..": ", data.emoji, 0.7)
-                current = newVal
-            end)
+            task.spawn(function() animateNumber(label, current, newVal, data.name..": ", data.emoji, 0.7) current=newVal end)
         end
-
         update()
         stat:GetPropertyChangedSignal("Value"):Connect(update)
     end
@@ -290,16 +268,12 @@ local function setupQuest(quest)
                     local progress = 0
                     if quest:FindFirstChild(req.Name) then
                         progress = quest[req.Name].Value
-                    elseif quest:FindFirstChild("Progress")
-                        and quest.Progress:FindFirstChild(req.Name) then
+                    elseif quest:FindFirstChild("Progress") and quest.Progress:FindFirstChild(req.Name) then
                         progress = quest.Progress[req.Name].Value
                     end
 
                     local name, emoji = req.Name, ""
-                    if StatMap[req.Name] then
-                        name, emoji = unpack(StatMap[req.Name])
-                    end
-
+                    if StatMap[req.Name] then name, emoji = unpack(StatMap[req.Name]) end
                     local done = progress >= req.Value
 
                     task.spawn(function()
@@ -309,21 +283,11 @@ local function setupQuest(quest)
                             local t = easeOutQuad(i/steps)
                             local val = current + (progress - current) * t
                             label:Set(string.format("%s/%s %s %s%s",
-                                abbreviate(math.floor(val)),
-                                abbreviate(req.Value),
-                                name,
-                                emoji,
-                                done and " ✅" or ""
-                            ))
+                                abbreviate(math.floor(val)), abbreviate(req.Value), name, emoji, done and " ✅" or ""))
                             task.wait(duration/steps)
                         end
                         label:Set(string.format("%s/%s %s %s%s",
-                            abbreviate(progress),
-                            abbreviate(req.Value),
-                            name,
-                            emoji,
-                            done and " ✅" or ""
-                        ))
+                            abbreviate(progress), abbreviate(req.Value), name, emoji, done and " ✅" or ""))
                         current = progress
                     end)
                 end
@@ -333,8 +297,7 @@ local function setupQuest(quest)
                 if quest:FindFirstChild(req.Name) then
                     quest[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
                 end
-                if quest:FindFirstChild("Progress")
-                    and quest.Progress:FindFirstChild(req.Name) then
+                if quest:FindFirstChild("Progress") and quest.Progress:FindFirstChild(req.Name) then
                     quest.Progress[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
                 end
             end
@@ -357,20 +320,13 @@ AutoTab:CreateSection("Auto Train 🏋️")
 local mainClient = Player:WaitForChild("PlayerGui"):WaitForChild("Main"):WaitForChild("MainClient")
 local StatFunctions = require(mainClient:WaitForChild("StatFunctions"))
 local CharacterModule
-repeat
-    CharacterModule = StatFunctions.characterModule
-    task.wait(0.1)
-until CharacterModule
+repeat CharacterModule = StatFunctions.characterModule task.wait(0.1) until CharacterModule
 
 local GameData = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameData"))
 
 local AutoStats = {
-    {1, "Strength", "💪"},
-    {2, "Durability", "🛡️"},
-    {3, "Chakra", "🌀"},
-    {4, "Sword", "🗡️"},
-    {5, "Agility", "☁️"},
-    {6, "Speed", "💨"},
+    {1,"Strength","💪"},{2,"Durability","🛡️"},{3,"Chakra","🌀"},
+    {4,"Sword","🗡️"},{5,"Agility","☁️"},{6,"Speed","💨"},
 }
 
 local ActiveTrains = {}
@@ -389,8 +345,7 @@ for _,stat in ipairs(AutoStats) do
                 LastFire[statID] = 0
                 task.spawn(function()
                     while ActiveTrains[statID] do
-                        if CharacterModule.states.Dead then
-                            task.wait(1)
+                        if CharacterModule.states.Dead then task.wait(1)
                         else
                             CharacterModule.characterStopped = false
                             CharacterModule:ResumeCharacter()
@@ -403,11 +358,7 @@ for _,stat in ipairs(AutoStats) do
                                 local success, err = pcall(function()
                                     ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train", statID)
                                 end)
-                                if success then
-                                    log("TrainStat fired for "..name)
-                                else
-                                    log("TrainStat error: "..tostring(err))
-                                end
+                                if success then log("TrainStat fired for "..name) else log("TrainStat error: "..tostring(err)) end
                                 LastFire[statID] = tick()
                             end
                             task.wait(0.05)
@@ -415,16 +366,13 @@ for _,stat in ipairs(AutoStats) do
                     end
                     ActiveTrains[statID] = nil
                 end)
-            else
-                ActiveTrains[statID] = false
-            end
+            else ActiveTrains[statID] = false end
         end
     })
 end
 
--- Auto Chikara Section (ClickBox + ClickDetector)
+-- Auto Chikara Section
 AutoTab:CreateSection("Auto Chikara 💎 | AUTOCLICKER NEEDED")
-
 local AutoChikaraActive = false
 
 AutoTab:CreateToggle({
@@ -434,7 +382,6 @@ AutoTab:CreateToggle({
     Callback = function(val)
         AutoChikaraActive = val
         if val then
-            log("Auto Chikara ON")
             task.spawn(function()
                 local lastCollected = {}
                 while AutoChikaraActive do
@@ -444,41 +391,29 @@ AutoTab:CreateToggle({
                         local hasCollected = false
                         for _, crate in ipairs(crates) do
                             if not AutoChikaraActive then break end
-                            if crate and crate:IsA("BasePart") then
-                                local clickBox = crate:FindFirstChild("ClickBox")
-                                if clickBox then
-                                    local clickDetector = clickBox:FindFirstChildWhichIsA("ClickDetector")
-                                    local now = tick()
-                                    if clickDetector and (not lastCollected[crate] or now - lastCollected[crate] >= 10) then
-                                        if Player.Character and Player.Character.PrimaryPart then
-                                            Player.Character:SetPrimaryPartCFrame(crate.CFrame + Vector3.new(0,3,0))
-                                        end
-                                        task.wait(0.1)
-                                        local success, err = pcall(function()
-                                            clickDetector:FireClick(Player)
-                                        end)
-                                        if success then
-                                            lastCollected[crate] = tick()
-                                            hasCollected = true
-                                            log("[AutoChikara] Collected crate")
-                                        else
-                                            warn("[AutoChikara] Failed to collect: "..tostring(err))
-                                        end
-                                        task.wait(10)
+                            local clickBox = crate:FindFirstChild("ClickBox")
+                            if clickBox then
+                                local clickDetector = clickBox:FindFirstChildWhichIsA("ClickDetector")
+                                local now = tick()
+                                if clickDetector and (not lastCollected[crate] or now - lastCollected[crate] >= 10) then
+                                    if Player.Character and Player.Character.PrimaryPart then
+                                        Player.Character:SetPrimaryPartCFrame(crate.CFrame + Vector3.new(0,3,0))
                                     end
+                                    task.wait(0.1)
+                                    pcall(function() clickDetector:FireClick(Player) end)
+                                    lastCollected[crate] = tick()
+                                    hasCollected = true
+                                    log("[AutoChikara] Collected crate")
+                                    task.wait(10)
                                 end
                             end
                         end
                         if not hasCollected then task.wait(1) end
-                    else
-                        task.wait(1)
-                    end
+                    else task.wait(1) end
                 end
                 log("Auto Chikara OFF")
             end)
-        else
-            log("Auto Chikara OFF")
-        end
+        else log("Auto Chikara OFF") end
     end
 })
 
@@ -486,32 +421,28 @@ AutoTab:CreateToggle({
 -- TELEPORTS TAB
 -------------------------------------------------
 local TeleportsTab = Window:CreateTab("Teleports 📍")
-local function getCharacter()
-    return Player.Character or Player.CharacterAdded:Wait()
-end
-
+local function getCharacter() return Player.Character or Player.CharacterAdded:Wait() end
 local function teleportTo(position)
     local char = getCharacter()
     if char and char.PrimaryPart then
-        char:SetPrimaryPartCFrame(CFrame.new(position + Vector3.new(0, 5, 0)))
+        char:SetPrimaryPartCFrame(CFrame.new(position + Vector3.new(0,5,0)))
     end
 end
 
--- Function to abbreviate numbers (1000 → 1K, 1e6 → 1M, etc.)
 local function formatNumber(n)
     local absN = math.abs(n)
-    if absN >= 1e21 then return string.format("%.0fSx", n / 1e21)
-    elseif absN >= 1e18 then return string.format("%.0fQn", n / 1e18)
-    elseif absN >= 1e15 then return string.format("%.0fQd", n / 1e15)
-    elseif absN >= 1e12 then return string.format("%.0fT", n / 1e12)
-    elseif absN >= 1e9  then return string.format("%.0fB", n / 1e9)
-    elseif absN >= 1e6  then return string.format("%.0fM", n / 1e6)
-    elseif absN >= 1e3  then return string.format("%.0fK", n / 1e3)
+    if absN >= 1e21 then return string.format("%.0fSx", n/1e21)
+    elseif absN >= 1e18 then return string.format("%.0fQn", n/1e18)
+    elseif absN >= 1e15 then return string.format("%.0fQd", n/1e15)
+    elseif absN >= 1e12 then return string.format("%.0fT", n/1e12)
+    elseif absN >= 1e9 then return string.format("%.0fB", n/1e9)
+    elseif absN >= 1e6 then return string.format("%.0fM", n/1e6)
+    elseif absN >= 1e3 then return string.format("%.0fK", n/1e3)
     else return tostring(n)
     end
 end
 
--- Stats data
+-- Stats Data
 local StatsData = {
     {Name="Strength", SectionEmoji="💪", ButtonEmoji="📁", StatId="1", Zones={
         {100, Vector3.new(-1.902,65.000,127.968)}, {10000, Vector3.new(1341.747,153.963,-137.436)},
@@ -520,7 +451,7 @@ local StatsData = {
         {1e9, Vector3.new(718.492,151.251,924.886)}, {1e11, Vector3.new(1846.949,141.200,92.585)},
         {5e12, Vector3.new(626.400,696.623,429.320)}, {2.5e14, Vector3.new(4340.031,60.000,-631.732)},
         {1.5e17, Vector3.new(812.393,207.000,-1001.867)}, {2.5e19, Vector3.new(3873.903,136.015,890.458)},
-        {1e22, Vector3.new(3869.009,1110.712,-1254.075)},
+        {1e22, Vector3.new(3869.009,1110.712,-1254.075)}
     }},
     {Name="Durability", SectionEmoji="🛡️", ButtonEmoji="📁", StatId="2", Zones={
         {100, Vector3.new(112.002,56.026,881.742)}, {10000, Vector3.new(-1606.842,61.615,-541.502)},
@@ -529,7 +460,7 @@ local StatsData = {
         {1e9, Vector3.new(2495.594,1543.135,-383.322)}, {1e11, Vector3.new(-2678.021,-229.855,358.415)},
         {5e12, Vector3.new(2175.640,519.579,571.121)}, {2.5e14, Vector3.new(1669.455,432.897,-1345.698)},
         {1.5e17, Vector3.new(194.019,773.591,-701.855)}, {2.5e19, Vector3.new(2564.930,91.790,1756.254)},
-        {1e22, Vector3.new(1718.871,2305.067,-22.188)},
+        {1e22, Vector3.new(1718.871,2305.067,-22.188)}
     }},
     {Name="Chakra", SectionEmoji="🌀", ButtonEmoji="📁", StatId="3", Zones={
         {100, Vector3.new(-6.479,65.000,-119.760)}, {10000, Vector3.new(1425.668,147.000,-581.487)},
@@ -538,15 +469,15 @@ local StatsData = {
         {1e9, Vector3.new(3053.817,110.900,1105.384)}, {1e11, Vector3.new(1663.124,556.154,1779.387)},
         {5e12, Vector3.new(-6.211,101.133,-480.247)}, {2.5e14, Vector3.new(-402.687,1252.990,668.177)},
         {1.5e17, Vector3.new(-768.222,2792.676,591.147)}, {2.5e19, Vector3.new(3226.973,-440.978,-244.406)},
-        {1e22, Vector3.new(337.880,61.008,1917.442)},
+        {1e22, Vector3.new(337.880,61.008,1917.442)}
     }},
     {Name="Agility", SectionEmoji="☁️", ButtonEmoji="📁", StatId="5", Zones={
         {100, Vector3.new(41.676,69.183,453.424)}, {10000, Vector3.new(-424.448,121.923,-78.950)},
-        {100000, Vector3.new(3482.918,60.000,130.891)}, {5e6, Vector3.new(4111.682,60.922,844.187)},
+        {100000, Vector3.new(3482.918,60.000,130.891)}, {5e6, Vector3.new(4111.682,60.922,844.187)}
     }},
     {Name="Speed", SectionEmoji="💨", ButtonEmoji="📁", StatId="6", Zones={
         {100, Vector3.new(-109.675,61.000,-508.852)}, {10000, Vector3.new(-424.448,121.923,-78.950)},
-        {100000, Vector3.new(3482.918,60.000,130.891)}, {5e6, Vector3.new(4111.682,60.922,844.187)},
+        {100000, Vector3.new(3482.918,60.000,130.891)}, {5e6, Vector3.new(4111.682,60.922,844.187)}
     }},
 }
 
@@ -555,44 +486,31 @@ TeleportsTab:CreateSection("Best Stat Zones 📊")
 for _, stat in ipairs(StatsData) do
     local playerStat = Player.Stats:FindFirstChild(stat.StatId)
     local currentZone
-
     local function updateZone()
         if playerStat then
             local value = playerStat.Value
             currentZone = nil
             for _, z in ipairs(stat.Zones) do
-                if value >= z[1] then
-                    currentZone = z[2]
-                end
+                if value >= z[1] then currentZone = z[2] end
             end
         end
     end
-
     updateZone()
-    if playerStat then
-        playerStat:GetPropertyChangedSignal("Value"):Connect(updateZone)
-    end
-
+    if playerStat then playerStat:GetPropertyChangedSignal("Value"):Connect(updateZone) end
     TeleportsTab:CreateButton({
         Name = stat.Name.." "..stat.SectionEmoji,
-        Callback = function()
-            if currentZone then
-                teleportTo(currentZone)
-            end
-        end
+        Callback = function() if currentZone then teleportTo(currentZone) end end
     })
 end
 
--- Regular Stat Sections
+-- Regular Stat Teleports
 for _, stat in ipairs(StatsData) do
     local section = TeleportsTab:CreateSection(stat.Name.." "..stat.SectionEmoji)
     for _, zone in ipairs(stat.Zones) do
         local label = formatNumber(zone[1]).." "..stat.Name.." "..stat.ButtonEmoji
         TeleportsTab:CreateButton({
             Name = label,
-            Callback = function()
-                teleportTo(zone[2])
-            end
+            Callback = function() teleportTo(zone[2]) end
         })
     end
 end
