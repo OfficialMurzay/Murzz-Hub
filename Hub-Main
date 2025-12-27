@@ -335,8 +335,6 @@ local AutoTrainToggle = AutoTab:CreateToggle({
     Callback=function(v)
         task.spawn(function()
             while v do
-                -- Optimized auto train loop
-                -- Use minimal waits
                 task.wait(0.1)
             end
         end)
@@ -351,7 +349,6 @@ local AutoChikaraToggle = AutoTab:CreateToggle({
     Callback=function(v)
         task.spawn(function()
             while v do
-                -- Optimized auto chikara loop
                 task.wait(0.1)
             end
         end)
@@ -362,13 +359,12 @@ local AutoChikaraToggle = AutoTab:CreateToggle({
 AutoTab:CreateSection("Auto Quest 📜 | Stats Only")
 for _,q in ipairs(QuestsFolder:GetChildren()) do
     if q:IsA("Folder") and q:FindFirstChild("Requirements") then
-        local toggle = AutoTab:CreateToggle({
+        AutoTab:CreateToggle({
             Name=q.Name.." 📜",
             CurrentValue=false,
             Callback=function(v)
                 task.spawn(function()
                     while v do
-                        -- Optimized quest farming loop
                         task.wait(0.2)
                     end
                 end)
@@ -422,7 +418,6 @@ end
 local SettingsTab = Window:CreateTab("Settings ⚙️")
 SettingsTab:CreateSection("Performance ⚡")
 
--- LOW TEXTURES
 SettingsTab:CreateToggle({
     Name = "Low Textures 🖼️",
     CurrentValue = false,
@@ -435,7 +430,6 @@ SettingsTab:CreateToggle({
     end
 })
 
--- LOWER RENDER DISTANCE
 SettingsTab:CreateToggle({
     Name = "Lower Render Distance ⚠️",
     CurrentValue=false,
@@ -448,12 +442,11 @@ SettingsTab:CreateToggle({
     end
 })
 
--- Additional performance
 SettingsTab:CreateToggle({Name="Disable Shadows 🌑", CurrentValue=false, Callback=function(v) Lighting.GlobalShadows=not v end})
 SettingsTab:CreateToggle({Name="Minimal Part Effects ✨", CurrentValue=false, Callback=function(v) for _,p in pairs(Workspace:GetDescendants()) do if p:IsA("ParticleEmitter") then p.Enabled=not v end end end})
 
 SettingsTab:CreateSection("Configuration 💾")
-local SaveBtn = SettingsTab:CreateButton({
+SettingsTab:CreateButton({
     Name="Save Config 💾",
     Callback=function()
         if Window and Window.SaveConfig then
