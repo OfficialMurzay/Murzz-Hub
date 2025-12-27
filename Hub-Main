@@ -523,8 +523,6 @@ AutoTab:CreateToggle({
 -- TELEPORTS TAB REVAMP
 -------------------------------------------------
 local TeleportsTab = Window:CreateTab("Teleports 📍")
-TeleportsTab:CreateSection("Best Stat Zones 📊")
-
 local function getCharacter()
     return Player.Character or Player.CharacterAdded:Wait()
 end
@@ -536,10 +534,37 @@ local function teleportTo(position)
     end
 end
 
--- Ordered stat info
+-- Function to abbreviate numbers (1000 → 1K, 1e6 → 1M, etc.)
+local function formatNumber(n)
+    local absN = math.abs(n)
+    if absN >= 1e21 then return string.format("%.0fSx", n / 1e21)
+    elseif absN >= 1e18 then return string.format("%.0fQn", n / 1e18)
+    elseif absN >= 1e15 then return string.format("%.0fQd", n / 1e15)
+    elseif absN >= 1e12 then return string.format("%.0fT", n / 1e12)
+    elseif absN >= 1e9  then return string.format("%.0fB", n / 1e9)
+    elseif absN >= 1e6  then return string.format("%.0fM", n / 1e6)
+    elseif absN >= 1e3  then return string.format("%.0fK", n / 1e3)
+    else return tostring(n)
+    end
+end
+
+-- Best Stat Zones section
+TeleportsTab:CreateSection("Best Stat Zones 📊")
+-- Example: you can populate this with your auto-teleport logic later
+-- For now, we'll create a placeholder button
+TeleportsTab:CreateButton({
+    Name = "Go to Best Zone 📊",
+    Callback = function()
+        -- your auto-best-stat teleport logic can go here
+        print("Best Zone Teleport placeholder")
+    end
+})
+
+-- Stats data
 local StatsData = {
     {
-        Name = "Strength", Emoji = "💪",
+        Name = "Strength",
+        Emoji = "📁",
         Zones = {
             {100, Vector3.new(-1.902, 65.000, 127.968)},
             {10000, Vector3.new(1341.747, 153.963, -137.436)},
@@ -557,7 +582,8 @@ local StatsData = {
         }
     },
     {
-        Name = "Durability", Emoji = "🛡️",
+        Name = "Durability",
+        Emoji = "📁",
         Zones = {
             {100, Vector3.new(112.002, 56.026, 881.742)},
             {10000, Vector3.new(-1606.842, 61.615, -541.502)},
@@ -575,7 +601,8 @@ local StatsData = {
         }
     },
     {
-        Name = "Chakra", Emoji = "🌀",
+        Name = "Chakra",
+        Emoji = "📁",
         Zones = {
             {100, Vector3.new(-6.479, 65.000, -119.760)},
             {10000, Vector3.new(1425.668, 147.000, -581.487)},
@@ -593,7 +620,8 @@ local StatsData = {
         }
     },
     {
-        Name = "Agility", Emoji = "☁️",
+        Name = "Agility",
+        Emoji = "📁",
         Zones = {
             {100, Vector3.new(41.676, 69.183, 453.424)},
             {10000, Vector3.new(-424.448, 121.923, -78.950)},
@@ -602,7 +630,8 @@ local StatsData = {
         }
     },
     {
-        Name = "Speed", Emoji = "💨",
+        Name = "Speed",
+        Emoji = "📁",
         Zones = {
             {100, Vector3.new(-109.675, 61.000, -508.852)},
             {10000, Vector3.new(-424.448, 121.923, -78.950)},
@@ -618,7 +647,7 @@ for _, stat in ipairs(StatsData) do
     for _, zone in ipairs(stat.Zones) do
         local amount = zone[1]
         local pos = zone[2]
-        local label = tostring(amount).. " "..stat.Name.." "..stat.Emoji
+        local label = formatNumber(amount).. " "..stat.Name.." "..stat.Emoji
 
         TeleportsTab:CreateButton({
             Name = label,
