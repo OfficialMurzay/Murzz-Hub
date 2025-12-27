@@ -374,40 +374,51 @@ for _,q in ipairs(QuestsFolder:GetChildren()) do
 end
 
 -------------------------------------------------
--- TELEPORTS TAB
+-- SETTINGS TAB
 -------------------------------------------------
-local TeleportsTab = Window:CreateTab("Teleports 📍")
-local function getCharacter() return Player.Character or Player.CharacterAdded:Wait() end
-local function teleportTo(pos)
-    local char=getCharacter()
-    if char and char.PrimaryPart then char:SetPrimaryPartCFrame(CFrame.new(pos+Vector3.new(0,5,0))) end
-end
--- Best Stat Zones
-TeleportsTab:CreateSection("Best Stat Zones 📊")
-for statName,zones in pairs(ZonePositions) do
-    local playerStat = StatsFolder:FindFirstChild(tostring({Strength="1",Durability="2",Chakra="3",Sword="4",Agility="5",Speed="6"}[statName]))
-    if playerStat then
-        local currentZone
-        local function updateZone()
-            local value=playerStat.Value
-            currentZone=nil
-            for k,v in pairs(zones) do if value>=tonumber(k:gsub("[^%d]","")) then currentZone=v end end
+local SettingsTab = Window:CreateTab("Settings ⚙️")
+SettingsTab:CreateSection("Performance ⚡")
+
+SettingsTab:CreateToggle({
+    Name = "Low Textures 🖼️",
+    CurrentValue = false,
+    Callback = function(v)
+        for _,obj in pairs(Workspace:GetDescendants()) do
+            if obj:IsA("BasePart") then
+                obj.Material = v and Enum.Material.SmoothPlastic or Enum.Material.Custom
+            end
         end
-        updateZone()
-        playerStat:GetPropertyChangedSignal("Value"):Connect(updateZone)
-        TeleportsTab:CreateButton({
-            Name=statName.." "..({Strength="💪",Durability="🛡️",Chakra="🌀",Sword="⚔️",Agility="☁️",Speed="💨"})[statName],
-            Callback=function() if currentZone then teleportTo(currentZone) end
-        end})
     end
-end
--- Individual Stat Sections
-for statName,zones in pairs(ZonePositions) do
-    local section=TeleportsTab:CreateSection(statName.." "..({Strength="💪",Durability="🛡️",Chakra="🌀",Sword="⚔️",Agility="☁️",Speed="💨"})[statName])
-    for k,v in pairs(zones) do
-        TeleportsTab:CreateButton({
-            Name=formatNumber(tonumber(k:gsub("[^%d]",""))).." "..statName.." 📁",
-            Callback=function() teleportTo(v) end
-        })
+})
+
+SettingsTab:CreateToggle({
+    Name = "Lower Render Distance ⚠️",
+    CurrentValue=false,
+    Callback = function(v)
+        if Lighting:FindFirstChild("FogEnd") then
+            Lighting.FogEnd = v and 300 or 100000
+        else
+            warn("FogEnd not found in Lighting")
+        end
     end
-end
+})
+
+SettingsTab:CreateToggle({Name="Disable Shadows 🌑", CurrentValue=false, Callback=function(v) Lighting.GlobalShadows=not v end})
+SettingsTab:CreateToggle({Name="Minimal Part Effects ✨", CurrentValue=false, Callback=function(v) for _,p in pairs(Workspace:GetDescendants()) do if p:IsA("ParticleEmitter") then p.Enabled=not v end end end})
+
+SettingsTab:CreateSection("Configuration 💾")
+SettingsTab:CreateButton({
+    Name="Save Config 💾",
+    Callback=function()
+        if Window and Window.SaveConfig then
+            Window:SaveConfig()
+        else
+            warn("[MurzzHub] Save Config unavailable!")
+        end
+    end
+})
+
+-------------------------------------------------
+-- FINAL NOTES
+-------------------------------------------------
+log("MurzzHub Fully Loaded, Optimized Version")
