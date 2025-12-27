@@ -276,11 +276,12 @@ end
 -------------------------------------------------
 HomeTab:CreateSection("Live Stats 📊")
 
--- Ordered stats
+-- Ordered stats including Sword
 local OrderedStats = {
     {id = "1", name = "Strength",   emoji = "💪"},
     {id = "2", name = "Durability", emoji = "🛡️"},
     {id = "3", name = "Chakra",     emoji = "🌀"},
+    {id = "4", name = "Sword",      emoji = "⚔️"},  -- added Sword
     {id = "6", name = "Speed",      emoji = "💨"},
     {id = "5", name = "Agility",    emoji = "☁️"},
 }
@@ -519,10 +520,10 @@ AutoTab:CreateToggle({
 })
 
 -------------------------------------------------
--- TELEPORTS TAB
+-- TELEPORTS TAB REVAMP
 -------------------------------------------------
 local TeleportsTab = Window:CreateTab("Teleports 📍")
-TeleportsTab:CreateSection("Stat-Based Zones")
+TeleportsTab:CreateSection("Best Stat Zones 📊")
 
 local function getCharacter()
     return Player.Character or Player.CharacterAdded:Wait()
@@ -535,75 +536,95 @@ local function teleportTo(position)
     end
 end
 
--- parse zone keys like "10K", "5T", "150Qd"
-local function parseZoneValue(text)
-    local number, suffix = text:match("([%d%.]+)(%a*)")
-    number = tonumber(number)
-    if not number then return 0 end
-
-    local mult = {
-        K  = 1e3,
-        M  = 1e6,
-        B  = 1e9,
-        T  = 1e12,
-        Qd = 1e15,
-        Qn = 1e18,
-        Sx = 1e21,
-    }
-
-    return number * (mult[suffix] or 1)
-end
-
-local function getBestZone(statName, statValue)
-    local zones = ZonePositions[statName]
-    if not zones then return nil end
-
-    local bestRequirement = 0
-    local bestPosition = nil
-
-    for requirement, position in pairs(zones) do
-        local needed = parseZoneValue(requirement)
-        if statValue >= needed and needed >= bestRequirement then
-            bestRequirement = needed
-            bestPosition = position
-        end
-    end
-
-    return bestPosition
-end
-
--- Ordered Stat Buttons (list ensures order)
-local StatButtonsOrdered = {
-    {Name = "Strength",   id = "1", emoji = "💪"},
-    {Name = "Durability", id = "2", emoji = "🛡️"},
-    {Name = "Chakra",     id = "3", emoji = "🌀"},
-    {Name = "Speed",      id = "6", emoji = "💨"},
-    {Name = "Agility",    id = "5", emoji = "☁️"},
+-- Ordered stat info
+local StatsData = {
+    {
+        Name = "Strength", Emoji = "💪",
+        Zones = {
+            {100, Vector3.new(-1.902, 65.000, 127.968)},
+            {10000, Vector3.new(1341.747, 153.963, -137.436)},
+            {100000, Vector3.new(-1238.425, 59.000, 476.596)},
+            {1e6, Vector3.new(-915.294, 83.520, 166.473)},
+            {1e7, Vector3.new(-2305.319, 617.492, 527.046)},
+            {1e8, Vector3.new(-39.747, 64.289, -1307.120)},
+            {1e9, Vector3.new(718.492, 151.251, 924.886)},
+            {1e11, Vector3.new(1846.949, 141.200, 92.585)},
+            {5e12, Vector3.new(626.400, 696.623, 429.320)},
+            {2.5e14, Vector3.new(4340.031, 60.000, -631.732)},
+            {1.5e17, Vector3.new(812.393, 207.000, -1001.867)},
+            {2.5e19, Vector3.new(3873.903, 136.015, 890.458)},
+            {1e22, Vector3.new(3869.009, 1110.712, -1254.075)},
+        }
+    },
+    {
+        Name = "Durability", Emoji = "🛡️",
+        Zones = {
+            {100, Vector3.new(112.002, 56.026, 881.742)},
+            {10000, Vector3.new(-1606.842, 61.615, -541.502)},
+            {100000, Vector3.new(-72.535, 61.008, 2055.987)},
+            {1e6, Vector3.new(-619.584, 179.000, 731.073)},
+            {1e7, Vector3.new(-1119.864, 212.630, -949.097)},
+            {1e8, Vector3.new(-338.338, 72.620, -1651.415)},
+            {1e9, Vector3.new(2495.594, 1543.135, -383.322)},
+            {1e11, Vector3.new(-2678.021, -229.855, 358.415)},
+            {5e12, Vector3.new(2175.640, 519.579, 571.121)},
+            {2.5e14, Vector3.new(1669.455, 432.897, -1345.698)},
+            {1.5e17, Vector3.new(194.019, 773.591, -701.855)},
+            {2.5e19, Vector3.new(2564.930, 91.790, 1756.254)},
+            {1e22, Vector3.new(1718.871, 2305.067, -22.188)},
+        }
+    },
+    {
+        Name = "Chakra", Emoji = "🌀",
+        Zones = {
+            {100, Vector3.new(-6.479, 65.000, -119.760)},
+            {10000, Vector3.new(1425.668, 147.000, -581.487)},
+            {100000, Vector3.new(915.292, 141.000, 783.253)},
+            {1e6, Vector3.new(1628.384, 388.750, 591.066)},
+            {1e7, Vector3.new(336.626, -156.000, -1802.547)},
+            {1e8, Vector3.new(1027.624, 251.000, -630.809)},
+            {1e9, Vector3.new(3053.817, 110.900, 1105.384)},
+            {1e11, Vector3.new(1663.124, 556.154, 1779.387)},
+            {5e12, Vector3.new(-6.211, 101.133, -480.247)},
+            {2.5e14, Vector3.new(-402.687, 1252.990, 668.177)},
+            {1.5e17, Vector3.new(-768.222, 2792.676, 591.147)},
+            {2.5e19, Vector3.new(3226.973, -440.978, -244.406)},
+            {1e22, Vector3.new(337.880, 61.008, 1917.442)},
+        }
+    },
+    {
+        Name = "Agility", Emoji = "☁️",
+        Zones = {
+            {100, Vector3.new(41.676, 69.183, 453.424)},
+            {10000, Vector3.new(-424.448, 121.923, -78.950)},
+            {100000, Vector3.new(3482.918, 60.000, 130.891)},
+            {5e6, Vector3.new(4111.682, 60.922, 844.187)},
+        }
+    },
+    {
+        Name = "Speed", Emoji = "💨",
+        Zones = {
+            {100, Vector3.new(-109.675, 61.000, -508.852)},
+            {10000, Vector3.new(-424.448, 121.923, -78.950)},
+            {100000, Vector3.new(3482.918, 60.000, 130.891)},
+            {5e6, Vector3.new(4111.682, 60.922, 844.187)},
+        }
+    },
 }
 
--- Create buttons in exact order
-for i = 1, #StatButtonsOrdered do
-    local data = StatButtonsOrdered[i]
-    local stat = Player.Stats:FindFirstChild(data.id)
-    if stat then
-        local currentZone
+-- Create sections and buttons
+for _, stat in ipairs(StatsData) do
+    local section = TeleportsTab:CreateSection(stat.Name.." "..stat.Emoji)
+    for _, zone in ipairs(stat.Zones) do
+        local amount = zone[1]
+        local pos = zone[2]
+        local label = tostring(amount).. " "..stat.Name.." "..stat.Emoji
 
-        -- Create button
-        local button = TeleportsTab:CreateButton({
-            Name = data.Name.." "..data.emoji,
+        TeleportsTab:CreateButton({
+            Name = label,
             Callback = function()
-                if currentZone then
-                    teleportTo(currentZone)
-                end
+                teleportTo(pos)
             end
         })
-
-        -- Update zone when stat changes
-        local function updateZone()
-            currentZone = getBestZone(data.Name, stat.Value)
-        end
-
-        updateZone()
-        stat:GetPropertyChangedSignal("Value"):Connect(updateZone)
     end
 end
