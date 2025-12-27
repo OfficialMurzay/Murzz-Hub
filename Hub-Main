@@ -514,3 +514,107 @@ for _, stat in ipairs(StatsData) do
         })
     end
 end
+
+-------------------------------------------------
+-- SETTINGS TAB
+-------------------------------------------------
+local SettingsTab = Window:CreateTab("Settings ⚙️")
+
+SettingsTab:CreateSection("Performance 🚀")
+
+-- Lower Render Distance
+SettingsTab:CreateToggle({
+    Name = "Lower Render Distance 🌄",
+    CurrentValue = false,
+    Flag = "LowerRenderDistance",
+    Callback = function(val)
+        workspace.FogEnd = val and 200 or 1000
+        workspace.FogStart = val and 0 or 100
+    end
+})
+
+-- Low Textures
+SettingsTab:CreateToggle({
+    Name = "Low Textures 🟫",
+    CurrentValue = false,
+    Flag = "LowTextures",
+    Callback = function(val)
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            if obj:IsA("Texture") or obj:IsA("Decal") then
+                obj.Transparency = val and 1 or 0
+            elseif obj:IsA("SpecialMesh") then
+                obj.TextureId = val and "" or obj.TextureId
+            end
+        end
+    end
+})
+
+-- Disable Shadows
+SettingsTab:CreateToggle({
+    Name = "Disable Shadows 🌑",
+    CurrentValue = false,
+    Flag = "DisableShadows",
+    Callback = function(val)
+        game:GetService("Lighting").ShadowMapEnabled = not val
+    end
+})
+
+-- Simplified Particles
+SettingsTab:CreateToggle({
+    Name = "Simplified Particles ✨",
+    CurrentValue = false,
+    Flag = "SimplifiedParticles",
+    Callback = function(val)
+        for _, p in ipairs(workspace:GetDescendants()) do
+            if p:IsA("ParticleEmitter") then
+                p.Rate = val and 0 or p:GetAttribute("OriginalRate") or p.Rate
+                if not p:GetAttribute("OriginalRate") then p:SetAttribute("OriginalRate", p.Rate) end
+            end
+        end
+    end
+})
+
+-- Disable PostProcessing
+SettingsTab:CreateToggle({
+    Name = "Disable PostProcessing 🎨",
+    CurrentValue = false,
+    Flag = "DisablePostProcessing",
+    Callback = function(val)
+        for _, pp in ipairs(game:GetService("Lighting"):GetChildren()) do
+            if pp:IsA("PostEffect") then
+                pp.Enabled = not val
+            end
+        end
+    end
+})
+
+-- ⚠️ Performance Mode (master toggle)
+SettingsTab:CreateToggle({
+    Name = "Performance Mode ⚠️",
+    CurrentValue = false,
+    Flag = "PerformanceMode",
+    Callback = function(val)
+        Rayfield.Flags.LowerRenderDistance.Value = val
+        Rayfield.Flags.LowTextures.Value = val
+        Rayfield.Flags.DisableShadows.Value = val
+        Rayfield.Flags.SimplifiedParticles.Value = val
+        Rayfield.Flags.DisablePostProcessing.Value = val
+    end
+})
+
+-- Optional: Config Builder (Rayfield built-in)
+SettingsTab:CreateSection("Configuration 💾")
+SettingsTab:CreateButton({
+    Name = "Save Config",
+    Callback = function()
+        Rayfield:SaveConfiguration()
+        warn("[MurzzHub] Config saved!")
+    end
+})
+SettingsTab:CreateButton({
+    Name = "Load Config",
+    Callback = function()
+        Rayfield:LoadConfiguration()
+        warn("[MurzzHub] Config loaded!")
+    end
+})
