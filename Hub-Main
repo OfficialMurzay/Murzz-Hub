@@ -44,7 +44,12 @@ end
 local Rayfield
 repeat
     local success, result = pcall(function()
-        return loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+        local code = game:HttpGet("https://sirius.menu/rayfield")
+        if code and loadstring then
+            return loadstring(code)()
+        else
+            error("Cannot load Rayfield!")
+        end
     end)
     if success then
         Rayfield = result
