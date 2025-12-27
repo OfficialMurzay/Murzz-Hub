@@ -516,15 +516,17 @@ for _, stat in ipairs(StatsData) do
 end
 
 -------------------------------------------------
--- SETTINGS TAB (Optimised)
+-- SETTINGS TAB (Optimised & Fixed)
 -------------------------------------------------
 local SettingsTab = Window:CreateTab("Settings ⚙️")
 SettingsTab:CreateSection("Performance 🚀")
 
+local Lighting = game:GetService("Lighting")
+
 -- Cache original values
-local originalFogStart = workspace.FogStart
-local originalFogEnd = workspace.FogEnd
-local originalGlobalShadows = game:GetService("Lighting").GlobalShadows
+local originalFogStart = Lighting.FogStart
+local originalFogEnd = Lighting.FogEnd
+local originalGlobalShadows = Lighting.GlobalShadows
 local originalTextures = {}
 local originalParticleRates = {}
 
@@ -535,8 +537,8 @@ SettingsTab:CreateToggle({
     Flag = "LowerRenderDistance",
     Callback = function(val)
         pcall(function()
-            workspace.FogStart = val and 0 or originalFogStart
-            workspace.FogEnd = val and 200 or originalFogEnd
+            Lighting.FogStart = val and 0 or originalFogStart
+            Lighting.FogEnd   = val and 200 or originalFogEnd
         end)
     end
 })
@@ -550,10 +552,10 @@ SettingsTab:CreateToggle({
         for _, obj in ipairs(workspace:GetDescendants()) do
             if obj:IsA("Texture") or obj:IsA("Decal") then
                 if originalTextures[obj] == nil then originalTextures[obj] = obj.Transparency end
-                obj.Transparency = val and 1 or originalTextures[obj]
+                obj.Transparency = val and 1 or (originalTextures[obj] or 0)
             elseif obj:IsA("SpecialMesh") then
                 if originalTextures[obj] == nil then originalTextures[obj] = obj.TextureId end
-                obj.TextureId = val and "" or originalTextures[obj]
+                obj.TextureId = val and "" or (originalTextures[obj] or obj.TextureId)
             end
         end
     end
@@ -566,7 +568,7 @@ SettingsTab:CreateToggle({
     Flag = "DisableShadows",
     Callback = function(val)
         pcall(function()
-            game:GetService("Lighting").GlobalShadows = not val
+            Lighting.GlobalShadows = not val
         end)
     end
 })
@@ -580,7 +582,7 @@ SettingsTab:CreateToggle({
         for _, p in ipairs(workspace:GetDescendants()) do
             if p:IsA("ParticleEmitter") then
                 if originalParticleRates[p] == nil then originalParticleRates[p] = p.Rate end
-                p.Rate = val and 0 or originalParticleRates[p]
+                p.Rate = val and 0 or (originalParticleRates[p] or 10)
             end
         end
     end
@@ -589,14 +591,14 @@ SettingsTab:CreateToggle({
 -- Config Buttons
 SettingsTab:CreateSection("Configuration 💾")
 SettingsTab:CreateButton({
-    Name = "Save Config 💾",
+    Name = "Save Config ⚠️",
     Callback = function()
         local success, err = pcall(function() Rayfield:SaveConfiguration() end)
         warn(success and "[MurzzHub] Config saved!" or "[MurzzHub] Config save failed: "..tostring(err))
     end
 })
 SettingsTab:CreateButton({
-    Name = "Load Config 💾",
+    Name = "Load Config ⚠️",
     Callback = function()
         local success, err = pcall(function() Rayfield:LoadConfiguration() end)
         warn(success and "[MurzzHub] Config loaded!" or "[MurzzHub] Config load failed: "..tostring(err))
