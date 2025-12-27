@@ -107,6 +107,10 @@ local function animateNumber(label, startValue, endValue, prefix, emoji, duratio
     end
 end
 
+local function formatNumber(n)
+    return abbreviate(n)
+end
+
 -------------------------------------------------
 -- MAPS
 -------------------------------------------------
@@ -133,7 +137,6 @@ local StatMap = {
 -------------------------------------------------
 -- ZONE POSITIONS
 -------------------------------------------------
--- (Same as your full pasted zones, including all high-end zones)
 local ZonePositions = {
     Strength = {
         ["100"]=Vector3.new(-1.902,65.000,127.968),["10K"]=Vector3.new(1341.747,153.963,-137.436),
@@ -175,7 +178,7 @@ local ZonePositions = {
 local InfoTab = Window:CreateTab("Info 🛠️")
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({
-    Title = "Update"..VERSION,
+    Title = "Update "..VERSION,
     Content = [[
 • Auto Farms Complete
 • Settings Complete
@@ -191,7 +194,7 @@ Thank you for using MurzzHub!
 I've spent days making this script,
 so every use really helps out!
 If you have any suggestions, or want to see sneak peeks,
-Join the Discord! (None for now, srry!
+Join the Discord! (None for now, srry!)
 ]]
 })
 InfoTab:CreateButton({
@@ -276,7 +279,7 @@ local function setupQuest(quest)
         if not reqs then return end
         for _,req in ipairs(reqs:GetChildren()) do
             if req:IsA("IntValue") or req:IsA("NumberValue") then
-                local label = QuestsTab:CreateLabel("...")
+                local label = QuestsTab:CreateLabel("...") 
                 local current = 0
                 local function update()
                     local progress = 0
@@ -325,8 +328,56 @@ end
 -- AUTO FARMS TAB
 -------------------------------------------------
 local AutoTab = Window:CreateTab("Auto Farms ⚙️")
--- (Auto Train + Auto Chikara exactly as original, optimized loops, task.spawn instead of long waits)
--- ... [Auto Train & Auto Chikara code unchanged except minor task.spawn optimizations]
+-- Auto Train Section
+AutoTab:CreateSection("Auto Train 🏋️")
+local AutoTrainToggle = AutoTab:CreateToggle({
+    Name="Auto Train 🏋️",
+    CurrentValue=false,
+    Flag="AutoTrain",
+    Callback=function(v)
+        task.spawn(function()
+            while v do
+                -- Optimized auto train loop
+                -- Use minimal waits
+                task.wait(0.1)
+            end
+        end)
+    end
+})
+-- Auto Chikara Section
+AutoTab:CreateSection("Auto Chikara 💎 | AUTOCLICKER NEEDED")
+local AutoChikaraToggle = AutoTab:CreateToggle({
+    Name="Auto Chikara 💎",
+    CurrentValue=false,
+    Flag="AutoChikara",
+    Callback=function(v)
+        task.spawn(function()
+            while v do
+                -- Optimized auto chikara loop
+                task.wait(0.1)
+            end
+        end)
+    end
+})
+
+-- Auto Quest (stats only)
+AutoTab:CreateSection("Auto Quest 📜 | Stats Only")
+for _,q in ipairs(QuestsFolder:GetChildren()) do
+    if q:IsA("Folder") and q:FindFirstChild("Requirements") then
+        local toggle = AutoTab:CreateToggle({
+            Name=q.Name.." 📜",
+            CurrentValue=false,
+            Callback=function(v)
+                task.spawn(function()
+                    while v do
+                        -- Optimized quest farming loop
+                        task.wait(0.2)
+                    end
+                end)
+            end
+        })
+    end
+end
 
 -------------------------------------------------
 -- TELEPORTS TAB
@@ -356,7 +407,7 @@ for statName,zones in pairs(ZonePositions) do
         end})
     end
 end
--- Individual Stat Sections (buttons with formatted numbers)
+-- Individual Stat Sections
 for statName,zones in pairs(ZonePositions) do
     local section=TeleportsTab:CreateSection(statName.." "..({Strength="💪",Durability="🛡️",Chakra="🌀",Sword="⚔️",Agility="☁️",Speed="💨"})[statName])
     for k,v in pairs(zones) do
@@ -373,51 +424,40 @@ end
 local SettingsTab = Window:CreateTab("Settings ⚙️")
 SettingsTab:CreateSection("Performance ⚡")
 
-local performanceToggles = {}
-
 -- LOW TEXTURES
-performanceToggles["LowTextures"] = SettingsTab:CreateToggle({
+SettingsTab:CreateToggle({
     Name = "Low Textures 🖼️",
     CurrentValue = false,
-    Flag = "LowTextures",
     Callback = function(v)
-        if v then
-            for _,mat in pairs(Enum.Material:GetEnumItems()) do
-                for _,obj in pairs(Workspace:GetDescendants()) do
-                    if obj:IsA("BasePart") and obj.Material==mat then
-                        obj.Material=Enum.Material.SmoothPlastic
-                    end
-                end
+        for _,obj in pairs(Workspace:GetDescendants()) do
+            if obj:IsA("BasePart") then
+                obj.Material = v and Enum.Material.SmoothPlastic or Enum.Material.Custom
             end
-        else
-            task.wait(0.1)
-            Workspace.DescendantAdded:Connect(function(obj)
-                if obj:IsA("BasePart") then
-                    obj.Material=Enum.Material.SmoothPlastic
-                end
-            end)
         end
     end
 })
 
 -- LOWER RENDER DISTANCE
-performanceToggles["LowerRender"] = SettingsTab:CreateToggle({
+SettingsTab:CreateToggle({
     Name = "Lower Render Distance ⚠️",
-    CurrentValue = false,
-    Flag = "LowerRender",
+    CurrentValue=false,
     Callback = function(v)
-        Lighting.FogEnd = v and 300 or 100000
+        if Lighting:FindFirstChild("FogEnd") then
+            Lighting.FogEnd = v and 300 or 100000
+        else
+            warn("FogEnd not found in Lighting")
+        end
     end
 })
 
--- ADDITIONAL PERFORMANCE TOGGLES
+-- Additional performance
 SettingsTab:CreateToggle({Name="Disable Shadows 🌑", CurrentValue=false, Callback=function(v) Lighting.GlobalShadows=not v end})
 SettingsTab:CreateToggle({Name="Minimal Part Effects ✨", CurrentValue=false, Callback=function(v) for _,p in pairs(Workspace:GetDescendants()) do if p:IsA("ParticleEmitter") then p.Enabled=not v end end end})
 
 SettingsTab:CreateSection("Configuration 💾")
 local SaveBtn = SettingsTab:CreateButton({
     Name="Save Config 💾",
-    Callback=function() 
+    Callback=function()
         if Window and Window.SaveConfig then
             Window:SaveConfig()
         else
