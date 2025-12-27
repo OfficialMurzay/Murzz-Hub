@@ -384,26 +384,18 @@ end
 local function teleportTo(pos)
     local char = getCharacter()
     if char and char.PrimaryPart then
-        char:SetPrimaryPartCFrame(CFrame.new(pos + Vector3.new(0, 5, 0)))
+        char:SetPrimaryPartCFrame(CFrame.new(pos + Vector3.new(0,5,0)))
     end
 end
 
 local StatIndexMap = {
-    Strength = "1",
-    Durability = "2",
-    Chakra = "3",
-    Sword = "4",
-    Agility = "5",
-    Speed = "6"
+    Strength="1",Durability="2",Chakra="3",
+    Sword="4",Agility="5",Speed="6"
 }
 
 local StatEmoji = {
-    Strength="💪",
-    Durability="🛡️",
-    Chakra="🌀",
-    Sword="⚔️",
-    Agility="☁️",
-    Speed="💨"
+    Strength="💪",Durability="🛡️",Chakra="🌀",
+    Sword="⚔️",Agility="☁️",Speed="💨"
 }
 
 -------------------------------------------------
@@ -412,9 +404,8 @@ local StatEmoji = {
 local BestSection = TeleportsTab:CreateSection("Best Stat Zones 📊")
 
 for statName, zones in pairs(ZonePositions) do
-    local playerStat = StatsFolder:FindFirstChild(StatIndexMap[statName])
-    if playerStat then
-        local currentZone
+    local stat = StatsFolder:FindFirstChild(StatIndexMap[statName])
+    if stat then
         local sorted = {}
 
         for k, v in pairs(zones) do
@@ -428,18 +419,18 @@ for statName, zones in pairs(ZonePositions) do
             return a.req < b.req
         end)
 
-        local function updateZone()
+        local currentZone
+        local function update()
             currentZone = nil
-            local value = playerStat.Value
             for _, data in ipairs(sorted) do
-                if value >= data.req then
+                if stat.Value >= data.req then
                     currentZone = data.pos
                 end
             end
         end
 
-        updateZone()
-        playerStat:GetPropertyChangedSignal("Value"):Connect(updateZone)
+        update()
+        stat:GetPropertyChangedSignal("Value"):Connect(update)
 
         BestSection:CreateButton({
             Name = statName.." "..StatEmoji[statName],
