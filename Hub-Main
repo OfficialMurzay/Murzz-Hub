@@ -53,7 +53,7 @@ until Rayfield
 
 local Window = Rayfield:CreateWindow({
     Name = "MurzzHub "..VERSION,
-    LoadingTitle = "MurzzHub "..VERSION,
+    LoadingTitle = "MurzzHub ".." | "..VERSION,
     LoadingSubtitle = "Auto Train, Chikara and more!",
     ConfigurationSaving = {
         Enabled = true,
