@@ -1,4 +1,4 @@
--- MurzzHub v1.0 Beta
+-- MurzzHub v1.0 Release
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara + Auto Quest)
 -- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
 -- Fully optimized for performance (no changes to functionality, UI, text, or behavior)
@@ -18,7 +18,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0 Beta"
+local VERSION = "v1.0 Release"
 
 -------------------------------------------------
 -- SAFE DEBUG
@@ -182,7 +182,7 @@ If you have any suggestions, or want to see sneak peeks,
 Join the discord! (None for now srry!)
 ]]})
 
-InfoTab:CreateButton({Name = "Join Discord", Callback = function() setclipboard("No Discord For Now Sorry :(") end})
+InfoTab:CreateButton({Name = "Join The Discord!", Callback = function() setclipboard("No Discord For Now Sorry :(") end})
 
 -------------------------------------------------
 -- HOME TAB
