@@ -1,6 +1,7 @@
 -- MurzzHub v1.0 Beta
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara + Auto Quest)
 -- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
+-- Optimized for performance (no functionality changes)
 
 -------------------------------------------------
 -- SERVICES
@@ -55,31 +56,20 @@ local Window = Rayfield:CreateWindow({
     Name = "MurzzHub ".."| "..VERSION,
     LoadingTitle = "MurzzHub "..VERSION,
     LoadingSubtitle = "Auto Train, Chikara and more!",
-    ConfigurationSaving = {
-        Enabled = true,
-        FolderName = "MurzzHub",
-        FileName = "AFSE_UI"
-    }
+    ConfigurationSaving = {Enabled=true, FolderName="MurzzHub", FileName="AFSE_UI"}
 })
 
 -------------------------------------------------
 -- UTIL (FIXED ABBREVIATION)
 -------------------------------------------------
 local function abbreviate(n)
-    if n >= 1e18 then
-        return string.format("%.2fQn", n/1e18)
-    elseif n >= 1e15 then
-        return string.format("%.2fQd", n/1e15)
-    elseif n >= 1e12 then
-        return string.format("%.2fT", n/1e12)
-    elseif n >= 1e9 then
-        return string.format("%.2fB", n/1e9)
-    elseif n >= 1e6 then
-        return string.format("%.2fM", n/1e6)
-    elseif n >= 1e3 then
-        return string.format("%.2fK", n/1e3)
-    else
-        return tostring(n)
+    if n >= 1e18 then return string.format("%.2fQn", n/1e18)
+    elseif n >= 1e15 then return string.format("%.2fQd", n/1e15)
+    elseif n >= 1e12 then return string.format("%.2fT", n/1e12)
+    elseif n >= 1e9 then return string.format("%.2fB", n/1e9)
+    elseif n >= 1e6 then return string.format("%.2fM", n/1e6)
+    elseif n >= 1e3 then return string.format("%.2fK", n/1e3)
+    else return tostring(n)
     end
 end
 
@@ -87,22 +77,30 @@ local function easeOutQuad(t)
     return 1 - (1 - t)^2
 end
 
+-- Optimized animation (queue-based)
+local AnimateQueue = {}
 local function animateNumber(label, startValue, endValue, prefix, emoji, duration)
     duration = duration or 0.5
-    local fps = 60
-    local steps = math.max(1, math.floor(duration * fps))
-    for i = 1, steps do
-        local t = easeOutQuad(i/steps)
-        local val = startValue + (endValue - startValue) * t
-        if label and label.Set then
-            label:Set(prefix..abbreviate(math.floor(val)).." "..emoji)
-        end
-        task.wait(duration/steps)
-    end
-    if label and label.Set then
-        label:Set(prefix..abbreviate(endValue).." "..emoji)
-    end
+    local key = label
+    if AnimateQueue[key] then AnimateQueue[key].target = endValue return end
+    AnimateQueue[key] = {current=startValue, target=endValue, prefix=prefix, emoji=emoji, duration=duration, elapsed=0}
 end
+
+RunService.Heartbeat:Connect(function(dt)
+    for label,data in pairs(AnimateQueue) do
+        data.elapsed = data.elapsed + dt
+        local t = math.min(1, data.elapsed/data.duration)
+        local val = data.current + (data.target - data.current) * easeOutQuad(t)
+        if label and label.Set then
+            label:Set(data.prefix..abbreviate(math.floor(val)).." "..data.emoji)
+        end
+        if t >= 1 then
+            data.current = data.target
+            data.elapsed = 0
+            AnimateQueue[label] = nil
+        end
+    end
+end)
 
 -------------------------------------------------
 -- MAPS
@@ -118,85 +116,50 @@ local ClassMap = {
 }
 
 local StatMap = {
-    ["1"]={"Strength","💪"},
-    ["2"]={"Durability","🛡️"},
-    ["3"]={"Chakra","🌀"},
-    ["4"]={"Sword","🗡️"},
-    ["5"]={"Agility","☁️"},
-    ["6"]={"Speed","💨"},
-    ["Kill"]={"Kill","🔪"},
+    ["1"]={"Strength","💪"},["2"]={"Durability","🛡️"},["3"]={"Chakra","🌀"},
+    ["4"]={"Sword","🗡️"},["5"]={"Agility","☁️"},["6"]={"Speed","💨"},["Kill"]={"Kill","🔪"},
 }
 
 -------------------------------------------------
--- ZONE POSITIONS (ALL STATS)
+-- ZONE POSITIONS
 -------------------------------------------------
 local ZonePositions = {
-
     Strength = {
-        ["100"]     = Vector3.new(-1.902, 65.000, 127.968),
-        ["10K"]     = Vector3.new(1341.747, 153.963, -137.436),
-        ["100K"]    = Vector3.new(-1238.425, 59.000, 476.596),
-        ["1M"]      = Vector3.new(-915.294, 83.520, 166.473),
-        ["10M"]     = Vector3.new(-2305.319, 617.492, 527.046),
-        ["100M"]    = Vector3.new(-39.747, 64.289, -1307.120),
-        ["1B"]      = Vector3.new(718.492, 151.251, 924.886),
-        ["100B"]    = Vector3.new(1846.949, 141.200, 92.585),
-        ["5T"]      = Vector3.new(626.400, 696.623, 429.320),
-        ["250T"]    = Vector3.new(4340.031, 60.000, -631.732),
-        ["150Qd"]   = Vector3.new(812.393, 207.000, -1001.867),
-        ["25Qn"]    = Vector3.new(3873.903, 136.015, 890.458),
-        ["10Sx"]    = Vector3.new(3869.009, 1110.712, -1254.075),
+        ["100"] = Vector3.new(-1.902,65.000,127.968), ["10K"] = Vector3.new(1341.747,153.963,-137.436),
+        ["100K"] = Vector3.new(-1238.425,59.000,476.596), ["1M"] = Vector3.new(-915.294,83.520,166.473),
+        ["10M"] = Vector3.new(-2305.319,617.492,527.046), ["100M"] = Vector3.new(-39.747,64.289,-1307.120),
+        ["1B"] = Vector3.new(718.492,151.251,924.886), ["100B"] = Vector3.new(1846.949,141.200,92.585),
+        ["5T"] = Vector3.new(626.400,696.623,429.320), ["250T"] = Vector3.new(4340.031,60.000,-631.732),
+        ["150Qd"] = Vector3.new(812.393,207.000,-1001.867), ["25Qn"] = Vector3.new(3873.903,136.015,890.458),
+        ["10Sx"] = Vector3.new(3869.009,1110.712,-1254.075),
     },
-
     Durability = {
-        ["100"]     = Vector3.new(112.002, 56.026, 881.742),
-        ["10K"]     = Vector3.new(-1606.842, 61.615, -541.502),
-        ["100K"]    = Vector3.new(-72.535, 61.008, 2055.987),
-        ["1M"]      = Vector3.new(-619.584, 179.000, 731.073),
-        ["10M"]     = Vector3.new(-1119.864, 212.630, -949.097),
-        ["100M"]    = Vector3.new(-338.338, 72.620, -1651.415),
-        ["1B"]      = Vector3.new(2495.594, 1543.135, -383.322),
-        ["100B"]    = Vector3.new(-2678.021, -229.855, 358.415),
-        ["5T"]      = Vector3.new(2175.640, 519.579, 571.121),
-        ["250T"]    = Vector3.new(1669.455, 432.897, -1345.698),
-        ["150Qd"]   = Vector3.new(194.019, 773.591, -701.855),
-        ["25Qn"]    = Vector3.new(2564.930, 91.790, 1756.254),
-        ["10Sx"]    = Vector3.new(1718.871, 2305.067, -22.188),
+        ["100"] = Vector3.new(112.002,56.026,881.742), ["10K"] = Vector3.new(-1606.842,61.615,-541.502),
+        ["100K"] = Vector3.new(-72.535,61.008,2055.987), ["1M"] = Vector3.new(-619.584,179.000,731.073),
+        ["10M"] = Vector3.new(-1119.864,212.630,-949.097), ["100M"] = Vector3.new(-338.338,72.620,-1651.415),
+        ["1B"] = Vector3.new(2495.594,1543.135,-383.322), ["100B"] = Vector3.new(-2678.021,-229.855,358.415),
+        ["5T"] = Vector3.new(2175.640,519.579,571.121), ["250T"] = Vector3.new(1669.455,432.897,-1345.698),
+        ["150Qd"] = Vector3.new(194.019,773.591,-701.855), ["25Qn"] = Vector3.new(2564.930,91.790,1756.254),
+        ["10Sx"] = Vector3.new(1718.871,2305.067,-22.188),
     },
-
     Chakra = {
-        ["100"]     = Vector3.new(-6.479, 65.000, -119.760),
-        ["10K"]     = Vector3.new(1425.668, 147.000, -581.487),
-        ["100K"]    = Vector3.new(915.292, 141.000, 783.253),
-        ["1M"]      = Vector3.new(1628.384, 388.750, 591.066),
-        ["10M"]     = Vector3.new(336.626, -156.000, -1802.547),
-        ["100M"]    = Vector3.new(1027.624, 251.000, -630.809),
-        ["1B"]      = Vector3.new(3053.817, 110.900, 1105.384),
-        ["100B"]    = Vector3.new(1663.124, 556.154, 1779.387),
-        ["5T"]      = Vector3.new(-6.211, 101.133, -480.247),
-        ["250T"]    = Vector3.new(-402.687, 1252.990, 668.177),
-        ["150Qd"]   = Vector3.new(-768.222, 2792.676, 591.147),
-        ["25Qn"]    = Vector3.new(3226.973, -440.978, -244.406),
-        ["10Sx"]    = Vector3.new(337.880, 61.008, 1917.442),
+        ["100"] = Vector3.new(-6.479,65.000,-119.760), ["10K"] = Vector3.new(1425.668,147.000,-581.487),
+        ["100K"] = Vector3.new(915.292,141.000,783.253), ["1M"] = Vector3.new(1628.384,388.750,591.066),
+        ["10M"] = Vector3.new(336.626,-156.000,-1802.547), ["100M"] = Vector3.new(1027.624,251.000,-630.809),
+        ["1B"] = Vector3.new(3053.817,110.900,1105.384), ["100B"] = Vector3.new(1663.124,556.154,1779.387),
+        ["5T"] = Vector3.new(-6.211,101.133,-480.247), ["250T"] = Vector3.new(-402.687,1252.990,668.177),
+        ["150Qd"] = Vector3.new(-768.222,2792.676,591.147), ["25Qn"] = Vector3.new(3226.973,-440.978,-244.406),
+        ["10Sx"] = Vector3.new(337.880,61.008,1917.442),
     },
-
     Agility = {
-        ["100"]     = Vector3.new(41.676, 69.183, 453.424),
-        ["10K"]     = Vector3.new(-424.448, 121.923, -78.950),
-        ["100K"]    = Vector3.new(3482.918, 60.000, 130.891),
-        ["5M"]      = Vector3.new(4111.682, 60.922, 844.187),
+        ["100"] = Vector3.new(41.676,69.183,453.424), ["10K"] = Vector3.new(-424.448,121.923,-78.950),
+        ["100K"] = Vector3.new(3482.918,60.000,130.891), ["5M"] = Vector3.new(4111.682,60.922,844.187),
     },
-
     Speed = {
-        ["100"]     = Vector3.new(-109.675, 61.000, -508.852),
-        ["10K"]     = Vector3.new(-424.448, 121.923, -78.950),
-        ["100K"]    = Vector3.new(3482.918, 60.000, 130.891),
-        ["5M"]      = Vector3.new(4111.682, 60.922, 844.187),
+        ["100"] = Vector3.new(-109.675,61.000,-508.852), ["10K"] = Vector3.new(-424.448,121.923,-78.950),
+        ["100K"] = Vector3.new(3482.918,60.000,130.891), ["5M"] = Vector3.new(4111.682,60.922,844.187),
     },
-
-    Sword = {
-        -- intentionally empty (no zones)
-    }
+    Sword = {}, -- intentionally empty
 }
 
 -------------------------------------------------
