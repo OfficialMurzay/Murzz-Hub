@@ -516,11 +516,17 @@ for _, stat in ipairs(StatsData) do
 end
 
 -------------------------------------------------
--- SETTINGS TAB
+-- SETTINGS TAB (Optimised)
 -------------------------------------------------
 local SettingsTab = Window:CreateTab("Settings ⚙️")
-
 SettingsTab:CreateSection("Performance 🚀")
+
+-- Cache original values
+local originalFogStart = workspace.FogStart
+local originalFogEnd = workspace.FogEnd
+local originalGlobalShadows = game:GetService("Lighting").GlobalShadows
+local originalTextures = {}
+local originalParticleRates = {}
 
 -- Lower Render Distance
 SettingsTab:CreateToggle({
@@ -528,11 +534,10 @@ SettingsTab:CreateToggle({
     CurrentValue = false,
     Flag = "LowerRenderDistance",
     Callback = function(val)
-        -- Ensure Workspace has FogEnd/FogStart
-        if workspace and workspace:IsA("Workspace") then
-            workspace.FogEnd = val and 200 or 1000
-            workspace.FogStart = val and 0 or 100
-        end
+        pcall(function()
+            workspace.FogStart = val and 0 or originalFogStart
+            workspace.FogEnd = val and 200 or originalFogEnd
+        end)
     end
 })
 
@@ -544,9 +549,11 @@ SettingsTab:CreateToggle({
     Callback = function(val)
         for _, obj in ipairs(workspace:GetDescendants()) do
             if obj:IsA("Texture") or obj:IsA("Decal") then
-                obj.Transparency = val and 1 or 0
+                if originalTextures[obj] == nil then originalTextures[obj] = obj.Transparency end
+                obj.Transparency = val and 1 or originalTextures[obj]
             elseif obj:IsA("SpecialMesh") then
-                obj.TextureId = val and "" or obj.TextureId
+                if originalTextures[obj] == nil then originalTextures[obj] = obj.TextureId end
+                obj.TextureId = val and "" or originalTextures[obj]
             end
         end
     end
@@ -558,12 +565,9 @@ SettingsTab:CreateToggle({
     CurrentValue = false,
     Flag = "DisableShadows",
     Callback = function(val)
-        local success, err = pcall(function()
+        pcall(function()
             game:GetService("Lighting").GlobalShadows = not val
         end)
-        if not success then
-            warn("[MurzzHub] Disable Shadows error: "..tostring(err))
-        end
     end
 })
 
@@ -575,39 +579,26 @@ SettingsTab:CreateToggle({
     Callback = function(val)
         for _, p in ipairs(workspace:GetDescendants()) do
             if p:IsA("ParticleEmitter") then
-                if not p:GetAttribute("OriginalRate") then p:SetAttribute("OriginalRate", p.Rate) end
-                p.Rate = val and 0 or p:GetAttribute("OriginalRate")
+                if originalParticleRates[p] == nil then originalParticleRates[p] = p.Rate end
+                p.Rate = val and 0 or originalParticleRates[p]
             end
         end
     end
 })
 
+-- Config Buttons
 SettingsTab:CreateSection("Configuration 💾")
-
 SettingsTab:CreateButton({
-    Name = "Save Config",
+    Name = "Save Config 💾",
     Callback = function()
-        local success, err = pcall(function()
-            Rayfield:SaveConfiguration()
-        end)
-        if success then
-            warn("[MurzzHub] Config saved!")
-        else
-            warn("[MurzzHub] Config save failed: "..tostring(err))
-        end
+        local success, err = pcall(function() Rayfield:SaveConfiguration() end)
+        warn(success and "[MurzzHub] Config saved!" or "[MurzzHub] Config save failed: "..tostring(err))
     end
 })
-
 SettingsTab:CreateButton({
-    Name = "Load Config",
+    Name = "Load Config 💾",
     Callback = function()
-        local success, err = pcall(function()
-            Rayfield:LoadConfiguration()
-        end)
-        if success then
-            warn("[MurzzHub] Config loaded!")
-        else
-            warn("[MurzzHub] Config load failed: "..tostring(err))
-        end
+        local success, err = pcall(function() Rayfield:LoadConfiguration() end)
+        warn(success and "[MurzzHub] Config loaded!" or "[MurzzHub] Config load failed: "..tostring(err))
     end
 })
