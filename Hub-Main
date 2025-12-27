@@ -528,8 +528,11 @@ SettingsTab:CreateToggle({
     CurrentValue = false,
     Flag = "LowerRenderDistance",
     Callback = function(val)
-        workspace.FogEnd = val and 200 or 1000
-        workspace.FogStart = val and 0 or 100
+        -- Ensure Workspace has FogEnd/FogStart
+        if workspace and workspace:IsA("Workspace") then
+            workspace.FogEnd = val and 200 or 1000
+            workspace.FogStart = val and 0 or 100
+        end
     end
 })
 
@@ -555,7 +558,12 @@ SettingsTab:CreateToggle({
     CurrentValue = false,
     Flag = "DisableShadows",
     Callback = function(val)
-        game:GetService("Lighting").ShadowMapEnabled = not val
+        local success, err = pcall(function()
+            game:GetService("Lighting").GlobalShadows = not val
+        end)
+        if not success then
+            warn("[MurzzHub] Disable Shadows error: "..tostring(err))
+        end
     end
 })
 
@@ -567,54 +575,39 @@ SettingsTab:CreateToggle({
     Callback = function(val)
         for _, p in ipairs(workspace:GetDescendants()) do
             if p:IsA("ParticleEmitter") then
-                p.Rate = val and 0 or p:GetAttribute("OriginalRate") or p.Rate
                 if not p:GetAttribute("OriginalRate") then p:SetAttribute("OriginalRate", p.Rate) end
+                p.Rate = val and 0 or p:GetAttribute("OriginalRate")
             end
         end
     end
 })
 
--- Disable PostProcessing
-SettingsTab:CreateToggle({
-    Name = "Disable PostProcessing 🎨",
-    CurrentValue = false,
-    Flag = "DisablePostProcessing",
-    Callback = function(val)
-        for _, pp in ipairs(game:GetService("Lighting"):GetChildren()) do
-            if pp:IsA("PostEffect") then
-                pp.Enabled = not val
-            end
-        end
-    end
-})
-
--- ⚠️ Performance Mode (master toggle)
-SettingsTab:CreateToggle({
-    Name = "Performance Mode ⚠️",
-    CurrentValue = false,
-    Flag = "PerformanceMode",
-    Callback = function(val)
-        Rayfield.Flags.LowerRenderDistance.Value = val
-        Rayfield.Flags.LowTextures.Value = val
-        Rayfield.Flags.DisableShadows.Value = val
-        Rayfield.Flags.SimplifiedParticles.Value = val
-        Rayfield.Flags.DisablePostProcessing.Value = val
-    end
-})
-
--- Optional: Config Builder (Rayfield built-in)
 SettingsTab:CreateSection("Configuration 💾")
+
 SettingsTab:CreateButton({
     Name = "Save Config",
     Callback = function()
-        Rayfield:SaveConfiguration()
-        warn("[MurzzHub] Config saved!")
+        local success, err = pcall(function()
+            Rayfield:SaveConfiguration()
+        end)
+        if success then
+            warn("[MurzzHub] Config saved!")
+        else
+            warn("[MurzzHub] Config save failed: "..tostring(err))
+        end
     end
 })
+
 SettingsTab:CreateButton({
     Name = "Load Config",
     Callback = function()
-        Rayfield:LoadConfiguration()
-        warn("[MurzzHub] Config loaded!")
+        local success, err = pcall(function()
+            Rayfield:LoadConfiguration()
+        end)
+        if success then
+            warn("[MurzzHub] Config loaded!")
+        else
+            warn("[MurzzHub] Config load failed: "..tostring(err))
+        end
     end
 })
