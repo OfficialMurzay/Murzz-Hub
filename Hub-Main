@@ -514,3 +514,10 @@ for _, stat in ipairs(StatsData) do
         })
     end
 end
+
+-------------------------------------------------
+-- SETTINGS TAB
+-------------------------------------------------
+local SettingsTab = Window:CreateTab("Settings ⚙️")
+
+SettingsTab:CreateLabel("None for now, srry!")
