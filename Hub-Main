@@ -548,23 +548,12 @@ local function formatNumber(n)
     end
 end
 
--- Best Stat Zones section
-TeleportsTab:CreateSection("Best Stat Zones 📊")
--- Example: you can populate this with your auto-teleport logic later
--- For now, we'll create a placeholder button
-TeleportsTab:CreateButton({
-    Name = "Go to Best Zone 📊",
-    Callback = function()
-        -- your auto-best-stat teleport logic can go here
-        print("Best Zone Teleport placeholder")
-    end
-})
-
 -- Stats data
 local StatsData = {
     {
         Name = "Strength",
-        Emoji = "📁",
+        SectionEmoji = "💪",
+        ButtonEmoji = "📁",
         Zones = {
             {100, Vector3.new(-1.902, 65.000, 127.968)},
             {10000, Vector3.new(1341.747, 153.963, -137.436)},
@@ -583,7 +572,8 @@ local StatsData = {
     },
     {
         Name = "Durability",
-        Emoji = "📁",
+        SectionEmoji = "🛡️",
+        ButtonEmoji = "📁",
         Zones = {
             {100, Vector3.new(112.002, 56.026, 881.742)},
             {10000, Vector3.new(-1606.842, 61.615, -541.502)},
@@ -602,7 +592,8 @@ local StatsData = {
     },
     {
         Name = "Chakra",
-        Emoji = "📁",
+        SectionEmoji = "🌀",
+        ButtonEmoji = "📁",
         Zones = {
             {100, Vector3.new(-6.479, 65.000, -119.760)},
             {10000, Vector3.new(1425.668, 147.000, -581.487)},
@@ -621,7 +612,8 @@ local StatsData = {
     },
     {
         Name = "Agility",
-        Emoji = "📁",
+        SectionEmoji = "☁️",
+        ButtonEmoji = "📁",
         Zones = {
             {100, Vector3.new(41.676, 69.183, 453.424)},
             {10000, Vector3.new(-424.448, 121.923, -78.950)},
@@ -631,7 +623,8 @@ local StatsData = {
     },
     {
         Name = "Speed",
-        Emoji = "📁",
+        SectionEmoji = "💨",
+        ButtonEmoji = "📁",
         Zones = {
             {100, Vector3.new(-109.675, 61.000, -508.852)},
             {10000, Vector3.new(-424.448, 121.923, -78.950)},
@@ -641,18 +634,48 @@ local StatsData = {
     },
 }
 
--- Create sections and buttons
+-- Best Stat Zones Section
+TeleportsTab:CreateSection("Best Stat Zones 📊")
 for _, stat in ipairs(StatsData) do
-    local section = TeleportsTab:CreateSection(stat.Name.." "..stat.Emoji)
-    for _, zone in ipairs(stat.Zones) do
-        local amount = zone[1]
-        local pos = zone[2]
-        local label = formatNumber(amount).. " "..stat.Name.." "..stat.Emoji
+    local statLabel = stat.Name.." "..stat.SectionEmoji
+    local playerStat = Player.Stats:FindFirstChild(stat.Name) -- or stat.id if numeric
+    local currentZone
 
+    -- find highest zone less than player's current value
+    local function updateZone()
+        local statValue = playerStat and playerStat.Value or 0
+        currentZone = nil
+        for _, z in ipairs(stat.Zones) do
+            if statValue >= z[1] then
+                currentZone = z[2]
+            end
+        end
+    end
+
+    updateZone()
+    if playerStat then
+        playerStat:GetPropertyChangedSignal("Value"):Connect(updateZone)
+    end
+
+    TeleportsTab:CreateButton({
+        Name = statLabel,
+        Callback = function()
+            if currentZone then
+                teleportTo(currentZone)
+            end
+        end
+    })
+end
+
+-- Regular Stat Sections
+for _, stat in ipairs(StatsData) do
+    local section = TeleportsTab:CreateSection(stat.SectionEmoji)
+    for _, zone in ipairs(stat.Zones) do
+        local label = formatNumber(zone[1]).." "..stat.Name.." "..stat.ButtonEmoji
         TeleportsTab:CreateButton({
             Name = label,
             Callback = function()
-                teleportTo(pos)
+                teleportTo(zone[2])
             end
         })
     end
