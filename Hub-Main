@@ -384,34 +384,54 @@ end
 local function teleportTo(pos)
     local char = getCharacter()
     if char and char.PrimaryPart then
-        char:SetPrimaryPartCFrame(CFrame.new(pos + Vector3.new(0,5,0)))
+        char:SetPrimaryPartCFrame(CFrame.new(pos + Vector3.new(0, 5, 0)))
     end
 end
 
--- Best Stat Zones
-TeleportsTab:CreateSection("Best Stat Zones 📊")
+local StatIndexMap = {
+    Strength = "1",
+    Durability = "2",
+    Chakra = "3",
+    Sword = "4",
+    Agility = "5",
+    Speed = "6"
+}
+
+local StatEmoji = {
+    Strength="💪",
+    Durability="🛡️",
+    Chakra="🌀",
+    Sword="⚔️",
+    Agility="☁️",
+    Speed="💨"
+}
+
+-------------------------------------------------
+-- BEST STAT ZONES
+-------------------------------------------------
+local BestSection = TeleportsTab:CreateSection("Best Stat Zones 📊")
 
 for statName, zones in pairs(ZonePositions) do
-    local statIndexMap = {
-        Strength = "1",
-        Durability = "2",
-        Chakra = "3",
-        Sword = "4",
-        Agility = "5",
-        Speed = "6"
-    }
-
-    local playerStat = StatsFolder:FindFirstChild(statIndexMap[statName])
+    local playerStat = StatsFolder:FindFirstChild(StatIndexMap[statName])
     if playerStat then
         local currentZone
 
+        -- pre-sort thresholds numerically
+        local sorted = {}
+        for k, v in pairs(zones) do
+            local num = tonumber(tostring(k):gsub("[^%d]", ""))
+            table.insert(sorted, { req = num, pos = v })
+        end
+        table.sort(sorted, function(a, b)
+            return a.req < b.req
+        end)
+
         local function updateZone()
-            local value = playerStat.Value
             currentZone = nil
-            for k, v in pairs(zones) do
-                local required = tonumber(tostring(k):gsub("[^%d]", ""))
-                if value >= required then
-                    currentZone = v
+            local value = playerStat.Value
+            for _, data in ipairs(sorted) do
+                if value >= data.req then
+                    currentZone = data.pos
                 end
             end
         end
@@ -419,15 +439,8 @@ for statName, zones in pairs(ZonePositions) do
         updateZone()
         playerStat:GetPropertyChangedSignal("Value"):Connect(updateZone)
 
-        TeleportsTab:CreateButton({
-            Name = statName.." "..({
-                Strength="💪",
-                Durability="🛡️",
-                Chakra="🌀",
-                Sword="⚔️",
-                Agility="☁️",
-                Speed="💨"
-            })[statName],
+        BestSection:CreateButton({
+            Name = statName.." "..StatEmoji[statName],
             Callback = function()
                 if currentZone then
                     teleportTo(currentZone)
@@ -437,26 +450,28 @@ for statName, zones in pairs(ZonePositions) do
     end
 end
 
--- Individual Stat Sections
+-------------------------------------------------
+-- INDIVIDUAL STAT SECTIONS
+-------------------------------------------------
 for statName, zones in pairs(ZonePositions) do
-    TeleportsTab:CreateSection(
-        statName.." "..({
-            Strength="💪",
-            Durability="🛡️",
-            Chakra="🌀",
-            Sword="⚔️",
-            Agility="☁️",
-            Speed="💨"
-        })[statName]
+    local section = TeleportsTab:CreateSection(
+        statName.." "..StatEmoji[statName]
     )
 
+    local sorted = {}
     for k, v in pairs(zones) do
-        TeleportsTab:CreateButton({
-            Name = formatNumber(
-                tonumber(tostring(k):gsub("[^%d]", ""))
-            ).." "..statName.." 📁",
+        local num = tonumber(tostring(k):gsub("[^%d]", ""))
+        table.insert(sorted, { req = num, pos = v })
+    end
+    table.sort(sorted, function(a, b)
+        return a.req < b.req
+    end)
+
+    for _, data in ipairs(sorted) do
+        section:CreateButton({
+            Name = formatNumber(data.req).." "..statName.." 📁",
             Callback = function()
-                teleportTo(v)
+                teleportTo(data.pos)
             end
         })
     end
