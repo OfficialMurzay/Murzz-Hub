@@ -516,14 +516,12 @@ for _, stat in ipairs(StatsData) do
 end
 
 -------------------------------------------------
--- SETTINGS TAB (Optimised & Fixed)
+-- SETTINGS TAB (Fixed & Optimised)
 -------------------------------------------------
 local SettingsTab = Window:CreateTab("Settings ⚙️")
 SettingsTab:CreateSection("Performance 🚀")
 
 local Lighting = game:GetService("Lighting")
-
--- Cache original values
 local originalFogStart = Lighting.FogStart
 local originalFogEnd = Lighting.FogEnd
 local originalGlobalShadows = Lighting.GlobalShadows
@@ -538,7 +536,7 @@ SettingsTab:CreateToggle({
     Callback = function(val)
         pcall(function()
             Lighting.FogStart = val and 0 or originalFogStart
-            Lighting.FogEnd   = val and 200 or originalFogEnd
+            Lighting.FogEnd   = val and 300 or originalFogEnd
         end)
     end
 })
@@ -573,7 +571,7 @@ SettingsTab:CreateToggle({
     end
 })
 
--- Simplified Particles
+-- Simplify Particles
 SettingsTab:CreateToggle({
     Name = "Simplified Particles ✨",
     CurrentValue = false,
@@ -588,19 +586,23 @@ SettingsTab:CreateToggle({
     end
 })
 
--- Config Buttons
+-- Config
 SettingsTab:CreateSection("Configuration 💾")
 SettingsTab:CreateButton({
     Name = "Save Config ⚠️",
     Callback = function()
-        local success, err = pcall(function() Rayfield:SaveConfiguration() end)
+        local success, err = pcall(function()
+            Rayfield:SaveConfiguration()
+        end)
         warn(success and "[MurzzHub] Config saved!" or "[MurzzHub] Config save failed: "..tostring(err))
     end
 })
 SettingsTab:CreateButton({
     Name = "Load Config ⚠️",
     Callback = function()
-        local success, err = pcall(function() Rayfield:LoadConfiguration() end)
+        local success, err = pcall(function()
+            Rayfield:LoadConfiguration()
+        end)
         warn(success and "[MurzzHub] Config loaded!" or "[MurzzHub] Config load failed: "..tostring(err))
     end
 })
