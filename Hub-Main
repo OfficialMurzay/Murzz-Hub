@@ -1,6 +1,7 @@
--- MurzzHub v1.0 Release (Optimized Full Version)
--- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara + Auto Quest + Teleports + Settings)
--- Author: Murzay | Fully Optimized
+-- MurzzHub v1.0 Beta
+-- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara + Auto Quest)
+-- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
+-- Fully optimized for performance (no changes to functionality, UI, text, or behavior)
 
 -------------------------------------------------
 -- SERVICES
@@ -9,9 +10,6 @@ local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local Workspace = game:GetService("Workspace")
-local Lighting = game:GetService("Lighting")
-local StarterGui = game:GetService("StarterGui")
 
 local OtherData = Player:WaitForChild("OtherData")
 local StatsFolder = Player:WaitForChild("Stats")
@@ -20,7 +18,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0 Release"
+local VERSION = "v1.0 Beta"
 
 -------------------------------------------------
 -- SAFE DEBUG
@@ -39,17 +37,12 @@ local function log(msg)
 end
 
 -------------------------------------------------
--- RAYFIELD LOAD
+-- RAYFIELD
 -------------------------------------------------
 local Rayfield
 repeat
     local success, result = pcall(function()
-        local code = game:HttpGet("https://sirius.menu/rayfield")
-        if code and loadstring then
-            return loadstring(code)()
-        else
-            error("Cannot load Rayfield!")
-        end
+        return loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
     end)
     if success then
         Rayfield = result
@@ -60,18 +53,14 @@ repeat
 until Rayfield
 
 local Window = Rayfield:CreateWindow({
-    Name = "MurzzHub | "..VERSION,
+    Name = "MurzzHub ".."| "..VERSION,
     LoadingTitle = "MurzzHub "..VERSION,
-    LoadingSubtitle = "Auto Train, Chikara, Quests & More!",
-    ConfigurationSaving = {
-        Enabled = true,
-        FolderName = "MurzzHub",
-        FileName = "AFSE_UI"
-    }
+    LoadingSubtitle = "Auto Train, Chikara and more!",
+    ConfigurationSaving = {Enabled=true, FolderName="MurzzHub", FileName="AFSE_UI"}
 })
 
 -------------------------------------------------
--- UTIL FUNCTIONS
+-- UTIL (ABBREVIATION & ANIMATION)
 -------------------------------------------------
 local function abbreviate(n)
     if n >= 1e18 then return string.format("%.2fQn", n/1e18)
@@ -84,33 +73,36 @@ local function abbreviate(n)
     end
 end
 
-local function easeOutQuad(t)
-    return 1 - (1 - t)^2
-end
+local function easeOutQuad(t) return 1 - (1 - t)^2 end
 
+-- Optimized animation queue
+local AnimateQueue = {}
 local function animateNumber(label, startValue, endValue, prefix, emoji, duration)
     duration = duration or 0.5
-    local fps = 60
-    local steps = math.max(1, math.floor(duration * fps))
-    for i = 1, steps do
-        local t = easeOutQuad(i/steps)
-        local val = startValue + (endValue - startValue) * t
-        if label and label.Set then
-            label:Set(prefix..abbreviate(math.floor(val)).." "..emoji)
-        end
-        task.wait(duration/steps)
+    if AnimateQueue[label] then
+        AnimateQueue[label].target = endValue
+        return
     end
-    if label and label.Set then
-        label:Set(prefix..abbreviate(endValue).." "..emoji)
-    end
+    AnimateQueue[label] = {current=startValue, target=endValue, prefix=prefix, emoji=emoji, duration=duration, elapsed=0}
 end
 
-local function formatNumber(n)
-    return abbreviate(n)
-end
+RunService.Heartbeat:Connect(function(dt)
+    for label,data in pairs(AnimateQueue) do
+        data.elapsed = data.elapsed + dt
+        local t = math.min(1, data.elapsed/data.duration)
+        local val = data.current + (data.target - data.current) * easeOutQuad(t)
+        if label and label.Set then
+            label:Set(data.prefix..abbreviate(math.floor(val)).." "..data.emoji)
+        end
+        if t >= 1 then
+            data.current = data.target
+            AnimateQueue[label] = nil
+        end
+    end
+end)
 
 -------------------------------------------------
--- CLASS & STAT MAPS
+-- MAPS
 -------------------------------------------------
 local ClassMap = {
     [1]="Fighter 🥊",[2]="Shinobi 🌀",[3]="Pirate ☠️",[4]="Ghoul 👻",[5]="Hero 🦸",
@@ -123,13 +115,8 @@ local ClassMap = {
 }
 
 local StatMap = {
-    ["1"]={"Strength","💪"},
-    ["2"]={"Durability","🛡️"},
-    ["3"]={"Chakra","🌀"},
-    ["4"]={"Sword","🗡️"},
-    ["5"]={"Agility","☁️"},
-    ["6"]={"Speed","💨"},
-    ["Kill"]={"Kill","🔪"},
+    ["1"]={"Strength","💪"},["2"]={"Durability","🛡️"},["3"]={"Chakra","🌀"},
+    ["4"]={"Sword","🗡️"},["5"]={"Agility","☁️"},["6"]={"Speed","💨"},["Kill"]={"Kill","🔪"},
 }
 
 -------------------------------------------------
@@ -137,70 +124,65 @@ local StatMap = {
 -------------------------------------------------
 local ZonePositions = {
     Strength = {
-        ["100"]=Vector3.new(-1.902,65.000,127.968),["10K"]=Vector3.new(1341.747,153.963,-137.436),
-        ["100K"]=Vector3.new(-1238.425,59.000,476.596),["1M"]=Vector3.new(-915.294,83.520,166.473),
-        ["10M"]=Vector3.new(-2305.319,617.492,527.046),["100M"]=Vector3.new(-39.747,64.289,-1307.120),
-        ["1B"]=Vector3.new(718.492,151.251,924.886),["100B"]=Vector3.new(1846.949,141.200,92.585),
-        ["5T"]=Vector3.new(626.400,696.623,429.320),["250T"]=Vector3.new(4340.031,60.000,-631.732),
-        ["150Qd"]=Vector3.new(812.393,207.000,-1001.867),["25Qn"]=Vector3.new(3873.903,136.015,890.458),
-        ["10Sx"]=Vector3.new(3869.009,1110.712,-1254.075),
+        ["100"] = Vector3.new(-1.902,65.000,127.968), ["10K"] = Vector3.new(1341.747,153.963,-137.436),
+        ["100K"] = Vector3.new(-1238.425,59.000,476.596), ["1M"] = Vector3.new(-915.294,83.520,166.473),
+        ["10M"] = Vector3.new(-2305.319,617.492,527.046), ["100M"] = Vector3.new(-39.747,64.289,-1307.120),
+        ["1B"] = Vector3.new(718.492,151.251,924.886), ["100B"] = Vector3.new(1846.949,141.200,92.585),
+        ["5T"] = Vector3.new(626.400,696.623,429.320), ["250T"] = Vector3.new(4340.031,60.000,-631.732),
+        ["150Qd"] = Vector3.new(812.393,207.000,-1001.867), ["25Qn"] = Vector3.new(3873.903,136.015,890.458),
+        ["10Sx"] = Vector3.new(3869.009,1110.712,-1254.075),
     },
     Durability = {
-        ["100"]=Vector3.new(112.002,56.026,881.742),["10K"]=Vector3.new(-1606.842,61.615,-541.502),
-        ["100K"]=Vector3.new(-72.535,61.008,2055.987),["1M"]=Vector3.new(-619.584,179.000,731.073),
-        ["10M"]=Vector3.new(-1119.864,212.630,-949.097),["100M"]=Vector3.new(-338.338,72.620,-1651.415),
-        ["1B"]=Vector3.new(2495.594,1543.135,-383.322),["100B"]=Vector3.new(-2678.021,-229.855,358.415),
-        ["5T"]=Vector3.new(2175.640,519.579,571.121),["250T"]=Vector3.new(1669.455,432.897,-1345.698),
-        ["150Qd"]=Vector3.new(194.019,773.591,-701.855),["25Qn"]=Vector3.new(2564.930,91.790,1756.254),
-        ["10Sx"]=Vector3.new(1718.871,2305.067,-22.188),
+        ["100"] = Vector3.new(112.002,56.026,881.742), ["10K"] = Vector3.new(-1606.842,61.615,-541.502),
+        ["100K"] = Vector3.new(-72.535,61.008,2055.987), ["1M"] = Vector3.new(-619.584,179.000,731.073),
+        ["10M"] = Vector3.new(-1119.864,212.630,-949.097), ["100M"] = Vector3.new(-338.338,72.620,-1651.415),
+        ["1B"] = Vector3.new(2495.594,1543.135,-383.322), ["100B"] = Vector3.new(-2678.021,-229.855,358.415),
+        ["5T"] = Vector3.new(2175.640,519.579,571.121), ["250T"] = Vector3.new(1669.455,432.897,-1345.698),
+        ["150Qd"] = Vector3.new(194.019,773.591,-701.855), ["25Qn"] = Vector3.new(2564.930,91.790,1756.254),
+        ["10Sx"] = Vector3.new(1718.871,2305.067,-22.188),
     },
     Chakra = {
-        ["100"]=Vector3.new(-6.479,65.000,-119.760),["10K"]=Vector3.new(1425.668,147.000,-581.487),
-        ["100K"]=Vector3.new(915.292,141.000,783.253),["1M"]=Vector3.new(1628.384,388.750,591.066),
-        ["10M"]=Vector3.new(336.626,-156.000,-1802.547),["100M"]=Vector3.new(1027.624,251.000,-630.809),
-        ["1B"]=Vector3.new(3053.817,110.900,1105.384),["100B"]=Vector3.new(1663.124,556.154,1779.387),
-        ["5T"]=Vector3.new(-6.211,101.133,-480.247),["250T"]=Vector3.new(-402.687,1252.990,668.177),
-        ["150Qd"]=Vector3.new(-768.222,2792.676,591.147),["25Qn"]=Vector3.new(3226.973,-440.978,-244.406),
-        ["10Sx"]=Vector3.new(337.880,61.008,1917.442),
+        ["100"] = Vector3.new(-6.479,65.000,-119.760), ["10K"] = Vector3.new(1425.668,147.000,-581.487),
+        ["100K"] = Vector3.new(915.292,141.000,783.253), ["1M"] = Vector3.new(1628.384,388.750,591.066),
+        ["10M"] = Vector3.new(336.626,-156.000,-1802.547), ["100M"] = Vector3.new(1027.624,251.000,-630.809),
+        ["1B"] = Vector3.new(3053.817,110.900,1105.384), ["100B"] = Vector3.new(1663.124,556.154,1779.387),
+        ["5T"] = Vector3.new(-6.211,101.133,-480.247), ["250T"] = Vector3.new(-402.687,1252.990,668.177),
+        ["150Qd"] = Vector3.new(-768.222,2792.676,591.147), ["25Qn"] = Vector3.new(3226.973,-440.978,-244.406),
+        ["10Sx"] = Vector3.new(337.880,61.008,1917.442),
     },
-    Agility = {["100"]=Vector3.new(41.676,69.183,453.424),["10K"]=Vector3.new(-424.448,121.923,-78.950),
-               ["100K"]=Vector3.new(3482.918,60.000,130.891),["5M"]=Vector3.new(4111.682,60.922,844.187)},
-    Speed = {["100"]=Vector3.new(-109.675,61.000,-508.852),["10K"]=Vector3.new(-424.448,121.923,-78.950),
-             ["100K"]=Vector3.new(3482.918,60.000,130.891),["5M"]=Vector3.new(4111.682,60.922,844.187)},
-    Sword = {}
+    Agility = {
+        ["100"] = Vector3.new(41.676,69.183,453.424), ["10K"] = Vector3.new(-424.448,121.923,-78.950),
+        ["100K"] = Vector3.new(3482.918,60.000,130.891), ["5M"] = Vector3.new(4111.682,60.922,844.187),
+    },
+    Speed = {
+        ["100"] = Vector3.new(-109.675,61.000,-508.852), ["10K"] = Vector3.new(-424.448,121.923,-78.950),
+        ["100K"] = Vector3.new(3482.918,60.000,130.891), ["5M"] = Vector3.new(4111.682,60.922,844.187),
+    },
+    Sword = {},
 }
 
 -------------------------------------------------
 -- INFO TAB
 -------------------------------------------------
 local InfoTab = Window:CreateTab("Info 🛠️")
+
 InfoTab:CreateSection("Update Log 📝")
-InfoTab:CreateParagraph({
-    Title = "Update "..VERSION,
-    Content = [[
-• Auto Farms Complete
-• Settings Complete
-• Working TPs
-• Auto Fruit + Quest coming soon!
-]]
-})
+InfoTab:CreateParagraph({Title = VERSION, Content = [[
+• Auto Farms complete
+• Teleports Tab in progress
+• Added basic debugging
+• Nearly ready for release!
+]]})
+
 InfoTab:CreateSection("Discord 💬")
-InfoTab:CreateParagraph({
-    Title = "Dear "..Player.DisplayName..",",
-    Content = [[
-Thank you for using MurzzHub!
-I've spent days making this script,
-so every use really helps out!
+InfoTab:CreateParagraph({Title = "Dear "..Player.DisplayName..",", Content = [[
+Thank you for using Murzzhub!
+I appreciate every second of you using my script!
 If you have any suggestions, or want to see sneak peeks,
-Join the Discord! (None for now, srry!)
-]]
-})
-InfoTab:CreateButton({
-    Name = "Join The Discord!",
-    Callback = function()
-        setclipboard("No Discord For Now Sorry :(")
-    end
-})
+Join the discord! (None for now srry!)
+]]})
+
+InfoTab:CreateButton({Name = "Join Discord", Callback = function() setclipboard("No Discord For Now Sorry :(") end})
 
 -------------------------------------------------
 -- HOME TAB
@@ -218,10 +200,7 @@ local function bindValue(obj, label, prefix, emoji)
     local current = obj.Value
     local function update()
         local newVal = obj.Value
-        task.spawn(function()
-            animateNumber(label, current, newVal, prefix, emoji, 0.7)
-            current = newVal
-        end)
+        task.spawn(function() animateNumber(label, current, newVal, prefix, emoji, 0.7) current=newVal end)
     end
     update()
     obj:GetPropertyChangedSignal("Value"):Connect(update)
@@ -243,11 +222,16 @@ end
 -- LIVE STATS
 -------------------------------------------------
 HomeTab:CreateSection("Live Stats 📊")
+
 local OrderedStats = {
-    {id="1",name="Strength",emoji="💪"},{id="2",name="Durability",emoji="🛡️"},
-    {id="3",name="Chakra",emoji="🌀"},{id="4",name="Sword",emoji="⚔️"},
-    {id="6",name="Speed",emoji="💨"},{id="5",name="Agility",emoji="☁️"},
+    {id="1", name="Strength", emoji="💪"},
+    {id="2", name="Durability", emoji="🛡️"},
+    {id="3", name="Chakra", emoji="🌀"},
+    {id="4", name="Sword", emoji="⚔️"},
+    {id="6", name="Speed", emoji="💨"},
+    {id="5", name="Agility", emoji="☁️"},
 }
+
 for _, data in ipairs(OrderedStats) do
     local stat = StatsFolder:FindFirstChild(data.id)
     if stat then
@@ -255,10 +239,7 @@ for _, data in ipairs(OrderedStats) do
         local label = HomeTab:CreateLabel(data.name..": ... "..data.emoji)
         local function update()
             local newVal = stat.Value
-            task.spawn(function()
-                animateNumber(label,current,newVal,data.name..": ",data.emoji,0.7)
-                current=newVal
-            end)
+            task.spawn(function() animateNumber(label, current, newVal, data.name..": ", data.emoji, 0.7) current=newVal end)
         end
         update()
         stat:GetPropertyChangedSignal("Value"):Connect(update)
@@ -269,15 +250,19 @@ end
 -- QUESTS TAB
 -------------------------------------------------
 local QuestsTab = Window:CreateTab("Quests 📜")
+
 local function setupQuest(quest)
     safeRun(function()
-        local display = quest.Name:gsub("(%a+)(%d+)","%1 No.%2")
+        local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
         QuestsTab:CreateSection(display.." 📜")
+
         local reqs = quest:FindFirstChild("Requirements")
         if not reqs then return end
+
         for _,req in ipairs(reqs:GetChildren()) do
             if req:IsA("IntValue") or req:IsA("NumberValue") then
-                local label = QuestsTab:CreateLabel("...") 
+                local label = QuestsTab:CreateLabel("...")
+
                 local current = 0
                 local function update()
                     local progress = 0
@@ -286,28 +271,29 @@ local function setupQuest(quest)
                     elseif quest:FindFirstChild("Progress") and quest.Progress:FindFirstChild(req.Name) then
                         progress = quest.Progress[req.Name].Value
                     end
-                    local name,emoji=req.Name,""
-                    if StatMap[req.Name] then
-                        name,emoji=unpack(StatMap[req.Name])
-                    end
+
+                    local name, emoji = req.Name, ""
+                    if StatMap[req.Name] then name, emoji = unpack(StatMap[req.Name]) end
                     local done = progress >= req.Value
+
                     task.spawn(function()
-                        local steps, duration = 30, 0.7
-                        for i=1,steps do
+                        local steps = 30
+                        local duration = 0.7
+                        for i = 1, steps do
                             local t = easeOutQuad(i/steps)
-                            local val=current+(progress-current)*t
+                            local val = current + (progress - current) * t
                             label:Set(string.format("%s/%s %s %s%s",
-                                abbreviate(math.floor(val)),abbreviate(req.Value),
-                                name,emoji,done and " ✅" or ""))
+                                abbreviate(math.floor(val)), abbreviate(req.Value), name, emoji, done and " ✅" or ""))
                             task.wait(duration/steps)
                         end
                         label:Set(string.format("%s/%s %s %s%s",
-                            abbreviate(progress),abbreviate(req.Value),
-                            name,emoji,done and " ✅" or ""))
-                        current=progress
+                            abbreviate(progress), abbreviate(req.Value), name, emoji, done and " ✅" or ""))
+                        current = progress
                     end)
                 end
+
                 update()
+
                 if quest:FindFirstChild(req.Name) then
                     quest[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
                 end
@@ -318,6 +304,7 @@ local function setupQuest(quest)
         end
     end)
 end
+
 for _,q in ipairs(QuestsFolder:GetChildren()) do
     if q:IsA("Folder") then setupQuest(q) end
 end
@@ -326,199 +313,204 @@ end
 -- AUTO FARMS TAB
 -------------------------------------------------
 local AutoTab = Window:CreateTab("Auto Farms ⚙️")
+
 -- Auto Train Section
 AutoTab:CreateSection("Auto Train 🏋️")
-local AutoTrainToggle = AutoTab:CreateToggle({
-    Name="Auto Train 🏋️",
-    CurrentValue=false,
-    Flag="AutoTrain",
-    Callback=function(v)
-        task.spawn(function()
-            while v do
-                task.wait(0.1)
-            end
-        end)
-    end
-})
+
+local mainClient = Player:WaitForChild("PlayerGui"):WaitForChild("Main"):WaitForChild("MainClient")
+local StatFunctions = require(mainClient:WaitForChild("StatFunctions"))
+local CharacterModule
+repeat CharacterModule = StatFunctions.characterModule task.wait(0.1) until CharacterModule
+
+local GameData = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameData"))
+
+local AutoStats = {
+    {1,"Strength","💪"},{2,"Durability","🛡️"},{3,"Chakra","🌀"},
+    {4,"Sword","🗡️"},{5,"Agility","☁️"},{6,"Speed","💨"},
+}
+
+local ActiveTrains = {}
+local LastFire = {}
+
+for _,stat in ipairs(AutoStats) do
+    local statID, name, emoji = unpack(stat)
+    AutoTab:CreateToggle({
+        Name = "Train "..name.." "..emoji,
+        CurrentValue = false,
+        Flag = name.."Toggle",
+        Callback = function(val)
+            if val then
+                if ActiveTrains[statID] then return end
+                ActiveTrains[statID] = true
+                LastFire[statID] = 0
+                task.spawn(function()
+                    while ActiveTrains[statID] do
+                        if CharacterModule.states.Dead then task.wait(1)
+                        else
+                            CharacterModule.characterStopped = false
+                            CharacterModule:ResumeCharacter()
+                            StatFunctions.CurrentKey = statID
+                            StatFunctions[statID] = false
+
+                            local cooldown = GameData.Stats[statID].Cooldown or 0.1
+                            local now = tick()
+                            if now - LastFire[statID] >= cooldown then
+                                local success, err = pcall(function()
+                                    ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train", statID)
+                                end)
+                                if success then log("TrainStat fired for "..name) else log("TrainStat error: "..tostring(err)) end
+                                LastFire[statID] = tick()
+                            end
+                            task.wait(0.05)
+                        end
+                    end
+                    ActiveTrains[statID] = nil
+                end)
+            else ActiveTrains[statID] = false end
+        end
+    })
+end
+
 -- Auto Chikara Section
 AutoTab:CreateSection("Auto Chikara 💎 | AUTOCLICKER NEEDED")
-local AutoChikaraToggle = AutoTab:CreateToggle({
-    Name="Auto Chikara 💎",
-    CurrentValue=false,
-    Flag="AutoChikara",
-    Callback=function(v)
-        task.spawn(function()
-            while v do
-                task.wait(0.1)
-            end
-        end)
+local AutoChikaraActive = false
+
+AutoTab:CreateToggle({
+    Name = "Collect Chikara ⚠️",
+    CurrentValue = false,
+    Flag = "AutoChikaraToggle",
+    Callback = function(val)
+        AutoChikaraActive = val
+        if val then
+            task.spawn(function()
+                local lastCollected = {}
+                while AutoChikaraActive do
+                    local cratesFolder = workspace:FindFirstChild("Scriptable") and workspace.Scriptable:FindFirstChild("ChikaraBoxes")
+                    if cratesFolder then
+                        local crates = cratesFolder:GetChildren()
+                        local hasCollected = false
+                        for _, crate in ipairs(crates) do
+                            if not AutoChikaraActive then break end
+                            local clickBox = crate:FindFirstChild("ClickBox")
+                            if clickBox then
+                                local clickDetector = clickBox:FindFirstChildWhichIsA("ClickDetector")
+                                local now = tick()
+                                if clickDetector and (not lastCollected[crate] or now - lastCollected[crate] >= 10) then
+                                    if Player.Character and Player.Character.PrimaryPart then
+                                        Player.Character:SetPrimaryPartCFrame(crate.CFrame + Vector3.new(0,3,0))
+                                    end
+                                    task.wait(0.1)
+                                    pcall(function() clickDetector:FireClick(Player) end)
+                                    lastCollected[crate] = tick()
+                                    hasCollected = true
+                                    log("[AutoChikara] Collected crate")
+                                    task.wait(10)
+                                end
+                            end
+                        end
+                        if not hasCollected then task.wait(1) end
+                    else task.wait(1) end
+                end
+                log("Auto Chikara OFF")
+            end)
+        else log("Auto Chikara OFF") end
     end
 })
 
--- Auto Quest (stats only)
-AutoTab:CreateSection("Auto Quest 📜 | Stats Only")
-for _,q in ipairs(QuestsFolder:GetChildren()) do
-    if q:IsA("Folder") and q:FindFirstChild("Requirements") then
-        AutoTab:CreateToggle({
-            Name=q.Name.." 📜",
-            CurrentValue=false,
-            Callback=function(v)
-                task.spawn(function()
-                    while v do
-                        task.wait(0.2)
-                    end
-                end)
-            end
-        })
-    end
-end
 -------------------------------------------------
 -- TELEPORTS TAB
 -------------------------------------------------
 local TeleportsTab = Window:CreateTab("Teleports 📍")
-
-local function getCharacter()
-    return Player.Character or Player.CharacterAdded:Wait()
-end
-
-local function teleportTo(pos)
+local function getCharacter() return Player.Character or Player.CharacterAdded:Wait() end
+local function teleportTo(position)
     local char = getCharacter()
     if char and char.PrimaryPart then
-        char:SetPrimaryPartCFrame(CFrame.new(pos + Vector3.new(0,5,0)))
+        char:SetPrimaryPartCFrame(CFrame.new(position + Vector3.new(0,5,0)))
     end
 end
 
-local StatIndexMap = {
-    Strength="1",Durability="2",Chakra="3",
-    Sword="4",Agility="5",Speed="6"
+local function formatNumber(n)
+    local absN = math.abs(n)
+    if absN >= 1e21 then return string.format("%.0fSx", n/1e21)
+    elseif absN >= 1e18 then return string.format("%.0fQn", n/1e18)
+    elseif absN >= 1e15 then return string.format("%.0fQd", n/1e15)
+    elseif absN >= 1e12 then return string.format("%.0fT", n/1e12)
+    elseif absN >= 1e9 then return string.format("%.0fB", n/1e9)
+    elseif absN >= 1e6 then return string.format("%.0fM", n/1e6)
+    elseif absN >= 1e3 then return string.format("%.0fK", n/1e3)
+    else return tostring(n)
+    end
+end
+
+-- Stats Data
+local StatsData = {
+    {Name="Strength", SectionEmoji="💪", ButtonEmoji="📁", StatId="1", Zones={
+        {100, Vector3.new(-1.902,65.000,127.968)}, {10000, Vector3.new(1341.747,153.963,-137.436)},
+        {100000, Vector3.new(-1238.425,59.000,476.596)}, {1e6, Vector3.new(-915.294,83.520,166.473)},
+        {1e7, Vector3.new(-2305.319,617.492,527.046)}, {1e8, Vector3.new(-39.747,64.289,-1307.120)},
+        {1e9, Vector3.new(718.492,151.251,924.886)}, {1e11, Vector3.new(1846.949,141.200,92.585)},
+        {5e12, Vector3.new(626.400,696.623,429.320)}, {2.5e14, Vector3.new(4340.031,60.000,-631.732)},
+        {1.5e17, Vector3.new(812.393,207.000,-1001.867)}, {2.5e19, Vector3.new(3873.903,136.015,890.458)},
+        {1e22, Vector3.new(3869.009,1110.712,-1254.075)}
+    }},
+    {Name="Durability", SectionEmoji="🛡️", ButtonEmoji="📁", StatId="2", Zones={
+        {100, Vector3.new(112.002,56.026,881.742)}, {10000, Vector3.new(-1606.842,61.615,-541.502)},
+        {100000, Vector3.new(-72.535,61.008,2055.987)}, {1e6, Vector3.new(-619.584,179.000,731.073)},
+        {1e7, Vector3.new(-1119.864,212.630,-949.097)}, {1e8, Vector3.new(-338.338,72.620,-1651.415)},
+        {1e9, Vector3.new(2495.594,1543.135,-383.322)}, {1e11, Vector3.new(-2678.021,-229.855,358.415)},
+        {5e12, Vector3.new(2175.640,519.579,571.121)}, {2.5e14, Vector3.new(1669.455,432.897,-1345.698)},
+        {1.5e17, Vector3.new(194.019,773.591,-701.855)}, {2.5e19, Vector3.new(2564.930,91.790,1756.254)},
+        {1e22, Vector3.new(1718.871,2305.067,-22.188)}
+    }},
+    {Name="Chakra", SectionEmoji="🌀", ButtonEmoji="📁", StatId="3", Zones={
+        {100, Vector3.new(-6.479,65.000,-119.760)}, {10000, Vector3.new(1425.668,147.000,-581.487)},
+        {100000, Vector3.new(915.292,141.000,783.253)}, {1e6, Vector3.new(1628.384,388.750,591.066)},
+        {1e7, Vector3.new(336.626,-156.000,-1802.547)}, {1e8, Vector3.new(1027.624,251.000,-630.809)},
+        {1e9, Vector3.new(3053.817,110.900,1105.384)}, {1e11, Vector3.new(1663.124,556.154,1779.387)},
+        {5e12, Vector3.new(-6.211,101.133,-480.247)}, {2.5e14, Vector3.new(-402.687,1252.990,668.177)},
+        {1.5e17, Vector3.new(-768.222,2792.676,591.147)}, {2.5e19, Vector3.new(3226.973,-440.978,-244.406)},
+        {1e22, Vector3.new(337.880,61.008,1917.442)}
+    }},
+    {Name="Agility", SectionEmoji="☁️", ButtonEmoji="📁", StatId="5", Zones={
+        {100, Vector3.new(41.676,69.183,453.424)}, {10000, Vector3.new(-424.448,121.923,-78.950)},
+        {100000, Vector3.new(3482.918,60.000,130.891)}, {5e6, Vector3.new(4111.682,60.922,844.187)}
+    }},
+    {Name="Speed", SectionEmoji="💨", ButtonEmoji="📁", StatId="6", Zones={
+        {100, Vector3.new(-109.675,61.000,-508.852)}, {10000, Vector3.new(-424.448,121.923,-78.950)},
+        {100000, Vector3.new(3482.918,60.000,130.891)}, {5e6, Vector3.new(4111.682,60.922,844.187)}
+    }},
 }
 
-local StatEmoji = {
-    Strength="💪",Durability="🛡️",Chakra="🌀",
-    Sword="⚔️",Agility="☁️",Speed="💨"
-}
-
--------------------------------------------------
--- BEST STAT ZONES
--------------------------------------------------
-local BestSection = TeleportsTab:CreateSection("Best Stat Zones 📊")
-
-for statName, zones in pairs(ZonePositions) do
-    local stat = StatsFolder:FindFirstChild(StatIndexMap[statName])
-    if stat then
-        local sorted = {}
-
-        for k, v in pairs(zones) do
-            local req = tonumber(tostring(k):match("%d+"))
-            if req then
-                table.insert(sorted, { req = req, pos = v })
-            end
-        end
-
-        table.sort(sorted, function(a, b)
-            return a.req < b.req
-        end)
-
-        local currentZone
-        local function update()
+-- Best Stat Zones Section
+TeleportsTab:CreateSection("Best Stat Zones 📊")
+for _, stat in ipairs(StatsData) do
+    local playerStat = Player.Stats:FindFirstChild(stat.StatId)
+    local currentZone
+    local function updateZone()
+        if playerStat then
+            local value = playerStat.Value
             currentZone = nil
-            for _, data in ipairs(sorted) do
-                if stat.Value >= data.req then
-                    currentZone = data.pos
-                end
+            for _, z in ipairs(stat.Zones) do
+                if value >= z[1] then currentZone = z[2] end
             end
         end
+    end
+    updateZone()
+    if playerStat then playerStat:GetPropertyChangedSignal("Value"):Connect(updateZone) end
+    TeleportsTab:CreateButton({
+        Name = stat.Name.." "..stat.SectionEmoji,
+        Callback = function() if currentZone then teleportTo(currentZone) end end
+    })
+end
 
-        update()
-        stat:GetPropertyChangedSignal("Value"):Connect(update)
-
-        BestSection:CreateButton({
-            Name = statName.." "..StatEmoji[statName],
-            Callback = function()
-                if currentZone then
-                    teleportTo(currentZone)
-                end
-            end
+-- Regular Stat Teleports
+for _, stat in ipairs(StatsData) do
+    local section = TeleportsTab:CreateSection(stat.Name.." "..stat.SectionEmoji)
+    for _, zone in ipairs(stat.Zones) do
+        local label = formatNumber(zone[1]).." "..stat.Name.." "..stat.ButtonEmoji
+        TeleportsTab:CreateButton({
+            Name = label,
+            Callback = function() teleportTo(zone[2]) end
         })
     end
 end
-
--------------------------------------------------
--- INDIVIDUAL STAT SECTIONS
--------------------------------------------------
-for statName, zones in pairs(ZonePositions) do
-    local section = TeleportsTab:CreateSection(
-        statName.." "..StatEmoji[statName]
-    )
-
-    local sorted = {}
-    for k, v in pairs(zones) do
-        local req = tonumber(tostring(k):match("%d+"))
-        if req then
-            table.insert(sorted, { req = req, pos = v })
-        end
-    end
-
-    table.sort(sorted, function(a, b)
-        return a.req < b.req
-    end)
-
-    for _, data in ipairs(sorted) do
-        section:CreateButton({
-            Name = formatNumber(data.req).." "..statName.." 📁",
-            Callback = function()
-                teleportTo(data.pos)
-            end
-        })
-    end
-end
-
--------------------------------------------------
--- SETTINGS TAB
--------------------------------------------------
-local SettingsTab = Window:CreateTab("Settings ⚙️")
-SettingsTab:CreateSection("Performance ⚡")
-
-SettingsTab:CreateToggle({
-    Name = "Low Textures 🖼️",
-    CurrentValue = false,
-    Callback = function(v)
-        for _,obj in pairs(Workspace:GetDescendants()) do
-            if obj:IsA("BasePart") then
-                obj.Material = v and Enum.Material.SmoothPlastic or Enum.Material.Custom
-            end
-        end
-    end
-})
-
-SettingsTab:CreateToggle({
-    Name = "Lower Render Distance ⚠️",
-    CurrentValue=false,
-    Callback = function(v)
-        if Lighting:FindFirstChild("FogEnd") then
-            Lighting.FogEnd = v and 300 or 100000
-        else
-            warn("FogEnd not found in Lighting")
-        end
-    end
-})
-
-SettingsTab:CreateToggle({Name="Disable Shadows 🌑", CurrentValue=false, Callback=function(v) Lighting.GlobalShadows=not v end})
-SettingsTab:CreateToggle({Name="Minimal Part Effects ✨", CurrentValue=false, Callback=function(v) for _,p in pairs(Workspace:GetDescendants()) do if p:IsA("ParticleEmitter") then p.Enabled=not v end end end})
-
-SettingsTab:CreateSection("Configuration 💾")
-SettingsTab:CreateButton({
-    Name="Save Config 💾",
-    Callback=function()
-        if Window and Window.SaveConfig then
-            Window:SaveConfig()
-        else
-            warn("[MurzzHub] Save Config unavailable!")
-        end
-    end
-})
-
--------------------------------------------------
--- FINAL NOTES
--------------------------------------------------
-log("MurzzHub Fully Loaded, Optimized Version")
