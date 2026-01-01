@@ -436,7 +436,7 @@ local notifiedNoFruits = false
 
 -- Emoji → real name map (IMPORTANT)
 local FruitNameMap = {
-    ["Rubber Fruit 🔘"] = "Rubber Fruit",
+    ["Rubber Fruit 👊"] = "Rubber Fruit",
     ["Thunder Fruit ⚡"] = "Thunder Fruit",
     ["Dark Fruit 🌑"] = "Dark Fruit",
     ["Quake Fruit 🌊"] = "Quake Fruit",
@@ -447,7 +447,7 @@ local FruitNameMap = {
 AutoTab:CreateDropdown({
     Name = "Select Fruits 🍎",
     Options = {
-        "Rubber Fruit 🔘",
+        "Rubber Fruit 👊",
         "Thunder Fruit ⚡",
         "Dark Fruit 🌑",
         "Quake Fruit 🌊",
