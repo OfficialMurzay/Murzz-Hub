@@ -1,4 +1,4 @@
--- MurzzHub v1.0 Release
+-- MurzzHub v1.1 Release
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara + Auto Quest)
 -- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
 -- Fully optimized for performance (no changes to functionality, UI, text, or behavior)
@@ -426,23 +426,64 @@ AutoTab:CreateToggle({
 })
 
 -- Variables
+local selectedFruits = {}        -- always a table
+local farmFruitsToggle = false
 local Stock = true
 local notifiedNoFruits = false
 local player = game.Players.LocalPlayer
 local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
 
--- Auto Fruits loop
+-- ===== DROPDOWN =====
+local SelectFruitsDropdown = AutoChikaraSection:NewDropdown({
+    Name = "Select Fruits",
+    Options = {"Rubber Fruit", "Thunder Fruit", "Dark Fruit", "Quake Fruit", "Explosion Fruit"},
+    MultiSelect = true,
+    Flag = "SelectedFruits",
+    Callback = function(values)
+        -- SAFE HANDLING for Rayfield 437+
+        if values == nil then
+            selectedFruits = {}
+        elseif typeof(values) == "table" then
+            selectedFruits = values
+        else
+            selectedFruits = {values} -- wrap single string
+        end
+        notifiedNoFruits = false -- reset notification
+    end
+})
+
+-- ===== TOGGLE =====
+local FarmFruitsToggle = AutoChikaraSection:NewToggle({
+    Name = "Farm Fruits",
+    Flag = "FarmFruits",
+    Default = false,
+    Callback = function(state)
+        farmFruitsToggle = state
+        notifiedNoFruits = false
+
+        if not next(selectedFruits) then
+            Rayfield:Notify({
+                Title = "Auto Fruits",
+                Content = "You haven't selected any fruits yet!",
+                Duration = 5,
+                Image = 4483362458
+            })
+            farmFruitsToggle = false
+        end
+    end
+})
+
+-- ===== AUTO FRUITS LOOP =====
 spawn(function()
     while true do
         wait(0.5) -- safe delay for performance
 
-        -- check toggle, HRP, and selection
         if farmFruitsToggle and hrp and next(selectedFruits) then
             local fruitFolder = workspace:FindFirstChild("Scriptable") and workspace.Scriptable:FindFirstChild("Fruits")
             if fruitFolder then
                 local foundFruit = nil
 
-                -- search for a fruit in the selection
+                -- find first matching fruit
                 for _, fruit in pairs(fruitFolder:GetChildren()) do
                     if fruit.Name and table.find(selectedFruits, fruit.Name) then
                         foundFruit = fruit
@@ -453,8 +494,7 @@ spawn(function()
                 -- handle Stock and notifications
                 if foundFruit then
                     Stock = true
-                    notifiedNoFruits = false -- reset notification
-                    -- teleport to fruit
+                    notifiedNoFruits = false
                     if hrp and foundFruit.CFrame then
                         hrp.CFrame = foundFruit.CFrame
                     end
