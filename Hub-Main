@@ -258,23 +258,20 @@ for _, data in ipairs(OrderedStats) do
 end
 
 -------------------------------------------------
--- QUESTS TAB
+-- QUESTS TAB HELPERS
 -------------------------------------------------
-local QuestsTab = Window:CreateTab("Quests 📜")
-
--- ===============================
--- AUTO QUEST HELPERS
--- ===============================
-
--- Stat name → StatId (matches Auto Train)
-local StatNameToId = {
-    Strength = 1,
-    Durability = 2,
-    Chakra = 3,
-    Sword = 4,
-    Agility = 5,
-    Speed = 6
+-- Map stat names → StatId (matches Auto Train)
+local StatMap = {
+    Strength = {"Strength","💪","1"},
+    Durability = {"Durability","🛡️","2"},
+    Chakra = {"Chakra","🌀","3"},
+    Sword = {"Sword","🗡️","4"},
+    Agility = {"Agility","☁️","5"},
+    Speed = {"Speed","💨","6"},
 }
+
+-- Ensure ActiveTrains table exists
+ActiveTrains = ActiveTrains or {}
 
 -- Disable all active auto trains
 local function disableAllAutoTrains()
@@ -309,10 +306,9 @@ end
 -- QUESTS TAB
 -------------------------------------------------
 local QuestsTab = Window:CreateTab("Quests 📜") -- only one tab
-local AutoQuestsSection -- will create after all quests
 local questToggles = {} -- store toggles per quest
 
--- Utility easing function
+-- Easing function for label updates
 local function easeOutQuad(t) return 1 - (1 - t)*(1 - t) end
 
 -- Setup a single quest
@@ -388,9 +384,10 @@ for _, q in ipairs(QuestsFolder:GetChildren()) do
     if q:IsA("Folder") then setupQuest(q) end
 end
 
--- After all quests and labels are created
-QuestsTab:CreateSection("Auto Quests 🤖") -- just a visual section
+-- Create one Auto Quests section at the bottom
+QuestsTab:CreateSection("Auto Quests 🤖") -- visual divider
 
+-- Add toggles for all stat-based quests
 for quest, statRequirements in pairs(questToggles) do
     local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
     QuestsTab:CreateToggle({
@@ -403,7 +400,12 @@ for quest, statRequirements in pairs(questToggles) do
                     for _, req in ipairs(statRequirements) do
                         if not state then break end
                         local statName = req.Name
-                        local statId = StatMap[statName][3]
+                        local statData = StatMap[statName]
+                        if not statData then
+                            warn("[Auto Quest] StatMap missing for "..tostring(statName))
+                            return
+                        end
+                        local statId = statData[3]
 
                         -- Best zone logic
                         local bestZone = nil
@@ -431,14 +433,16 @@ for quest, statRequirements in pairs(questToggles) do
                 end)
             else
                 for _, req in ipairs(statRequirements) do
-                    local statId = StatMap[req.Name][3]
-                    ActiveTrains[statId] = false
+                    local statData = StatMap[req.Name]
+                    if statData then
+                        local statId = statData[3]
+                        ActiveTrains[statId] = false
+                    end
                 end
             end
         end
     })
 end
-
 -------------------------------------------------
 -- AUTO FARMS TAB
 -------------------------------------------------
