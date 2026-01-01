@@ -309,9 +309,9 @@ end
 -- QUESTS TAB
 -------------------------------------------------
 local QuestsTab = Window:CreateTab("Quests 📜")
+local AutoQuestsSection = QuestsTab:CreateSection("Auto Quests 🤖") -- single section at bottom
 
--- Utility function to ease numbers for progress animation
-local function easeOutQuad(t) return 1 - (1 - t)*(1 - t) end
+local questToggles = {} -- store toggles per quest
 
 local function setupQuest(quest)
     safeRun(function()
@@ -321,7 +321,6 @@ local function setupQuest(quest)
         local reqs = quest:FindFirstChild("Requirements")
         if not reqs then return end
 
-        -- Store stat-based requirements for Auto Quests
         local statRequirements = {}
 
         for _, req in ipairs(reqs:GetChildren()) do
@@ -366,31 +365,28 @@ local function setupQuest(quest)
                     quest.Progress[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
                 end
 
-                -- Collect stat-based requirements
                 if StatMap[req.Name] then
                     table.insert(statRequirements, req)
                 end
             end
         end
 
-        -- ===== AUTO QUESTS SECTION =====
+        -- Add toggle for this quest in the single Auto Quests section
         if #statRequirements > 0 then
-            local autoQuestSection = QuestsTab:CreateSection("Auto Quests 🤖")
             local toggle
-            toggle = QuestsTab:CreateToggle({
+            toggle = AutoQuestsSection:CreateToggle({
                 Name = display,
                 CurrentValue = false,
                 Flag = display.."AutoQuest",
                 Callback = function(state)
                     if state then
                         task.spawn(function()
-                            -- Loop through each stat requirement in order
                             for _, req in ipairs(statRequirements) do
                                 if not toggle.CurrentValue then break end
                                 local statName = req.Name
-                                local statId = StatMap[statName][3] -- assuming StatMap[req.Name] = {name, emoji, StatId}
+                                local statId = StatMap[statName][3]
 
-                                -- Get best zone for stat
+                                -- Best zone logic
                                 local bestZone = nil
                                 for _, s in ipairs(StatsData) do
                                     if s.StatId == statId then
@@ -406,21 +402,15 @@ local function setupQuest(quest)
 
                                 if bestZone then
                                     teleportTo(bestZone)
-                                    -- Start auto training for this stat
                                     ActiveTrains[statId] = true
-
-                                    -- Wait until requirement is complete
                                     repeat task.wait()
-                                    until (Player.Stats:FindFirstChild(statId) and Player.Stats[statId].Value >= req.Value) 
+                                    until (Player.Stats:FindFirstChild(statId) and Player.Stats[statId].Value >= req.Value)
                                         or not toggle.CurrentValue
-
-                                    -- Stop auto training for this stat
                                     ActiveTrains[statId] = false
                                 end
                             end
                         end)
                     else
-                        -- Turn off all auto training if toggle is disabled
                         for _, req in ipairs(statRequirements) do
                             local statId = StatMap[req.Name][3]
                             ActiveTrains[statId] = false
@@ -428,11 +418,12 @@ local function setupQuest(quest)
                     end
                 end
             })
+            questToggles[quest] = toggle
         end
     end)
 end
 
--- Setup all quests in folder
+-- Setup all quests
 for _,q in ipairs(QuestsFolder:GetChildren()) do
     if q:IsA("Folder") then setupQuest(q) end
 end
