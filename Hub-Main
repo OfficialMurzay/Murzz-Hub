@@ -18,7 +18,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.0 Release"
+local VERSION = "v1.1 Testing"
 
 -------------------------------------------------
 -- SAFE DEBUG
@@ -179,10 +179,10 @@ local InfoTab = Window:CreateTab("Info 🛠️")
 
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({Title = VERSION, Content = [[
-• Adding Auto Quest
+• Added Unit Abbreviations
 • Added Auto Fruit
-• Improved performance and fixed UI misconceptions
-• Added an easter egg!
+• Added Misc Tab
+• Auto Quest coming soon!
 ]]})
 
 InfoTab:CreateSection("Discord 💬")
