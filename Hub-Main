@@ -425,6 +425,87 @@ AutoTab:CreateToggle({
     end
 })
 
+-- Variables
+local selectedFruits = {} -- dropdown selections
+local farmFruitsToggle = false
+local Stock = true
+local notifiedNoFruits = false -- avoids notification spam
+local player = game.Players.LocalPlayer
+local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+
+-- Dropdown (multi-select)
+SelectFruitsDropdown:New({
+    Name = "Select Fruits",
+    Options = {"Rubber Fruit", "Thunder Fruit", "Dark Fruit", "Quake Fruit", "Explosion Fruit"},
+    MultiSelect = true,
+    Flag = "SelectedFruits",
+    Callback = function(values)
+        selectedFruits = values
+        notifiedNoFruits = false -- reset notification on change
+    end
+})
+
+-- Farm Fruits Toggle
+FarmFruitsToggle:New({
+    Name = "Farm Fruits",
+    Flag = "FarmFruits",
+    Default = false,
+    Callback = function(state)
+        farmFruitsToggle = state
+        notifiedNoFruits = false
+        if not next(selectedFruits) then
+            Rayfield:Notify({
+                Title = "Auto Fruits",
+                Content = "You haven't selected any fruits yet!",
+                Duration = 5,
+                Image = 4483362458
+            })
+            farmFruitsToggle = false
+        end
+    end
+})
+
+-- Auto fruit loop (optimized)
+spawn(function()
+    while true do
+        wait(0.5) -- safe delay to avoid lag
+
+        if farmFruitsToggle and hrp then
+            local fruitFolder = workspace:FindFirstChild("Scriptable") and workspace.Scriptable:FindFirstChild("Fruits")
+            if fruitFolder then
+                local foundFruit = nil
+
+                -- Find the first available fruit in selection
+                for _, fruit in pairs(fruitFolder:GetChildren()) do
+                    if table.find(selectedFruits, fruit.Name) then
+                        foundFruit = fruit
+                        break
+                    end
+                end
+
+                -- Handle stock status
+                if foundFruit then
+                    Stock = true
+                    notifiedNoFruits = false -- reset notification
+                    -- teleport to fruit smoothly
+                    hrp.CFrame = foundFruit.CFrame
+                else
+                    Stock = false
+                    if not notifiedNoFruits then
+                        notifiedNoFruits = true
+                        Rayfield:Notify({
+                            Title = "Auto Fruits",
+                            Content = "There currently isn't any available fruits of your selection. Sorry!",
+                            Duration = 5,
+                            Image = 4483362458
+                        })
+                    end
+                end
+            end
+        end
+    end
+end)
+
 -------------------------------------------------
 -- TELEPORTS TAB
 -------------------------------------------------
