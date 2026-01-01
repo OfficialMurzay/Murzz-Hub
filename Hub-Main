@@ -1,4 +1,4 @@
--- MurzzHub v1.1 Release
+-- MurzzHub v1.2 Release
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara + Auto Quest)
 -- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
 -- Fully optimized for performance (no changes to functionality, UI, text, or behavior)
@@ -280,7 +280,7 @@ local function disableAllAutoTrains()
     end
 end
 
--- Teleport to best zone for a stat (reuses Teleports logic)
+-- Teleport to best zone for a stat (reuse Teleports logic)
 local function teleportToBestStat(statName)
     for _, stat in ipairs(StatsData) do
         if stat.Name == statName then
@@ -306,7 +306,7 @@ end
 -- QUESTS TAB
 -------------------------------------------------
 local QuestsTab = Window:CreateTab("Quests 📜") -- only one tab
-local questToggles = {} -- store toggles per quest
+local questToggles = {} -- store stat-based requirements per quest
 
 -- Easing function for label updates
 local function easeOutQuad(t) return 1 - (1 - t)*(1 - t) end
@@ -365,9 +365,9 @@ local function setupQuest(quest)
                     quest.Progress[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
                 end
 
-                -- Collect stat-based requirements for auto quest
+                -- Collect stat-based requirements for Auto Quests
                 if StatMap[req.Name] then
-                    table.insert(statRequirements, req)
+                    table.insert(statRequirements, {Name = req.Name, Value = req.Value})
                 end
             end
         end
@@ -379,18 +379,21 @@ local function setupQuest(quest)
     end)
 end
 
--- Setup all quests first
+-- Setup all quests
 for _, q in ipairs(QuestsFolder:GetChildren()) do
     if q:IsA("Folder") then setupQuest(q) end
 end
 
--- Create one Auto Quests section at the bottom
-QuestsTab:CreateSection("Auto Quests 🤖") -- visual divider
+-------------------------------------------------
+-- AUTO QUESTS SECTION (bottom of the tab)
+-------------------------------------------------
+QuestsTab:CreateSection("Auto Quests 🤖") -- single bottom section
+local autoQuestToggles = {}
 
--- Add toggles for all stat-based quests
 for quest, statRequirements in pairs(questToggles) do
     local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
-    QuestsTab:CreateToggle({
+
+    autoQuestToggles[quest] = QuestsTab:CreateToggle({
         Name = display,
         CurrentValue = false,
         Flag = display.."AutoQuest",
@@ -407,7 +410,7 @@ for quest, statRequirements in pairs(questToggles) do
                         end
                         local statId = statData[3]
 
-                        -- Best zone logic
+                        -- Teleport to best zone for this stat
                         local bestZone = nil
                         for _, s in ipairs(StatsData) do
                             if s.StatId == statId then
@@ -443,6 +446,7 @@ for quest, statRequirements in pairs(questToggles) do
         end
     })
 end
+
 -------------------------------------------------
 -- AUTO FARMS TAB
 -------------------------------------------------
