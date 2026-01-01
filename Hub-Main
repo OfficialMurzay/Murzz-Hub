@@ -277,15 +277,21 @@ local function disableAllAutoTrains()
     end
 end
 
+-- Teleport to best zone safely
 local function teleportToBestStat(statName)
+    if not StatsData then return end
     for _, stat in ipairs(StatsData) do
         if stat.Name == statName then
             local playerStat = Player.Stats:FindFirstChild(stat.StatId)
             if not playerStat then return end
+
             local bestZone
-            for _, z in ipairs(stat.Zones) do
-                if playerStat.Value >= z[1] then bestZone = z[2] end
+            if stat.Zones then
+                for _, z in ipairs(stat.Zones) do
+                    if playerStat.Value >= z[1] then bestZone = z[2] end
+                end
             end
+
             if bestZone then teleportTo(bestZone) end
             return
         end
@@ -312,10 +318,11 @@ local function setupQuest(quest)
 
         for _, req in ipairs(reqs:GetChildren()) do
             if req:IsA("IntValue") or req:IsA("NumberValue") then
-                -- Map stat ID -> name + emoji
-                local name, emoji = StatMap[req.Name] and StatMap[req.Name][1] or req.Name,
-                                    StatMap[req.Name] and StatMap[req.Name][2] or ""
+                local statData = StatMap[req.Name]
+                local name, emoji = statData and statData[1] or req.Name,
+                                    statData and statData[2] or ""
 
+                -- Create the label with proper name + emoji
                 local label = QuestsTab:CreateLabel(string.format("0/%s %s %s", abbreviate(req.Value), name, emoji))
                 local current = 0
 
@@ -352,7 +359,9 @@ local function setupQuest(quest)
                 end
 
                 -- save for Auto Quest toggles
-                table.insert(statRequirements, {Name = req.Name, Value = req.Value})
+                if statData then
+                    table.insert(statRequirements, {Name = req.Name, Value = req.Value})
+                end
             end
         end
 
@@ -373,10 +382,13 @@ end
 QuestsTab:CreateSection("Auto Quests 🤖")
 for quest, statRequirements in pairs(questToggles) do
     local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
+    -- sanitize flag for Rayfield
+    local safeFlag = display:gsub("[^%w]", "") .. "AutoQuest"
+
     QuestsTab:CreateToggle({
         Name = display,
         CurrentValue = false,
-        Flag = display.."AutoQuest",
+        Flag = safeFlag,
         Callback = function(state)
             if state then
                 task.spawn(function()
@@ -404,7 +416,6 @@ for quest, statRequirements in pairs(questToggles) do
         end
     })
 end
-
 -------------------------------------------------
 -- AUTO FARMS TAB
 -------------------------------------------------
