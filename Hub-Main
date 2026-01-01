@@ -259,6 +259,53 @@ end
 -------------------------------------------------
 local QuestsTab = Window:CreateTab("Quests 📜")
 
+-- ===============================
+-- AUTO QUEST HELPERS
+-- ===============================
+
+-- Stat name → StatId (matches Auto Train)
+local StatNameToId = {
+    Strength = 1,
+    Durability = 2,
+    Chakra = 3,
+    Sword = 4,
+    Agility = 5,
+    Speed = 6
+}
+
+-- Disable all active auto trains
+local function disableAllAutoTrains()
+    for id in pairs(ActiveTrains) do
+        ActiveTrains[id] = false
+    end
+end
+
+-- Teleport to best zone for a stat (reuses Teleports logic)
+local function teleportToBestStat(statName)
+    for _, stat in ipairs(StatsData) do
+        if stat.Name == statName then
+            local playerStat = Player.Stats:FindFirstChild(stat.StatId)
+            if not playerStat then return end
+
+            local bestZone
+            for _, z in ipairs(stat.Zones) do
+                if playerStat.Value >= z[1] then
+                    bestZone = z[2]
+                end
+            end
+
+            if bestZone then
+                teleportTo(bestZone)
+            end
+            return
+        end
+    end
+end
+
+-- ===============================
+-- QUEST SETUP
+-- ===============================
+
 local function setupQuest(quest)
     safeRun(function()
         local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
@@ -267,21 +314,34 @@ local function setupQuest(quest)
         local reqs = quest:FindFirstChild("Requirements")
         if not reqs then return end
 
-        for _,req in ipairs(reqs:GetChildren()) do
+        local statRequirements = {}
+
+        -- ===============================
+        -- DISPLAY REQUIREMENTS
+        -- ===============================
+        for _, req in ipairs(reqs:GetChildren()) do
             if req:IsA("IntValue") or req:IsA("NumberValue") then
                 local label = QuestsTab:CreateLabel("...")
-
                 local current = 0
+
+                if StatNameToId[req.Name] then
+                    table.insert(statRequirements, req)
+                end
+
                 local function update()
                     local progress = 0
                     if quest:FindFirstChild(req.Name) then
                         progress = quest[req.Name].Value
-                    elseif quest:FindFirstChild("Progress") and quest.Progress:FindFirstChild(req.Name) then
+                    elseif quest:FindFirstChild("Progress")
+                        and quest.Progress:FindFirstChild(req.Name) then
                         progress = quest.Progress[req.Name].Value
                     end
 
                     local name, emoji = req.Name, ""
-                    if StatMap[req.Name] then name, emoji = unpack(StatMap[req.Name]) end
+                    if StatMap[req.Name] then
+                        name, emoji = unpack(StatMap[req.Name])
+                    end
+
                     local done = progress >= req.Value
 
                     task.spawn(function()
@@ -290,12 +350,26 @@ local function setupQuest(quest)
                         for i = 1, steps do
                             local t = easeOutQuad(i/steps)
                             local val = current + (progress - current) * t
-                            label:Set(string.format("%s/%s %s %s%s",
-                                abbreviate(math.floor(val)), abbreviate(req.Value), name, emoji, done and " ✅" or ""))
+                            label:Set(string.format(
+                                "%s/%s %s %s%s",
+                                abbreviate(math.floor(val)),
+                                abbreviate(req.Value),
+                                name,
+                                emoji,
+                                done and " ✅" or ""
+                            ))
                             task.wait(duration/steps)
                         end
-                        label:Set(string.format("%s/%s %s %s%s",
-                            abbreviate(progress), abbreviate(req.Value), name, emoji, done and " ✅" or ""))
+
+                        label:Set(string.format(
+                            "%s/%s %s %s%s",
+                            abbreviate(progress),
+                            abbreviate(req.Value),
+                            name,
+                            emoji,
+                            done and " ✅" or ""
+                        ))
+
                         current = progress
                     end)
                 end
@@ -305,16 +379,91 @@ local function setupQuest(quest)
                 if quest:FindFirstChild(req.Name) then
                     quest[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
                 end
-                if quest:FindFirstChild("Progress") and quest.Progress:FindFirstChild(req.Name) then
+                if quest:FindFirstChild("Progress")
+                    and quest.Progress:FindFirstChild(req.Name) then
                     quest.Progress[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
                 end
             end
         end
+
+        -- ===============================
+        -- AUTO QUEST SECTION
+        -- ===============================
+        if #statRequirements > 0 then
+            QuestsTab:CreateSection("Auto Quests 🤖")
+
+            local AutoQuestEnabled = false
+
+            QuestsTab:CreateToggle({
+                Name = display,
+                CurrentValue = false,
+                Flag = "AutoQuest_" .. quest.Name,
+                Callback = function(state)
+                    AutoQuestEnabled = state
+
+                    if not state then
+                        disableAllAutoTrains()
+                        return
+                    end
+
+                    task.spawn(function()
+                        while AutoQuestEnabled do
+                            task.wait(0.3)
+
+                            if CharacterModule.states.Dead then
+                                disableAllAutoTrains()
+                                task.wait(1)
+                                continue
+                            end
+
+                            local activeReq = nil
+
+                            -- Find first unfinished stat requirement
+                            for _, req in ipairs(statRequirements) do
+                                local progress = 0
+                                if quest:FindFirstChild(req.Name) then
+                                    progress = quest[req.Name].Value
+                                elseif quest:FindFirstChild("Progress")
+                                    and quest.Progress:FindFirstChild(req.Name) then
+                                    progress = quest.Progress[req.Name].Value
+                                end
+
+                                if progress < req.Value then
+                                    activeReq = req
+                                    break
+                                end
+                            end
+
+                            -- Quest complete
+                            if not activeReq then
+                                disableAllAutoTrains()
+                                AutoQuestEnabled = false
+                                break
+                            end
+
+                            -- Train this stat only
+                            disableAllAutoTrains()
+
+                            local statName = activeReq.Name
+                            local statId = StatNameToId[statName]
+
+                            teleportToBestStat(statName)
+                            ActiveTrains[statId] = true
+                        end
+                    end)
+                end
+            })
+        end
     end)
 end
 
-for _,q in ipairs(QuestsFolder:GetChildren()) do
-    if q:IsA("Folder") then setupQuest(q) end
+-- ===============================
+-- LOAD QUESTS
+-- ===============================
+for _, q in ipairs(QuestsFolder:GetChildren()) do
+    if q:IsA("Folder") then
+        setupQuest(q)
+    end
 end
 
 -------------------------------------------------
