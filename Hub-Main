@@ -425,35 +425,8 @@ AutoTab:CreateToggle({
     end
 })
 
--- Variables
-local selectedFruits = {}        -- always a table
-local farmFruitsToggle = false
-local Stock = true
-local notifiedNoFruits = false
-local player = game.Players.LocalPlayer
-local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-
--- ===== DROPDOWN =====
-local SelectFruitsDropdown = AutoChikaraSection:NewDropdown({
-    Name = "Select Fruits",
-    Options = {"Rubber Fruit", "Thunder Fruit", "Dark Fruit", "Quake Fruit", "Explosion Fruit"},
-    MultiSelect = true,
-    Flag = "SelectedFruits",
-    Callback = function(values)
-        -- SAFE HANDLING for Rayfield 437+
-        if values == nil then
-            selectedFruits = {}
-        elseif typeof(values) == "table" then
-            selectedFruits = values
-        else
-            selectedFruits = {values} -- wrap single string
-        end
-        notifiedNoFruits = false -- reset notification
-    end
-})
-
 -- ===== VARIABLES =====
-local selectedFruits = {} -- always a table
+local selectedFruits = {}         -- always a table
 local farmFruitsToggle = false
 local Stock = true
 local notifiedNoFruits = false
@@ -461,26 +434,20 @@ local player = game.Players.LocalPlayer
 local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
 
 -- ===== DROPDOWN =====
-local SelectFruitsDropdown = AutoChikaraSection:Dropdown({
+local SelectFruitsDropdown = AutoChikaraSection:CreateDropdown({
     Name = "Select Fruits",
-    Options = {"Rubber Fruit", "Thunder Fruit", "Dark Fruit", "Quake Fruit", "Explosion Fruit"},
-    MultiSelect = true,
+    Options = {"Rubber Fruit","Thunder Fruit","Dark Fruit","Quake Fruit","Explosion Fruit"},
+    CurrentOption = {},            -- empty by default
+    MultipleOptions = true,        -- allow multi-select
     Flag = "SelectedFruits",
-    Callback = function(values)
-        -- SAFE HANDLING for Rayfield 437+
-        if values == nil then
-            selectedFruits = {}
-        elseif typeof(values) == "table" then
-            selectedFruits = values
-        else
-            selectedFruits = {values} -- wrap single string
-        end
-        notifiedNoFruits = false -- reset notification
+    Callback = function(Options)
+        selectedFruits = Options or {}      -- always a table
+        notifiedNoFruits = false           -- reset notification
     end
 })
 
 -- ===== TOGGLE =====
-local FarmFruitsToggle = AutoChikaraSection:Toggle({
+local FarmFruitsToggle = AutoChikaraSection:CreateToggle({
     Name = "Farm Fruits",
     Flag = "FarmFruits",
     Default = false,
@@ -503,14 +470,14 @@ local FarmFruitsToggle = AutoChikaraSection:Toggle({
 -- ===== AUTO FRUITS LOOP =====
 spawn(function()
     while true do
-        wait(0.5) -- safe delay for performance
+        wait(0.5) -- safe for performance
 
         if farmFruitsToggle and hrp and next(selectedFruits) then
             local fruitFolder = workspace:FindFirstChild("Scriptable") and workspace.Scriptable:FindFirstChild("Fruits")
             if fruitFolder then
                 local foundFruit = nil
 
-                -- find first fruit from selection
+                -- search for first selected fruit
                 for _, fruit in pairs(fruitFolder:GetChildren()) do
                     if fruit.Name and table.find(selectedFruits, fruit.Name) then
                         foundFruit = fruit
