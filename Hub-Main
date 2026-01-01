@@ -269,36 +269,12 @@ local StatMap = {
     ["6"] = {"Speed","💨","6"},
 }
 
-ActiveTrains = ActiveTrains or {}
-
-local function disableAllAutoTrains()
-    for id in pairs(ActiveTrains) do
-        ActiveTrains[id] = false
-    end
-end
-
-local function teleportToBestStat(statName)
-    for _, stat in ipairs(StatsData or {}) do
-        if stat.Name == statName and stat.Zones and type(stat.Zones) == "table" then
-            local playerStat = Player.Stats:FindFirstChild(stat.StatId)
-            if not playerStat then return end
-            local bestZone
-            for _, z in ipairs(stat.Zones) do
-                if z and z[1] and playerStat.Value >= z[1] then bestZone = z[2] end
-            end
-            if bestZone then teleportTo(bestZone) end
-            return
-        end
-    end
-end
+local function easeOutQuad(t) return 1 - (1 - t)*(1 - t) end
 
 -------------------------------------------------
 -- QUESTS TAB
 -------------------------------------------------
 local QuestsTab = Window:CreateTab("Quests 📜")
-local questToggles = {} -- stat-based requirements per quest
-
-local function easeOutQuad(t) return 1 - (1 - t)*(1 - t) end
 
 -- Setup single quest
 local function setupQuest(quest)
@@ -308,7 +284,6 @@ local function setupQuest(quest)
 
         local reqs = quest:FindFirstChild("Requirements")
         if not reqs then return end
-        local statRequirements = {}
 
         for _, req in ipairs(reqs:GetChildren() or {}) do
             if req:IsA("IntValue") or req:IsA("NumberValue") then
@@ -326,6 +301,7 @@ local function setupQuest(quest)
                         progress = quest.Progress[req.Name].Value
                     end
                     local done = progress >= req.Value
+
                     task.spawn(function()
                         local steps = 30
                         local duration = 0.7
@@ -343,65 +319,21 @@ local function setupQuest(quest)
                 end
 
                 update()
+
                 if quest:FindFirstChild(req.Name) then
                     quest[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
                 end
                 if quest:FindFirstChild("Progress") and quest.Progress:FindFirstChild(req.Name) then
                     quest.Progress[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
                 end
-
-                -- Only save stat-based requirements that exist in StatMap
-                if StatMap[req.Name] then
-                    table.insert(statRequirements, {Name = req.Name, Value = req.Value})
-                end
             end
         end
-
-        questToggles[quest] = statRequirements or {}
     end)
 end
 
 -- Setup all quests
 for _, q in ipairs(QuestsFolder:GetChildren() or {}) do
     if q:IsA("Folder") then setupQuest(q) end
-end
-
--------------------------------------------------
--- AUTO QUESTS SECTION
--------------------------------------------------
-QuestsTab:CreateSection("Auto Quests 🤖")
-for quest, statRequirements in pairs(questToggles) do
-    if statRequirements and type(statRequirements) == "table" and #statRequirements > 0 then
-        local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
-        QuestsTab:CreateToggle({
-            Name = display,
-            CurrentValue = false,
-            Flag = display.."AutoQuest",
-            Callback = function(state)
-                if state then
-                    task.spawn(function()
-                        for _, req in ipairs(statRequirements or {}) do
-                            if not state then break end
-                            local statData = StatMap[req.Name]
-                            if statData then
-                                local statId = statData[3]
-                                teleportToBestStat(statData[1])
-                                ActiveTrains[statId] = true
-                                repeat task.wait()
-                                until (Player.Stats:FindFirstChild(statId) and Player.Stats[statId].Value >= req.Value) or not state
-                                ActiveTrains[statId] = false
-                            end
-                        end
-                    end)
-                else
-                    for _, req in ipairs(statRequirements or {}) do
-                        local statData = StatMap[req.Name]
-                        if statData then ActiveTrains[statData[3]] = false end
-                    end
-                end
-            end
-        })
-    end
 end
 
 -------------------------------------------------
