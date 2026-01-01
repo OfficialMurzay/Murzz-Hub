@@ -388,14 +388,12 @@ for _, q in ipairs(QuestsFolder:GetChildren()) do
     if q:IsA("Folder") then setupQuest(q) end
 end
 
--- Create one Auto Quests section at the bottom
-AutoQuestsSection = QuestsTab:CreateSection("Auto Quests 🤖")
+-- After all quests and labels are created
+QuestsTab:CreateSection("Auto Quests 🤖") -- just a visual section
 
--- Add toggles for all stat-based quests
 for quest, statRequirements in pairs(questToggles) do
     local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
-    local toggle
-    toggle = AutoQuestsSection:CreateToggle({
+    QuestsTab:CreateToggle({
         Name = display,
         CurrentValue = false,
         Flag = display.."AutoQuest",
@@ -403,11 +401,11 @@ for quest, statRequirements in pairs(questToggles) do
             if state then
                 task.spawn(function()
                     for _, req in ipairs(statRequirements) do
-                        if not toggle.CurrentValue then break end
+                        if not state then break end
                         local statName = req.Name
                         local statId = StatMap[statName][3]
 
-                        -- Find best zone for this stat
+                        -- Best zone logic
                         local bestZone = nil
                         for _, s in ipairs(StatsData) do
                             if s.StatId == statId then
@@ -424,16 +422,14 @@ for quest, statRequirements in pairs(questToggles) do
                         if bestZone then
                             teleportTo(bestZone)
                             ActiveTrains[statId] = true
-                            -- Wait until stat requirement is done
                             repeat task.wait()
                             until (Player.Stats:FindFirstChild(statId) and Player.Stats[statId].Value >= req.Value)
-                                or not toggle.CurrentValue
+                                or not state
                             ActiveTrains[statId] = false
                         end
                     end
                 end)
             else
-                -- Stop all auto training when toggle off
                 for _, req in ipairs(statRequirements) do
                     local statId = StatMap[req.Name][3]
                     ActiveTrains[statId] = false
