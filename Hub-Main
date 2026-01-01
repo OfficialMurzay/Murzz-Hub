@@ -380,11 +380,11 @@ for _,stat in ipairs(AutoStats) do
 end
 
 -- Auto Chikara Section
-AutoTab:CreateSection("Auto Chikara 💎 | AUTOCLICKER NEEDED")
+AutoTab:CreateSection("Auto Resource ⚠️ | AUTOCLICKER NEEDED")
 local AutoChikaraActive = false
 
 AutoTab:CreateToggle({
-    Name = "Collect Chikara ⚠️",
+    Name = "Collect Chikara 💎",
     CurrentValue = false,
     Flag = "AutoChikaraToggle",
     Callback = function(val)
@@ -434,8 +434,8 @@ local hrp = Player.Character and Player.Character:FindFirstChild("HumanoidRootPa
 
 -- DROPDOWN: Select Fruits
 local SelectFruitsDropdown = AutoTab:CreateDropdown({
-    Name = "Select Fruits",
-    Options = {"Rubber Fruit","Thunder Fruit","Dark Fruit","Quake Fruit","Explosion Fruit"},
+    Name = "Select Fruits 🍎",
+    Options = {"Rubber Fruit 🔘","Thunder Fruit ⚡","Dark Fruit 🌑","Quake Fruit 🌊","Explosion Fruit 💥"},
     CurrentOption = {},           -- empty default
     MultipleOptions = true,       -- allow multi-select
     Flag = "SelectedFruits",
@@ -447,7 +447,7 @@ local SelectFruitsDropdown = AutoTab:CreateDropdown({
 
 -- TOGGLE: Farm Fruits
 local FarmFruitsToggle = AutoTab:CreateToggle({
-    Name = "Farm Fruits",
+    Name = "Farm Fruits 🧺",
     Flag = "FarmFruits",
     CurrentValue = false,
     Callback = function(state)
