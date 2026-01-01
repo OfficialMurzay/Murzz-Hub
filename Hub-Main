@@ -260,43 +260,33 @@ end
 -------------------------------------------------
 -- QUESTS TAB HELPERS
 -------------------------------------------------
--- Map stat names → StatId (matches Auto Train)
 local StatMap = {
-    Strength = {"Strength","💪","1"},
-    Durability = {"Durability","🛡️","2"},
-    Chakra = {"Chakra","🌀","3"},
-    Sword = {"Sword","🗡️","4"},
-    Agility = {"Agility","☁️","5"},
-    Speed = {"Speed","💨","6"},
+    ["1"] = {"Strength","💪","1"},
+    ["2"] = {"Durability","🛡️","2"},
+    ["3"] = {"Chakra","🌀","3"},
+    ["4"] = {"Sword","🗡️","4"},
+    ["5"] = {"Agility","☁️","5"},
+    ["6"] = {"Speed","💨","6"},
 }
 
--- Ensure ActiveTrains table exists
 ActiveTrains = ActiveTrains or {}
 
--- Disable all active auto trains
 local function disableAllAutoTrains()
     for id in pairs(ActiveTrains) do
         ActiveTrains[id] = false
     end
 end
 
--- Teleport to best zone for a stat (reuse Teleports logic)
 local function teleportToBestStat(statName)
     for _, stat in ipairs(StatsData) do
         if stat.Name == statName then
             local playerStat = Player.Stats:FindFirstChild(stat.StatId)
             if not playerStat then return end
-
             local bestZone
             for _, z in ipairs(stat.Zones) do
-                if playerStat.Value >= z[1] then
-                    bestZone = z[2]
-                end
+                if playerStat.Value >= z[1] then bestZone = z[2] end
             end
-
-            if bestZone then
-                teleportTo(bestZone)
-            end
+            if bestZone then teleportTo(bestZone) end
             return
         end
     end
@@ -305,13 +295,12 @@ end
 -------------------------------------------------
 -- QUESTS TAB
 -------------------------------------------------
-local QuestsTab = Window:CreateTab("Quests 📜") -- only one tab
-local questToggles = {} -- store stat-based requirements per quest
+local QuestsTab = Window:CreateTab("Quests 📜")
+local questToggles = {} -- stat-based requirements per quest
 
--- Easing function for label updates
 local function easeOutQuad(t) return 1 - (1 - t)*(1 - t) end
 
--- Setup a single quest
+-- Setup single quest
 local function setupQuest(quest)
     safeRun(function()
         local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
@@ -319,13 +308,15 @@ local function setupQuest(quest)
 
         local reqs = quest:FindFirstChild("Requirements")
         if not reqs then return end
-
         local statRequirements = {}
 
         for _, req in ipairs(reqs:GetChildren()) do
             if req:IsA("IntValue") or req:IsA("NumberValue") then
-                -- Quest progress label
-                local label = QuestsTab:CreateLabel("...")
+                -- Map stat ID -> name + emoji
+                local name, emoji = StatMap[req.Name] and StatMap[req.Name][1] or req.Name,
+                                    StatMap[req.Name] and StatMap[req.Name][2] or ""
+
+                local label = QuestsTab:CreateLabel(string.format("0/%s %s %s", abbreviate(req.Value), name, emoji))
                 local current = 0
 
                 local function update()
@@ -335,11 +326,7 @@ local function setupQuest(quest)
                     elseif quest:FindFirstChild("Progress") and quest.Progress:FindFirstChild(req.Name) then
                         progress = quest.Progress[req.Name].Value
                     end
-
-                    local name, emoji = req.Name, ""
-                    if StatMap[req.Name] then name, emoji = unpack(StatMap[req.Name]) end
                     local done = progress >= req.Value
-
                     task.spawn(function()
                         local steps = 30
                         local duration = 0.7
@@ -357,7 +344,6 @@ local function setupQuest(quest)
                 end
 
                 update()
-
                 if quest:FindFirstChild(req.Name) then
                     quest[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
                 end
@@ -365,14 +351,11 @@ local function setupQuest(quest)
                     quest.Progress[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
                 end
 
-                -- Collect stat-based requirements for Auto Quests
-                if StatMap[req.Name] then
-                    table.insert(statRequirements, {Name = req.Name, Value = req.Value})
-                end
+                -- save for Auto Quest toggles
+                table.insert(statRequirements, {Name = req.Name, Value = req.Value})
             end
         end
 
-        -- Store stat-based requirements for toggles
         if #statRequirements > 0 then
             questToggles[quest] = statRequirements
         end
@@ -385,15 +368,12 @@ for _, q in ipairs(QuestsFolder:GetChildren()) do
 end
 
 -------------------------------------------------
--- AUTO QUESTS SECTION (bottom of the tab)
+-- AUTO QUESTS SECTION
 -------------------------------------------------
-QuestsTab:CreateSection("Auto Quests 🤖") -- single bottom section
-local autoQuestToggles = {}
-
+QuestsTab:CreateSection("Auto Quests 🤖")
 for quest, statRequirements in pairs(questToggles) do
     local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
-
-    autoQuestToggles[quest] = QuestsTab:CreateToggle({
+    QuestsTab:CreateToggle({
         Name = display,
         CurrentValue = false,
         Flag = display.."AutoQuest",
@@ -402,34 +382,13 @@ for quest, statRequirements in pairs(questToggles) do
                 task.spawn(function()
                     for _, req in ipairs(statRequirements) do
                         if not state then break end
-                        local statName = req.Name
-                        local statData = StatMap[statName]
-                        if not statData then
-                            warn("[Auto Quest] StatMap missing for "..tostring(statName))
-                            return
-                        end
-                        local statId = statData[3]
-
-                        -- Teleport to best zone for this stat
-                        local bestZone = nil
-                        for _, s in ipairs(StatsData) do
-                            if s.StatId == statId then
-                                local playerStat = Player.Stats:FindFirstChild(statId)
-                                if playerStat then
-                                    local value = playerStat.Value
-                                    for _, z in ipairs(s.Zones) do
-                                        if value >= z[1] then bestZone = z[2] end
-                                    end
-                                end
-                            end
-                        end
-
-                        if bestZone then
-                            teleportTo(bestZone)
+                        local statData = StatMap[req.Name]
+                        if statData then
+                            local statId = statData[3]
+                            teleportToBestStat(statData[1])
                             ActiveTrains[statId] = true
                             repeat task.wait()
-                            until (Player.Stats:FindFirstChild(statId) and Player.Stats[statId].Value >= req.Value)
-                                or not state
+                            until (Player.Stats:FindFirstChild(statId) and Player.Stats[statId].Value >= req.Value) or not state
                             ActiveTrains[statId] = false
                         end
                     end
@@ -438,8 +397,7 @@ for quest, statRequirements in pairs(questToggles) do
                 for _, req in ipairs(statRequirements) do
                     local statData = StatMap[req.Name]
                     if statData then
-                        local statId = statData[3]
-                        ActiveTrains[statId] = false
+                        ActiveTrains[statData[3]] = false
                     end
                 end
             end
