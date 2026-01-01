@@ -1,4 +1,4 @@
--- MurzzHub v1.1 Release
+-- MurzzHub v1.2 Release
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara + Auto Quest)
 -- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
 -- Fully optimized for performance (no changes to functionality, UI, text, or behavior)
@@ -575,25 +575,16 @@ AutoTab:CreateToggle({
 })
 
 -------------------------------------------------
--- AUTO FRUITS 🍎
+-- AUTO FRUITS SECTION
 -------------------------------------------------
-
-local selectedFruits = {}
+local selectedFruits = {}       -- always a table
 local farmFruitsToggle = false
 local Stock = true
 local notifiedNoFruits = false
-
--- Emoji → real name map (IMPORTANT)
-local FruitNameMap = {
-    ["Rubber Fruit 👊"] = "Rubber Fruit",
-    ["Thunder Fruit ⚡"] = "Thunder Fruit",
-    ["Dark Fruit 🌑"] = "Dark Fruit",
-    ["Quake Fruit 🌊"] = "Quake Fruit",
-    ["Explosion Fruit 💥"] = "Explosive Fruit"
-}
+local hrp = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
 
 -- DROPDOWN: Select Fruits
-AutoTab:CreateDropdown({
+local SelectFruitsDropdown = AutoTab:CreateDropdown({
     Name = "Select Fruits 🍎",
     Options = {
         "Rubber Fruit 👊",
@@ -602,25 +593,25 @@ AutoTab:CreateDropdown({
         "Quake Fruit 🌊",
         "Explosion Fruit 💥"
     },
-    CurrentOption = {},
-    MultipleOptions = true,
+    CurrentOption = {},           -- empty default
+    MultipleOptions = true,       -- allow multi-select
     Flag = "SelectedFruits",
-    Callback = function(options)
-        selectedFruits = options or {}
-        notifiedNoFruits = false
+    Callback = function(Options)
+        selectedFruits = Options or {}        -- always a table
+        notifiedNoFruits = false              -- reset notification
     end
 })
 
 -- TOGGLE: Farm Fruits
-AutoTab:CreateToggle({
+local FarmFruitsToggle = AutoTab:CreateToggle({
     Name = "Farm Fruits 🧺",
-    CurrentValue = false,
     Flag = "FarmFruits",
+    CurrentValue = false,
     Callback = function(state)
         farmFruitsToggle = state
         notifiedNoFruits = false
 
-        if state and not next(selectedFruits) then
+        if not next(selectedFruits) then
             Rayfield:Notify({
                 Title = "Auto Fruits",
                 Content = "You haven't selected any fruits yet!",
@@ -635,53 +626,54 @@ AutoTab:CreateToggle({
 -- AUTO FRUITS LOOP
 task.spawn(function()
     while true do
-        task.wait(0.5) -- performance-safe
+        task.wait(0.5) -- safe for performance
 
-        if not farmFruitsToggle or not next(selectedFruits) then
-            continue
-        end
+        if farmFruitsToggle and hrp and next(selectedFruits) then
+            local fruitFolder = workspace:FindFirstChild("Scriptable") and workspace.Scriptable:FindFirstChild("Fruits")
+            if fruitFolder then
+                local foundFruit = nil
 
-        local character = Player.Character
-        local hrp = character and character:FindFirstChild("HumanoidRootPart")
-        if not hrp then
-            continue
-        end
-
-        local fruitFolder = workspace:FindFirstChild("Scriptable")
-            and workspace.Scriptable:FindFirstChild("Fruits")
-
-        if not fruitFolder then
-            continue
-        end
-
-        local foundFruit = nil
-
-        -- Find matching fruit
-        for _, fruit in ipairs(fruitFolder:GetChildren()) do
-            for _, selected in ipairs(selectedFruits) do
-                if FruitNameMap[selected] == fruit.Name then
-                    foundFruit = fruit
-                    break
+                -- find first matching fruit
+                for _, fruit in pairs(fruitFolder:GetChildren()) do
+                    if fruit.Name and table.find(selectedFruits, fruit.Name) then
+                        foundFruit = fruit
+                        break
+                    end
                 end
-            end
-            if foundFruit then break end
-        end
 
-        -- Handle stock + teleport
-        if foundFruit then
-            Stock = true
-            notifiedNoFruits = false
-            hrp.CFrame = foundFruit.CFrame
-        else
-            Stock = false
-            if not notifiedNoFruits then
-                notifiedNoFruits = true
-                Rayfield:Notify({
-                    Title = "Auto Fruits",
-                    Content = "There currently isn't any available fruits of your selection. Sorry!",
-                    Duration = 5,
-                    Image = 4483362458
-                })
+                -- handle Stock & notifications
+                if foundFruit then
+                    Stock = true
+                    notifiedNoFruits = false
+
+                    -- determine CFrame safely
+                    local targetCFrame = nil
+
+                    if foundFruit:IsA("BasePart") then
+                        targetCFrame = foundFruit.CFrame
+                    elseif foundFruit:IsA("Model") and foundFruit.PrimaryPart then
+                        targetCFrame = foundFruit.PrimaryPart.CFrame
+                    elseif foundFruit:FindFirstChildWhichIsA("BasePart") then
+                        targetCFrame = foundFruit:FindFirstChildWhichIsA("BasePart").CFrame
+                    end
+
+                    -- teleport player safely
+                    if targetCFrame then
+                        hrp.CFrame = targetCFrame + Vector3.new(0,3,0)
+                    end
+
+                else
+                    Stock = false
+                    if not notifiedNoFruits then
+                        notifiedNoFruits = true
+                        Rayfield:Notify({
+                            Title = "Auto Fruits",
+                            Content = "There currently isn't any available fruits of your selection. Sorry!",
+                            Duration = 5,
+                            Image = 4483362458
+                        })
+                    end
+                end
             end
         end
     end
