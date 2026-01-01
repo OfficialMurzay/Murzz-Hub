@@ -179,10 +179,7 @@ local InfoTab = Window:CreateTab("Info 🛠️")
 
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({Title = VERSION, Content = [[
-• Auto Farms complete
-• Teleports Tab in progress
-• Added basic debugging
-• Nearly ready for release!
+• Updates are being made rn. Stay tuned!
 ]]})
 
 InfoTab:CreateSection("Discord 💬")
