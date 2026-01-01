@@ -396,10 +396,20 @@ for quest, statRequirements in pairs(questToggles) do
                             local statId = tonumber(statData[3])
                             local statName = statData[1]
 
-                            -- Teleport to best zone for this stat
+                            -- Teleport to best zone
                             teleportToBestStat(statName)
 
-                            -- Start the auto train for this stat (reuses your Auto Train logic)
+                            -- Find the correct entry in StatsData
+                            local statInfo
+                            for _, s in ipairs(StatsData) do
+                                if s.StatId == statId then
+                                    statInfo = s
+                                    break
+                                end
+                            end
+                            if not statInfo then continue end
+
+                            -- Start auto train
                             if not ActiveTrains[statId] then
                                 ActiveTrains[statId] = true
                                 LastFire[statId] = 0
@@ -428,17 +438,17 @@ for quest, statRequirements in pairs(questToggles) do
                                 end)
                             end
 
-                            -- Wait until stat reaches quest requirement
+                            -- Wait for stat to reach requirement
                             repeat task.wait()
-                            until (Player.Stats:FindFirstChild(statId) and Player.Stats[statId].Value >= req.Value) or not state
+                            until (Player.Stats:FindFirstChild(tostring(statId)) and Player.Stats[tostring(statId)].Value >= req.Value) or not state
 
-                            -- Stop the auto train for this stat after done
+                            -- Stop auto train
                             ActiveTrains[statId] = false
                         end
                     end
                 end)
             else
-                -- Stop all active auto trains if toggle is turned off
+                -- Stop all active auto trains if toggle off
                 for _, req in ipairs(statRequirements) do
                     local statData = StatMap[req.Name]
                     if statData then
