@@ -379,16 +379,13 @@ end
 -------------------------------------------------
 -- AUTO QUESTS SECTION
 -------------------------------------------------
-QuestsTab:CreateSection("Auto Quests 🤖")
+QuestsTab:CreateSection("Auto Quests 🤖") -- single section at the bottom
 for quest, statRequirements in pairs(questToggles) do
     local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
-    -- sanitize flag for Rayfield
-    local safeFlag = display:gsub("[^%w]", "") .. "AutoQuest"
-
     QuestsTab:CreateToggle({
         Name = display,
         CurrentValue = false,
-        Flag = safeFlag,
+        Flag = display.."AutoQuest",
         Callback = function(state)
             if state then
                 task.spawn(function()
@@ -396,26 +393,64 @@ for quest, statRequirements in pairs(questToggles) do
                         if not state then break end
                         local statData = StatMap[req.Name]
                         if statData then
-                            local statId = statData[3]
-                            teleportToBestStat(statData[1])
-                            ActiveTrains[statId] = true
+                            local statId = tonumber(statData[3])
+                            local statName = statData[1]
+
+                            -- Teleport to best zone for this stat
+                            teleportToBestStat(statName)
+
+                            -- Start the auto train for this stat (reuses your Auto Train logic)
+                            if not ActiveTrains[statId] then
+                                ActiveTrains[statId] = true
+                                LastFire[statId] = 0
+                                task.spawn(function()
+                                    while ActiveTrains[statId] do
+                                        if CharacterModule.states.Dead then
+                                            task.wait(1)
+                                        else
+                                            CharacterModule.characterStopped = false
+                                            CharacterModule:ResumeCharacter()
+                                            StatFunctions.CurrentKey = statId
+                                            StatFunctions[statId] = false
+
+                                            local cooldown = GameData.Stats[statId].Cooldown or 0.1
+                                            local now = tick()
+                                            if now - LastFire[statId] >= cooldown then
+                                                pcall(function()
+                                                    ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train", statId)
+                                                end)
+                                                LastFire[statId] = tick()
+                                            end
+                                            task.wait(0.05)
+                                        end
+                                    end
+                                    ActiveTrains[statId] = nil
+                                end)
+                            end
+
+                            -- Wait until stat reaches quest requirement
                             repeat task.wait()
                             until (Player.Stats:FindFirstChild(statId) and Player.Stats[statId].Value >= req.Value) or not state
+
+                            -- Stop the auto train for this stat after done
                             ActiveTrains[statId] = false
                         end
                     end
                 end)
             else
+                -- Stop all active auto trains if toggle is turned off
                 for _, req in ipairs(statRequirements) do
                     local statData = StatMap[req.Name]
                     if statData then
-                        ActiveTrains[statData[3]] = false
+                        local statId = tonumber(statData[3])
+                        ActiveTrains[statId] = false
                     end
                 end
             end
         end
     })
 end
+
 -------------------------------------------------
 -- AUTO FARMS TAB
 -------------------------------------------------
