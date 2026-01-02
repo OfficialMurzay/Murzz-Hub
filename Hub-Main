@@ -702,7 +702,7 @@ Player.CharacterAdded:Connect(function(char)
 end)
 
 -------------------------------------------------
--- CODES SECTIONS (DESCENDING ORDER)
+-- CODES SECTIONS (DESCENDING ORDER, NUMBER + NAME + EMOJI)
 -------------------------------------------------
 
 -- =======================
@@ -722,7 +722,7 @@ table.sort(YenCodes, function(a,b) return a.Reward > b.Reward end)
 
 for _, entry in ipairs(YenCodes) do
     MiscTab:CreateButton({
-        Name = entry.Reward.." "..YenEmoji,
+        Name = entry.Reward.." Yen "..YenEmoji, -- number + "Yen" + emoji
         Callback = function()
             setclipboard(entry.Code)
             Rayfield:Notify({
@@ -777,19 +777,18 @@ end
 MiscTab:CreateSection("Boosts ⚡")
 local BoostEmoji = "⏱️"
 local BoostCodes = {
-    {Code="100CCU", Reward=24*60},      -- 1 Day in minutes
-    {Code="100kVisits", Reward=24*60},
-    {Code="400CCU", Reward=24*60},
-    {Code="50Likes", Reward=60},        -- 1 Hour
+    {Code="100CCU", Reward=24*60, Name="1 Day Boost"},      -- 1 Day
+    {Code="100kVisits", Reward=24*60, Name="1 Day Boost"},
+    {Code="400CCU", Reward=24*60, Name="1 Day Boost"},
+    {Code="50Likes", Reward=60, Name="1 Hour Boost"},        -- 1 Hour
 }
 
 -- Sort descending
 table.sort(BoostCodes, function(a,b) return a.Reward > b.Reward end)
 
 for _, entry in ipairs(BoostCodes) do
-    local durationStr = entry.Reward >= 1440 and "1 Day Boost" or "1 Hour Boost"
     MiscTab:CreateButton({
-        Name = durationStr.." "..BoostEmoji,
+        Name = entry.Reward >= 1440 and "1 Day Boost "..BoostEmoji or "1 Hour Boost "..BoostEmoji,
         Callback = function()
             setclipboard(entry.Code)
             Rayfield:Notify({
@@ -801,4 +800,3 @@ for _, entry in ipairs(BoostCodes) do
         end
     })
 end
-
