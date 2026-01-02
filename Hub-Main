@@ -652,7 +652,7 @@ end
 -------------------------------------------------
 -- MISC TAB
 -------------------------------------------------
-local MiscTab = Window:CreateTab("Misc 🛠️") -- make sure this exists
+local MiscTab = Window:CreateTab("Misc 🛠️") -- ensure tab exists
 
 -- Quality Of Life Section
 MiscTab:CreateSection("Quality Of Life ✨")
@@ -666,6 +666,29 @@ MiscTab:CreateButton({
             Rayfield:Notify({
                 Title = "Quality Of Life",
                 Content = "Position saved successfully!",
+                Duration = 3,
+                Image = 4483362458
+            })
+        end
+    end
+})
+
+-- Teleport To Position Button
+MiscTab:CreateButton({
+    Name = "Teleport to Position 📍",
+    Callback = function()
+        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") and _G.SavedPosition then
+            Player.Character.HumanoidRootPart.CFrame = CFrame.new(_G.SavedPosition + Vector3.new(0,5,0))
+            Rayfield:Notify({
+                Title = "Quality Of Life",
+                Content = "Teleported to saved position!",
+                Duration = 3,
+                Image = 4483362458
+            })
+        else
+            Rayfield:Notify({
+                Title = "Quality Of Life",
+                Content = "No saved position found!",
                 Duration = 3,
                 Image = 4483362458
             })
