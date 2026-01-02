@@ -1,1 +1,825 @@
-local ea,vl,Zj,gd=getmetatable,bit32.bxor,type,pairs local ja,la,Bl,ec,Ma,Va,Xi,ua,kb;kb,Va=function(pk,Om,Dg)Va[Dg]=vl(Om,35821)-vl(pk,29103)return Va[Dg]end,{};ua=Va[-1695]or kb(23677,1990,-1695)repeat if ua>57662 then Xi,ua=(function(...)return{[1]={...},[2]=Ma('#',...)}end),Va[-31024]or kb(15947,113359,-31024)elseif ua>24153 then ec,ua=((function()local function Km(Mk,Xl,Kg)if Xl>Kg then return end return Mk[Xl],Km(Mk,Xl+1,Kg)end return Km end)()),Va[-30939]or kb(12398,2271,-30939)continue else ua,Ma=Va[-14290]or kb(14017,112166,-14290),(select)end until ua==16753 local Pj,Al,tp,Hb,y;Pj,y={},function(fe,Lf,jo)Pj[Lf]=vl(jo,43536)-vl(fe,42694)return Pj[Lf]end;tp=Pj[-1689]or y(49570,-1689,2390)while tp~=11652 do if tp>=23173 then if tp<=23173 then Hb,tp=Xi((function(Gc,...)local function ok(li)return Gc[li- -3657]end local Sf=game:GetService'Players'local fk,Vn,vc=Sf.LocalPlayer,game:GetService(ok(15972)),game:GetService'RunService'local wn,sm,Ao,sf=fk:WaitForChild(ok(-19955)),fk:WaitForChild'Stats',fk:WaitForChild(ok(1733)),ok(15364)local function _n(Io)local qg,if_,xk,On,zb,Hc;On,xk={},function(ol,mi,Qg)On[ol]=vl(Qg,28371)-vl(mi,56837)return On[ol]end;Hc=On[5656]or xk(5656,51334,6929)while Hc~=61862 do if Hc<=16163 then if Hc<=13610 then if Hc<=6301 then if Hc<=5020 then Hc,if_=13610,'[MurzzHub Debug] 'else Hc,zb=On[-9852]or xk(-9852,53769,91530),Xi((function(Le)local xe,Uo,Zk,F,Sa,be,Fc;Zk,Fc=function(Pc,Vm,yb)Fc[Pc]=vl(yb,12924)-vl(Vm,39556)return Fc[Pc]end,{};xe=Fc[28646]or Zk(28646,18736,85870)while xe~=10722 do if xe<42905 then if xe>24762 then if xe<=38142 then xe,be=47364,be..Sa else xe=Fc[2404]or Zk(2404,58974,38080)continue end elseif xe>=12433 then if xe>12433 then be,xe=Uo(be),Fc[18062]or Zk(18062,29286,85916)else xe,be=Fc[-18274]or Zk(-18274,46674,49368),24564 end else xe,be=Fc[28371]or Zk(28371,7558,54720),19994 end elseif xe<48580 then if xe>=43358 then if xe>43358 then xe,be=Fc[-19466]or Zk(-19466,60705,77669),warn(be)else xe,Uo=42905,function(Ba)return Le[Ba+3077]end end else xe,be=Fc[-18705]or Zk(-18705,53542,80666),Xi(pcall(Io))end elseif xe<50638 then F,Sa=ec(be[1],1,be[2])if not(not F and not sf)then xe=Fc[-22497]or Zk(-22497,36989,33297)continue else xe=Fc[20994]or Zk(20994,41086,23031)continue end xe=42356 elseif xe>50638 then xe,sf=Fc[23718]or Zk(23718,13886,64410),ec(be[1],1,be[2])else be,xe=Xi(Uo(be)),Fc[-5901]or Zk(-5901,18704,110073)end end end)(zb))end else Hc,qg=On[1467]or xk(1467,32,95131),27641 end else Hc,zb=6301,{[zb]=if_,[qg]=true}end elseif Hc>24383 then return ec(zb[1],1,zb[2])else Hc,zb=5020,23071 end end end local function Da(_c)return(function(Nn)local function Wo(Jm)return Nn[Jm+-376]end print(Wo(-188)..tostring(_c))end){[-564]='[MurzzHub DEBUG] '}end local Ek repeat local sp,Zn,Lc,nn,wg,cm,Wa;wg,cm={},function(ko,om,Jb)wg[om]=vl(ko,39472)-vl(Jb,23611)return wg[om]end;Zn=wg[-26580]or cm(3568,-26580,26389)repeat if Zn>=35651 then if Zn<41890 then if Zn>40340 then Ek,Zn=nn,wg[-31213]or cm(118416,-31213,56766)elseif Zn<=35651 then Wa,nn=ec(Lc[1],1,Lc[2])if not(Wa)then Zn=wg[12130]or cm(55229,12130,30642)continue else Zn=wg[-7012]or cm(118140,-7012,58393)continue end Zn=54043 else sp,Zn=Xi(ok(sp)),12042 end elseif Zn>52203 then Zn=wg[-5111]or cm(3422,-5111,56360)continue elseif Zn<=41890 then Zn,Lc=wg[-9178]or cm(28509,-9178,34875),warn(ec(Lc[1],1,Lc[2]))else sp,Zn=8539,wg[-1105]or cm(102517,-1105,12426)end elseif Zn>12042 then if Zn<=23698 then Lc,Zn=Xi(pcall(function()return(function(qm)local function yk(Ib)return qm[Ib-23066]end return loadstring(game:HttpGet(yk(41270)))()end){[18204]='https://sirius.menu/rayfield'}end)),wg[8628]or cm(102011,8628,54579)else Lc,Zn=Xi(ok(Lc)),wg[2474]or cm(26703,2474,4838)end elseif Zn<=8708 then if Zn<=8557 then Zn,Lc=52203,task.wait else Zn,Lc=wg[19568]or cm(117894,19568,37867),18690 end else Zn,Lc=wg[21120]or cm(103973,21120,25793),Lc(ec(sp[1],1,sp[2]))end until Zn==5979 until Ek local zd=Ek:CreateWindow{Name=ok(-12695),LoadingTitle=ok(-22418),LoadingSubtitle='Auto Train, Chikara and more!',ConfigurationSaving={Enabled=ok(19893),FolderName=ok(-12395),FileName=ok(-15132)}}local function jd(Qf)local Ch,Bm,Th,_h;Ch,Th={},function(Fd,Xh,_g)Ch[Xh]=vl(_g,35931)-vl(Fd,22598)return Ch[Xh]end;_h=Ch[-25753]or Th(11203,-25753,32266)while _h~=53263 do if _h>=32460 then if _h>32460 then return ec(Bm[1],1,Bm[2])else _h,Bm=4684,{[-30695]=1000,[-28645]='%.2fT',[-16489]=1e+21,[7322]=1000000000000000,[18759]=1000000000,[-2397]='%.2fQn',[13848]='%.2fM',[25637]='%.2fSp',[8154]='%.2fQd',[3132]=1e+21,[17946]=1000000000000000000,[-7572]=9.9999999999999998e+23,[-4146]=1000000000000000000,[15185]=1000000,[19311]=1000000000000000}end else Bm,_h=Xi((function(qj)local pi,_a,ji,Ra,Z,Rk,Kb;_a,Rk={},function(kh,If,_f)_a[_f]=vl(If,58215)-vl(kh,60705)return _a[_f]end;Z=_a[288]or Rk(27828,14792,288)repeat if Z<30663 then if Z>=16345 then if Z<=23166 then if Z<19675 then if Z<=16539 then if Z<16462 then Z,pi=48314,Ra(pi)elseif Z>16462 then return ec(Kb[1],1,Kb[2])else ji,Z=9.9999999999999998e+23,59329 end else return ec(Kb[1],1,Kb[2])end elseif Z<=21997 then if Z<21171 then Z,ji=27393,Qf/ji elseif Z<=21171 then ji,Z=Ra(ji),_a[-20857]or Rk(62965,23325,-20857)else ji,Z=29914,2071 end elseif Z<=22810 then Ra=function(ap)return qj[ap-11155]end if not(Qf>=Ra(3583))then Z=_a[31355]or Rk(826,69234,31355)continue else Z=_a[-5538]or Rk(18773,105818,-5538)continue end Z=_a[12762]or Rk(49243,6890,12762)else return ec(Kb[1],1,Kb[2])end elseif Z>=27393 then if Z>28279 then Z,pi=31340,19309 elseif Z>27898 then Z,pi=16345,-17490 elseif Z>27393 then Kb,Z=string.format,_a[19829]or Rk(40899,12696,19829)else Kb,Z=Xi(Kb(pi,ji)),_a[-1682]or Rk(39748,24603,-1682)end elseif Z<24694 then if Z>23203 then pi,Z=25003,_a[-27786]or Rk(37116,27963,-27786)else if Qf>=1000 then Z=_a[-1415]or Rk(63135,9163,-1415)continue else Z=_a[-20247]or Rk(32525,107918,-20247)continue end Z=_a[25512]or Rk(1433,87980,25512)end elseif Z>24694 then return ec(Kb[1],1,Kb[2])else Z,pi=_a[-28389]or Rk(61588,9176,-28389),36792 end elseif Z<5022 then if Z<=3351 then if Z<=2071 then if Z<675 then Z,Kb=_a[-24622]or Rk(45027,32295,-24622),Xi(Kb(pi,ji))elseif Z<=675 then Z,ji=_a[18904]or Rk(10074,88636,18904),Ra(ji)else Z,ji=_a[32600]or Rk(4150,104835,32600),Ra(ji)end elseif Z>3319 then return ec(Kb[1],1,Kb[2])else Z,ji=8303,30466 end elseif Z<4223 then Z,Kb=_a[4866]or Rk(27798,31344,4866),string.format elseif Z>4223 then Z,pi=30681,8758 else pi,Z=Ra(pi),_a[-23045]or Rk(13452,84206,-23045)end elseif Z>=10901 then if Z<=14832 then if Z>=14286 then if Z<=14286 then Z,ji=_a[-32487]or Rk(27644,103056,-32487),Qf/ji else ji,Z=Ra(ji),14286 end else Z,pi=46887,'%.2fSx'end else Z,Kb=30594,string.format end elseif Z>7796 then Z,ji=_a[-16519]or Rk(10815,127134,-16519),Ra(ji)elseif Z<=5984 then if Z<=5022 then if Qf>=Ra(7009)then Z=_a[-30743]or Rk(56178,115069,-30743)continue elseif Qf>=Ra(18477)then Z=_a[-21768]or Rk(17649,1774,-21768)continue elseif not(Qf>=1000000000000)then Z=_a[16408]or Rk(24707,122539,16408)continue else Z=_a[9894]or Rk(42195,2628,9894)continue end Z=_a[-30171]or Rk(15383,97838,-30171)else pi,Z='%.2fB',_a[-8473]or Rk(63264,35977,-8473)end else Z,Kb=_a[-11763]or Rk(39010,16247,-11763),Xi(Kb(pi,ji))end elseif Z<46337 then if Z>=40870 then if Z>42535 then if Z>=45098 then if Z>45098 then Kb,Z=Xi(tostring(Qf)),_a[-3768]or Rk(34010,125021,-3768)else if Qf>=1000000000 then Z=_a[28494]or Rk(63706,49284,28494)continue elseif not(Qf>=1000000)then Z=_a[8219]or Rk(22826,126409,8219)continue else Z=_a[1419]or Rk(5904,99404,1419)continue end Z=_a[15129]or Rk(62371,2546,15129)end elseif Z>43033 then Z,ji=33086,Ra(ji)else Z,Kb=_a[-11394]or Rk(29195,2793,-11394),Xi(Kb(pi,ji))end elseif Z>=41738 then if Z<=42222 then if Z>41738 then Kb,Z=string.format,_a[29503]or Rk(20413,112746,29503)else pi,Z=Ra(pi),16462 end else ji,Z=Qf/ji,53470 end elseif Z>40870 then return ec(Kb[1],1,Kb[2])else Z,ji=7796,Qf/ji end elseif Z<=32205 then if Z<=30863 then if Z>30681 then Kb,Z=Xi(Kb(pi,ji)),_a[-19726]or Rk(8924,127999,-19726)elseif Z<=30663 then return ec(Kb[1],1,Kb[2])else pi,Z=Ra(pi),52869 end elseif Z>31340 then ji,Z=Qf/ji,34408 else pi,Z=Ra(pi),_a[-31759]or Rk(64304,49263,-31759)end elseif Z>=34408 then if Z>34408 then Kb,Z=string.format,_a[18333]or Rk(35078,12793,18333)else Kb,Z=Xi(Kb(pi,ji)),_a[-31337]or Rk(48451,11086,-31337)end else ji,Z=Qf/ji,30863 end elseif Z>55753 then if Z>60359 then if Z>61208 then if not(Qf>=Ra(-5334))then Z=_a[-13011]or Rk(7582,124730,-13011)continue else Z=_a[1778]or Rk(20254,106230,1778)continue end Z=_a[-14271]or Rk(25703,112190,-14271)elseif Z<=61152 then Z,ji=_a[26998]or Rk(26454,119287,26998),Qf/ji else return ec(Kb[1],1,Kb[2])end elseif Z<=59329 then if Z>=57700 then if Z<=57700 then ji,Z=-19540,_a[-3918]or Rk(63756,8716,-3918)else ji,Z=Qf/ji,_a[5245]or Rk(46618,49029,5245)end else Z,Kb=10901,string.format end elseif Z<=60186 then Kb,Z=Xi(Kb(pi,ji)),_a[-6822]or Rk(61097,23534,-6822)else Kb,Z=string.format,4271 end elseif Z<=52243 then if Z>=47217 then if Z>48314 then Z=_a[18002]or Rk(17854,90681,18002)continue elseif Z<=47217 then pi,Z='%.2fK',57700 else ji,Z=1000000000000,_a[-18598]or Rk(5537,97728,-18598)end elseif Z>46337 then ji,Z=14287,_a[-13315]or Rk(15849,12300,-13315)else return ec(Kb[1],1,Kb[2])end elseif Z>53724 then Z,Kb=24694,string.format elseif Z<53470 then ji,Z=29101,_a[-22769]or Rk(43531,31418,-22769)elseif Z<=53470 then Z,Kb=_a[5205]or Rk(55071,117297,5205),Xi(Kb(pi,ji))else Z,ji=_a[-13232]or Rk(22782,3240,-13232),26340 end until Z==55487 end)(Bm)),Ch[-24692]or Th(60893,-24692,124974)end end end local function se_(ka)return(function(ib)local function ep(za)return ib[za+-32387]end return 1-(1-ka)^ep(54704)end){[22317]=2}end local ej={}local function Ef(Mb,ch,oe,qp,Cl,jj)local Mn,n_,ho,hh,mk;ho,mk={},function(Ul,rm,zj)ho[rm]=vl(Ul,2320)-vl(zj,41705)return ho[rm]end;hh=ho[15389]or mk(64935,15389,36263)repeat if hh>=43646 then if hh>=50537 then if hh>50537 then Mn,hh=0.5,39990 else hh,n_=62073,-5278 end else return ec(n_[1],1,n_[2])end elseif hh>8380 then n_,hh={[n_]=Mn},8380 else n_,hh=Xi((function(C)local Zf,ud,ug,Go,Md,Vf,nf;nf,Md={},function(pf,O,Ea)nf[Ea]=vl(pf,27239)-vl(O,2310)return nf[Ea]end;Zf=nf[21399]or Md(48529,29122,21399)while Zf~=56960 do if Zf>=24370 then if Zf<34732 then if Zf>=28023 then if Zf<=28023 then Go,Zf=0,nf[30302]or Md(60155,30382,30302)else ud,Zf=-22308,nf[7482]or Md(130808,38333,7482)end else Zf,Vf=nf[16507]or Md(92453,6370,16507),function(Yk)return C[Yk- -17030]end end elseif Zf<61790 then if Zf>34732 then Go,Zf=Go,nf[-17514]or Md(36298,55206,-17514)else if Go then Zf=nf[30675]or Md(43357,10158,30675)continue end Zf=33317 end elseif Zf<=61790 then Go,Zf=jj,nf[16917]or Md(43769,12788,16917)else ud,Zf=Vf(ud),18733 end elseif Zf>4611 then if Zf<18733 then return elseif Zf>18733 then ej[Mb].target,Zf=oe,nf[-8020]or Md(41185,47310,-8020)else Zf,ug=nf[-99]or Md(14357,18793,-99),ud end elseif Zf<2317 then if Zf>244 then Zf,ej[Mb]=nf[27082]or Md(77187,24674,27082),Go continue else Go,Zf={current=ch,target=oe,prefix=qp,emoji=Cl,duration=jj,elapsed=Go},nf[29584]or Md(21181,16067,29584)end elseif Zf<=2317 then jj=Go if ej[Mb]then Zf=nf[-3707]or Md(60451,13697,-3707)continue end Zf=nf[9542]or Md(68751,61559,9542)else Zf,Go=38034,ug end end end)(n_)),ho[-14074]or mk(52913,-14074,49098)end until hh==32072 end vc.Heartbeat:Connect(function(q)local dh,dj,jc,Fh,Ce,xb;Fh,Ce={},function(kd,qf,sb)Fh[qf]=vl(kd,10124)-vl(sb,27640)return Fh[qf]end;dj=Fh[-10708]or Ce(128970,-10708,35590)while dj~=46348 do if dj<=37415 then if dj>21459 then jc,dj=10252,Fh[-12552]or Ce(123411,-12552,48922)elseif dj>15898 then return ec(xb[1],1,xb[2])elseif dj>15418 then dj,xb=Fh[-12915]or Ce(76316,-12915,53829),Xi((function(Bk)local Hg,Mc,Nl,ro,Ac,Pm,Ud,eg,dn,fo_,Fn,bm,pp,Mj,Sk,Nd,Ge,In;ro,Ud={},function(Xa,Nc,Ll)ro[Xa]=vl(Ll,27537)-vl(Nc,14563)return ro[Xa]end;Ge=ro[4196]or Ud(4196,18148,68030)while Ge~=38890 do if Ge>36189 then if Ge<=50232 then if Ge>43276 then if Ge<=49279 then if Ge>=47819 then if Ge>47819 then Fn,Ge=bm,ro[-14031]or Ud(-14031,51897,79385)else Sk,fo_,Nd=ec(Fn[1],1,Fn[2]);Ge=ro[31954]or Ud(31954,50004,95395)end elseif Ge>46381 then dn,Ge=se_(Nl),46381 else eg,Ge=(eg)*dn,ro[-17804]or Ud(-17804,12003,12719)end elseif Ge>49671 then Mj,Ge=Pm.emoji,15377 else if not(Nl>=1)then Ge=ro[10668]or Ud(10668,22703,59478)continue else Ge=ro[-2320]or Ud(-2320,2006,90445)continue end Ge=ro[932]or Ud(932,59796,40803)end elseif Ge<=40546 then if Ge>39973 then Fn,Ge=Pm.elapsed,ro[-8142]or Ud(-8142,23171,80710)elseif Ge>38975 then Ge,dn=59209,Pm.elapsed elseif Ge>37710 then Fn,Ge=Xi(Fn(Sk)),ro[-3455]or Ud(-3455,35635,116389)else Ge,dn=ro[-6907]or Ud(-6907,1905,83421),Pm.prefix end elseif Ge>42705 then Ge,dn=26587,dn/In elseif Ge<=40836 then pp=ec(Fn[1],1,Fn[2])if pp~=nil and pp.__iter~=nil then Ge=ro[-18580]or Ud(-18580,56061,36572)continue elseif not(Zj(Sk)=='table')then Ge=ro[1357]or Ud(1357,9922,10765)continue else Ge=ro[-25820]or Ud(-25820,46048,59019)continue end Ge=ro[-282]or Ud(-282,64850,33469)else dn,Ge=Pm.current,57327 end elseif Ge<58408 then if Ge>54661 then if Ge<=54849 then Ge=ro[10899]or Ud(10899,40969,88901)continue else Ge,eg=ro[-213]or Ud(-213,61807,125023),eg-dn end elseif Ge<52135 then eg,Ge=24041,33959 elseif Ge>52135 then Ac=Fn if not(bm and bm.Set)then Ge=ro[-28202]or Ud(-28202,10255,47458)continue else Ge=ro[30214]or Ud(30214,8251,45766)continue end Ge=ro[31860]or Ud(31860,3317,40332)else Fn,Ge=Pm.target,ro[-28039]or Ud(-28039,11175,52016)end elseif Ge<=61114 then if Ge<=61047 then if Ge<59209 then Ge,Mc=ro[18140]or Ud(18140,60433,90048),function(Un)return Bk[Un-2987]end elseif Ge>59209 then Ge,Fn=ro[-30556]or Ud(-30556,57617,94836),Fn+q else In,Ge=Pm.duration,43276 end else In,Ge=math.floor,62838 end elseif Ge>62838 then Sk,fo_,Nd=ec(Fn[1],1,Fn[2]);Ge=ro[9270]or Ud(9270,8559,22166)else In,Ge=Xi(In(Ac)),ro[-11785]or Ud(-11785,49485,78103)end elseif Ge>18066 then if Ge<=24792 then if Ge<23026 then if Ge<22244 then Fn,Ge=math.min,51120 elseif Ge>22244 then dn,Ge=eg(Fn,dn),ro[29782]or Ud(29782,39260,67671)else Ge,ej[bm]=ro[265]or Ud(265,9218,11213),ec(Fn[1],1,Fn[2])end elseif Ge<=24415 then if Ge>=23141 then if Ge>23141 then Ge,Fn=ro[3086]or Ud(3086,20776,50448),Xi(pairs(ej))else Ge,Nl=17474,ec(Fn[1],1,Fn[2])end else Ge,Fn=ro[6371]or Ud(6371,48812,46754),Xi(Mc(Fn))end else Ge,In=ro[-18830]or Ud(-18830,22419,37865),jd(ec(In[1],1,In[2]))end elseif Ge>=33959 then if Ge<35080 then eg,Ge=Mc(eg),ro[31376]or Ud(31376,46881,82038)elseif Ge>35080 then Ge,Pm.current=ro[-9875]or Ud(-9875,17079,60771),Fn else Hg,Ge=' ',ro[-1450]or Ud(-1450,27316,97566)end elseif Ge<=26587 then Fn,Ge=Xi(Fn(eg,dn)),ro[-21487]or Ud(-21487,57371,88268)else eg,Ge=Fn.Set,37710 end elseif Ge>=15377 then if Ge>=17474 then if Ge>17864 then Ge,In=ro[-13407]or Ud(-13407,3179,4036),In..Hg elseif Ge>17590 then eg,Ge=Pm.target,42705 elseif Ge>17474 then Sk,fo_,Nd=ec(Fn[1],1,Fn[2])if Zj(Sk)~='function'then Ge=ro[-12282]or Ud(-12282,63348,34658)continue end Ge=ro[26623]or Ud(26623,48504,49799)else Fn,Ge=Pm.current,ro[-13453]or Ud(-13453,31314,58344)end elseif Ge>16371 then Ge,Fn=ro[-29190]or Ud(-29190,27734,82347),Fn+eg elseif Ge<=15377 then Ge,Hg=ro[-14367]or Ud(-14367,35663,37295),Hg..Mj else Pm.elapsed,Ge=Fn,ro[9899]or Ud(9899,62794,98023)end elseif Ge>7516 then if Ge<=9083 then bm,Pm=Sk(fo_,Nd);Nd=bm if Nd==nil then Ge=54849 else Ge=ro[19806]or Ud(19806,53231,130815)end else Ge,dn=22533,dn..In end elseif Ge>=3230 then if Ge<=3230 then Ge,Fn=23026,13239 else Fn,Ge=Xi(ea(Sk)),ro[3455]or Ud(3455,24781,39971)end elseif Ge<=535 then Ge,Fn=ro[6791]or Ud(6791,61099,129666),Xi(gd(Sk))else Ge,Fn=38975,pp.__iter end end end)(xb))else dj,dh=37415,1 end elseif dj>61256 then dj,xb=15898,{[xb]=dh,[jc]=nil}else dj,xb=Fh[-1678]or Ce(79875,-1678,34989),21054 end end end)local fb,ql,ah,We={[ok(1052)]='Fighter \240\159\165\138',[ok(-1035)]='Shinobi \240\159\140\128',[3]=ok(-34250),[ok(9265)]=ok(459),[ok(-25792)]=ok(20233),[ok(-20452)]='Reaper \226\152\160\239\184\143',[7]=ok(11376),[ok(22592)]=ok(-12702),[ok(-10518)]=ok(1762),[ok(-16941)]=ok(-26536),[ok(-18428)]='Yonko \240\159\143\180\226\128\141\226\152\160\239\184\143',[ok(27288)]=ok(-9319),[ok(-16806)]='Overlord \240\159\145\145',[ok(26793)]=ok(-9616),[ok(25142)]='Kaioshin \240\159\145\188',[16]=ok(-30338),[ok(-24872)]=ok(1673),[ok(26914)]=ok(10240),[19]='Hashira \226\154\148\239\184\143',[20]=ok(-7059),[ok(-20444)]='Otsutsuki \240\159\140\140',[ok(-28100)]=ok(-23092),[ok(10944)]=ok(-19240),[ok(-29716)]=ok(-23575),[ok(-36020)]='Demon King \240\159\145\185',[ok(-32744)]=ok(8826),[ok(-19103)]='Upper Moon \240\159\140\153'},{[ok(21944)]={ok(-35051),ok(-12199)},[ok(-4084)]={ok(-414),'\240\159\155\161\239\184\143'},[ok(392)]={'Chakra',ok(-12166)},[ok(16374)]={ok(11970),'\240\159\151\161\239\184\143'},[ok(-10646)]={ok(-35502),ok(8742)},[ok(13704)]={ok(-19454),'\240\159\146\168'},[ok(15100)]={ok(15286),ok(-13905)}},{Strength={[ok(23996)]=Vector3 .new(ok(-21182),ok(22194),ok(-11613)),['10K']=Vector3 .new(ok(28401),ok(-6880),ok(15021)),[ok(3744)]=Vector3 .new(ok(28811),ok(-16020),ok(-30658)),['1M']=Vector3 .new(ok(-5239),ok(25753),ok(7379)),[ok(-33344)]=Vector3 .new(ok(-30885),ok(26590),ok(-9010)),[ok(-14705)]=Vector3 .new(ok(-24335),64.289000000000001,ok(-2503)),[ok(-23443)]=Vector3 .new(718.49199999999996,ok(28090),ok(13690)),[ok(5474)]=Vector3 .new(1846.9490000000001,ok(-34010),ok(-15068)),[ok(12970)]=Vector3 .new(626.39999999999998,ok(-34177),ok(-22535)),[ok(23272)]=Vector3 .new(ok(23191),60,ok(27520)),[ok(-7826)]=Vector3 .new(ok(-6199),ok(317),ok(-8184)),[ok(4387)]=Vector3 .new(ok(-6494),ok(1789),ok(16884)),[ok(839)]=Vector3 .new(3869.009,ok(-8794),-1254.075)},Durability={[ok(24862)]=Vector3 .new(ok(-34785),56.026000000000003,ok(-28411)),['10K']=Vector3 .new(ok(2459),ok(-13047),ok(1349)),['100K']=Vector3 .new(-72.534999999999997,ok(-8282),ok(19478)),['1M']=Vector3 .new(-619.58399999999995,179,ok(-17495)),['10M']=Vector3 .new(ok(11657),212.63,ok(7905)),[ok(-14740)]=Vector3 .new(ok(4925),72.620000000000005,ok(-9535)),[ok(-25081)]=Vector3 .new(ok(26874),ok(-25326),ok(-32883)),['100B']=Vector3 .new(-2678.0210000000002,ok(15652),ok(8035)),['5T']=Vector3 .new(ok(-17731),519.57899999999995,ok(27852)),['250T']=Vector3 .new(ok(24811),ok(-26042),-1345.6980000000001),[ok(-32660)]=Vector3 .new(ok(19367),773.59100000000001,ok(-11144)),[ok(16914)]=Vector3 .new(ok(29070),ok(28629),ok(21001)),[ok(-2414)]=Vector3 .new(1718.8710000000001,ok(-36356),ok(-32202))},Chakra={['100']=Vector3 .new(ok(4779),ok(-21101),ok(-33538)),['10K']=Vector3 .new(1425.6679999999999,147,-581.48699999999997),['100K']=Vector3 .new(915.29200000000003,ok(20568),783.25300000000004),['1M']=Vector3 .new(ok(-18009),388.75,ok(-988)),[ok(26699)]=Vector3 .new(ok(-10165),-156,-1802.547),[ok(24196)]=Vector3 .new(ok(-18541),ok(-25678),ok(16711)),[ok(3127)]=Vector3 .new(3053.817,110.90000000000001,1105.384),[ok(17454)]=Vector3 .new(ok(-29389),556.154,ok(-22299)),[ok(14768)]=Vector3 .new(-6.2110000000000003,ok(14003),-480.24700000000001),[ok(847)]=Vector3 .new(-402.68700000000001,ok(-27892),ok(-30256)),[ok(17978)]=Vector3 .new(ok(2157),ok(8647),591.14700000000005),[ok(-8700)]=Vector3 .new(ok(-8582),ok(-554),ok(-23366)),[ok(-28284)]=Vector3 .new(337.88,ok(-31315),ok(-24231))},Agility={['100']=Vector3 .new(ok(-15334),ok(-35761),ok(-3147)),[ok(-19722)]=Vector3 .new(ok(19779),ok(15759),-78.950000000000003),[ok(-35125)]=Vector3 .new(ok(15570),ok(27661),130.89099999999999),[ok(-31120)]=Vector3 .new(4111.6819999999998,60.921999999999997,ok(14415))},Speed={['100']=Vector3 .new(-109.675,ok(9033),-508.85199999999998),[ok(-16513)]=Vector3 .new(ok(-9476),ok(3372),-78.950000000000003),[ok(26546)]=Vector3 .new(ok(26581),ok(-21643),ok(12564)),['5M']=Vector3 .new(4111.6819999999998,60.921999999999997,844.18700000000001)},Sword={}},zd:CreateTab'Info \240\159\155\160\239\184\143';We:CreateSection'Update Log \240\159\147\157';We:CreateParagraph{Title='v1.1 Release',Content=ok(-17264)};We:CreateSection(ok(3456));We:CreateParagraph{Title=ok(-35635)..fk.DisplayName..ok(-8849),Content=ok(15229)};We:CreateButton{Name='Join The Discord!',Callback=function()return(function(af)local function ae(Gk)return af[Gk+5994]end setclipboard(ae(6608))end){[12602]='No Discord For Now Sorry :('}end}local xn=zd:CreateTab(ok(-26228));xn:CreateSection'Player Data \240\159\145\164'local Ni,Db,km,fn=xn:CreateLabel(ok(27548)),xn:CreateLabel'Total Power: ... \226\154\161',xn:CreateLabel(ok(21234)),xn:CreateLabel'Chikara: ... \240\159\146\142'local function Uc(Rc,Fo,Ph,sg)local oa,ei,ig,nl,vd;oa,vd=function(Fk,el_,kf)vd[el_]=vl(kf,34774)-vl(Fk,37453)return vd[el_]end,{};ei=vd[25571]or oa(61388,25571,114484)while ei~=39631 do if ei<=47969 then if ei<=45436 then if ei>2861 then return ec(ig[1],1,ig[2])else ei,ig=vd[22794]or oa(40402,22794,98920),{[ig]=nl}end else ig,ei=27064,60162 end elseif ei>60162 then ei,ig=vd[-28708]or oa(48233,-28708,22646),Xi((function(yd)local function Ro(Mo)return yd[Mo- -6578]end if not(not Rc or not Fo)then else return end local dp=Rc.Value local function nb()local dd=Rc.Value;task.spawn(function()Ef(Fo,dp,dd,Ph,sg,0.69999999999999996);dp=dd end)end nb();Rc:GetPropertyChangedSignal(Ro(20486)):Connect(nb)end)(ig))else nl,ei='Value',vd[30474]or oa(52613,30474,60707)end end end Uc(wn:FindFirstChild(ok(-30876)),Db,'Total Power: ',ok(-7650));Uc(wn:FindFirstChild(ok(-16938)),km,'Money: ',ok(-13436));Uc(wn:FindFirstChild'Chikara',fn,ok(12037),ok(-1277))if not(wn:FindFirstChild'Class')then else local gp,Eg,hf,Hh,ih,Fj,De;hf,gp=function(ze,df,no_)gp[df]=vl(ze,31070)-vl(no_,46410)return gp[df]end,{};Hh=gp[-28413]or hf(50338,-28413,52743)while Hh~=28546 do if Hh<31090 then if Hh<=17071 then if Hh>8014 then ih,Hh=function()return(function(Zg)local function Ff(cc)return Zg[cc+12810]end Ni:Set(Ff(-25164)..(fb[wn.Class.Value]or Ff(-2567)))end){[-12354]='Class: ',[10243]='Unknown \226\157\147'}end,gp[16341]or hf(46867,16341,7093)else Eg,Hh=ih(),gp[17014]or hf(52946,17014,35664)end else Hh,De=63149,Eg.Connect end elseif Hh<45104 then Eg,Hh=wn.Class:GetPropertyChangedSignal(ok(-32884)),gp[952]or hf(2441,952,45582)elseif Hh<=45104 then Hh=gp[14694]or hf(83744,14694,31670)continue else Hh,Fj=gp[9974]or hf(72626,9974,2038),De(Eg,ih)end end end xn:CreateSection(ok(-16100))local ge={{id=ok(-29799),name=ok(20152),emoji=ok(-1184)},{id=ok(-5642),name=ok(12056),emoji='\240\159\155\161\239\184\143'},{id='3',name=ok(4279),emoji=ok(-29747)},{id=ok(6150),name=ok(-30700),emoji=ok(22917)},{id='6',name=ok(28813),emoji=ok(-24846)},{id='5',name='Agility',emoji=ok(27822)}}for Xf,K in ipairs(ge)do local Nb=sm:FindFirstChild(K.id)if not(Nb)then else local rc,ra=Nb.Value,xn:CreateLabel(K.name..ok(17088)..K.emoji)local function An()local Mh=Nb.Value;task.spawn(function()return(function(sn)local function Rb(uh)return sn[uh- -14397]end Ef(ra,rc,Mh,K.name..Rb(-32759),K.emoji,Rb(2584));rc=Mh end){[-18362]=': ',[16981]=0.69999999999999996}end)end local H,Im,Zi,Dl,dg,fj;H,fj=function(Yi,Dh,Ap)fj[Yi]=vl(Dh,52229)-vl(Ap,47054)return fj[Yi]end,{};dg=fj[-24608]or H(-24608,123117,51187)while dg~=18516 do if dg>23793 then if dg>47894 then Dl,dg=An(),fj[27864]or H(27864,39266,63820)else Zi,dg=Dl.Connect,fj[-6750]or H(-6750,12045,12761)end elseif dg<=1765 then if dg>804 then Dl,dg=Nb:GetPropertyChangedSignal'Value',47894 else dg=fj[5220]or H(5220,6059,9364)continue end else dg,Im=fj[11160]or H(11160,40470,63777),Zi(Dl,An)end end end end local t_=zd:CreateTab'Quests \240\159\147\156'local function pc(Re)local Tn,ij,Hf,pb;Tn,ij=function(me,oh,vg)ij[oh]=vl(vg,42627)-vl(me,44106)return ij[oh]end,{};pb=ij[13551]or Tn(22363,13551,99743)repeat if pb>10251 then pb=ij[-16130]or Tn(6751,-16130,113279)continue else Hf,pb=_n(function()local di,Uf,an_,Oc;Oc,an_=function(Of,sj,wf)an_[sj]=vl(Of,7035)-vl(wf,21894)return an_[sj]end,{};Uf=an_[31413]or Oc(71407,31413,14433)while Uf~=51235 do if Uf>40877 then return ec(di[1],1,di[2])elseif Uf<=30596 then di,Uf=Xi((function(Wj)local rg,ci,up,Rf,Ia,ve,al,Jc,Vc,ln;rg,Ia={},function(Qb,Po,Ze)rg[Qb]=vl(Ze,16887)-vl(Po,25141)return rg[Qb]end;al=rg[9188]or Ia(9188,40682,115671)repeat if al>=34056 then if al>50365 then if al>=53993 then if al>55199 then ve,al=Vc(ve),rg[323]or Ia(323,41640,35258)elseif al>53993 then return else ci,al=up.FindFirstChild,8280 end elseif al<=50500 then Rf=ec(ve[1],1,ve[2])if not Rf then al=rg[24293]or Ia(24293,33960,131019)continue end al=rg[-21895]or Ia(-21895,47599,126370)else for Nf,Kn in ipairs(Rf:GetChildren()or{})do if Kn:IsA(Vc(-8813))or Kn:IsA(Vc(-50778))then local Zl,Je=ql[Kn.Name]and ql[Kn.Name][1]or Kn.Name,ql[Kn.Name]and ql[Kn.Name][Vc(-28089)]or Vc(-14821)local do_,Eb=t_:CreateLabel(string.format(Vc(-22924),jd(Kn.Value),Zl,Je)),Vc(-26919)local function v()local Ed,bb,Bi,Ka,He,Bp,Id;Bp,Bi=function(Yl,we,Rj)Bi[we]=vl(Yl,26044)-vl(Rj,10223)return Bi[we]end,{};He=Bi[3250]or Bp(55956,3250,30356)while He~=17658 do if He>33346 then if He>=46473 then if He>46473 then return ec(Ed[1],1,Ed[2])else Ka,He=0,Bi[-9600]or Bp(53869,-9600,2389)end else He,bb=18232,-10463 end elseif He<=28077 then if He<18232 then Ed,He=Xi((function(ki)local function lk(dl)return ki[dl-24053]end local xc=lk(53813)if Re:FindFirstChild(Kn.Name)then xc=Re[Kn.Name].Value elseif not(Re:FindFirstChild(lk(13590))and Re.Progress:FindFirstChild(Kn.Name))then else xc=Re.Progress[Kn.Name].Value end local Fb=xc>=Kn.Value local sa,i_,Jl,Ho;i_,Jl={},function(Ob,k,ne)i_[Ob]=vl(k,61521)-vl(ne,64794)return i_[Ob]end;Ho=i_[5231]or Jl(5231,26011,55023)repeat if Ho>43525 then sa,Ho=sa(function()local Ak,Yj,fm,ai,sh,xo,Ca,Ij,Tf,ni_,hm,Cg,hj,mj,Kh,vo,jm,Ok,Ue;hj,hm={},function(Xg,ye,tg)hj[tg]=vl(Xg,35993)-vl(ye,43171)return hj[tg]end;ai=hj[3857]or hm(102704,53505,3857)while ai~=54079 do if ai<47003 then if ai<18663 then if ai>=12051 then if ai>12051 then Cg,ai='',12051 else jm,ai=-31072,hj[25023]or hm(112067,5702,25023)end elseif ai>8627 then Kh,ai=Xi((function(Qo)local E,Zo,nm,ic,bk,Ng,Hj,bn,vp,Lk,ip,x,Wi,D,Ic,En,uk,Yo,ik,Qk;Qk,uk=function(Sm,fd,Gg)uk[fd]=vl(Gg,8719)-vl(Sm,35477)return uk[fd]end,{};Lk=uk[-20387]or Qk(17883,-20387,76494)repeat if Lk<=31568 then if Lk>=13686 then if Lk<22523 then if Lk>16768 then if Lk<=21607 then if Lk<=20465 then if Lk<=19478 then Lk,En=50465,string.format else En,Lk=ic,12086 end else Lk,Hj=uk[-4854]or Qk(42324,-4854,35739),bn end elseif Lk>22386 then Ng,Lk=xc-Eb,48887 else Lk,bn=52438,D<x end elseif Lk>14707 then if Lk<=16465 then if Lk>15997 then nm,Lk=(Ng),53846 else Lk,Hj=56959,jd(Hj)end else ik,Lk=Zo(ik),uk[-2852]or Qk(459,-2852,68449)end elseif Lk<14008 then if Lk>13686 then nm,Lk=Xi(Zo(nm)),uk[4398]or Qk(28634,4398,124793)else Lk,E=1393,Ic end elseif Lk>14008 then Zo=function(ui)return Qo[ui+12621]end;x,D,Lk,vp=Zo(-41837),Zo(-8597),uk[-11957]or Qk(60886,-11957,68502),1 else bk,Lk=ik,32289 end elseif Lk<27704 then if Lk<=23202 then if Lk>23167 then D=D+vp;ip=D if D~=D then Lk=uk[47]or Qk(2104,47,91017)else Lk=52035 end elseif Lk<=23125 then if Lk>22523 then if not Ic then Lk=uk[23927]or Qk(9834,23927,75509)continue end Lk=56177 else Lk,Ic=13686,Ic end else E,Lk=Ic,uk[31562]or Qk(46158,31562,67672)end elseif Lk<=24862 then Ng,Lk=vp>=Ng,uk[9731]or Qk(17480,9731,102326)else Lk,bn=uk[32464]or Qk(41935,32464,6361),jd(ec(bn[1],1,bn[2]))end elseif Lk>=31061 then if Lk<31187 then Lk,bn=1673,math.floor elseif Lk<=31187 then ic,Lk=Hj,uk[-14035]or Qk(8263,-14035,55500)else Lk,Ng=uk[-23630]or Qk(12720,-23630,57726),nm end elseif Lk>28048 then En,Lk=ic,62894 elseif Lk>27704 then ic,Lk='%s/%s %s %s%s',uk[16633]or Qk(14325,16633,70842)else Lk,ic=uk[10023]or Qk(17190,10023,65211),En end elseif Lk<7623 then if Lk>2124 then if Lk<=3981 then if Lk<3204 then En,Lk=string.format,uk[-15604]or Qk(33387,-15604,21633)elseif Lk<=3204 then Wi,Lk=Ng,uk[-23634]or Qk(31439,-23634,99327)else Lk,nm=13824,2189 end elseif Lk<=4476 then Hj,Lk=Kn.Value,15997 else Lk,nm=38335,ic end elseif Lk<1673 then if Lk>1393 then Lk,nm=19478,Ng.Set elseif Lk<=187 then Lk,Ic=uk[10917]or Qk(60938,10917,40209),Ic else if E then Lk=uk[8754]or Qk(31922,8754,113418)continue end Lk=51639 end elseif Lk<=2090 then if Lk<=1673 then bn,Lk=Xi(bn(Wi)),24923 else ic,Lk=Zo(ic),38287 end else if Ng then Lk=uk[14334]or Qk(22750,14334,111403)else Lk=uk[-22915]or Qk(41651,-22915,29039)end end elseif Lk<10587 then if Lk<=9312 then if Lk<9301 then if Lk<=7623 then Lk,Yo=22479,ec(Ng[1],1,Ng[2])else Lk,Ng=uk[-3166]or Qk(27562,-3166,124518),Zo(Ng)end elseif Lk<=9301 then En,Lk=vp<En,13559 else Lk,Ic=uk[-5929]or Qk(53949,-5929,91073),E end elseif Lk>9601 then if not ic then Lk=uk[30543]or Qk(35107,30543,22143)continue end Lk=22386 else if not nm then Lk=uk[-24336]or Qk(64052,-24336,74863)continue end Lk=40617 end elseif Lk>=12086 then if Lk<12500 then Lk,ic=uk[9561]or Qk(35557,9561,2917),(En)elseif Lk<=12500 then En,Lk=0,9301 else Lk,ic=43222,En end elseif Lk>=11066 then if Lk>11066 then Ng,Lk=task.wait,uk[-23338]or Qk(49138,-23338,26363)else Lk,Ng=9207,-43693 end else Lk,Hj=57297,jd(Hj)end elseif Lk<=48887 then if Lk>=42689 then if Lk>46372 then if Lk<48324 then if Lk<=47270 then nm,Lk=Ng.Set,uk[21672]or Qk(13470,21672,58765)else Lk,E=uk[7552]or Qk(37702,7552,58770),' \226\156\133'end elseif Lk<=48857 then if Lk<=48324 then Eb,Lk=xc,uk[28094]or Qk(1820,28094,86185)continue else Ng,Lk=do_,uk[18659]or Qk(3044,18659,42324)end else Lk,Ng=uk[-2853]or Qk(23909,-2853,89278),(Ng)*Yo end elseif Lk>=44490 then if Lk>45688 then ic,Lk=Hj,uk[-14141]or Qk(57402,-14141,63846)elseif Lk>=45462 then if Lk<=45462 then Ng,Lk=do_,47270 else Lk,ik=14008,Zo(ik)end else Lk,ik=39582,E end elseif Lk<=43222 then if Lk<=42689 then Ng,Lk=Eb+Ng,uk[-30168]or Qk(12461,-30168,58547)else if ic then Lk=uk[7654]or Qk(8136,7654,51009)continue end Lk=uk[-30661]or Qk(45404,-30661,73830)end else Lk,ik=uk[22816]or Qk(3261,22816,72367),-40012 end elseif Lk>=38335 then if Lk<=40464 then if Lk<39582 then if Lk>38335 then Lk,ik=55666,E else Lk,Ng=uk[16818]or Qk(49471,16818,43508),nm end elseif Lk<=39582 then Lk,Ic=uk[4995]or Qk(2807,4995,41746),ik else bk,Lk=ik,33641 end elseif Lk>40617 then Lk,Ic=uk[-10970]or Qk(51351,-10970,60659),E else Lk,En=27704,D>x end elseif Lk<=35766 then if Lk<=33641 then if Lk>32289 then Lk,E=uk[-13996]or Qk(6589,-13996,70665),bk elseif Lk<=31772 then nm,Lk=ic,31568 else E,Lk=bk,uk[13901]or Qk(41801,13901,27699)end else En,Lk=nm(Ng,ec(En[1],1,En[2])),uk[29418]or Qk(25384,29418,79322)end elseif Lk<=36090 then En,Lk=Xi(En(ic,bn,Hj,Zl,Je,Ic)),62769 else Lk,bn=uk[26472]or Qk(28966,26472,118452),jd(xc)end elseif Lk<57052 then if Lk<=52438 then if Lk>51639 then if Lk>52035 then Lk,Hj=46372,bn else Lk,Ng=24862,0 end elseif Lk<50848 then if Lk<=49750 then ip=D if x~=x then Lk=uk[-3250]or Qk(18341,-3250,110086)else Lk=uk[-8890]or Qk(5496,-8890,84287)end else ic,Lk=15936,uk[9390]or Qk(32374,9390,57090)end elseif Lk<=50848 then bn,Lk=vp~=vp,uk[14527]or Qk(59665,14527,38372)else Lk,ik=uk[9457]or Qk(14827,9457,55025),2187 end elseif Lk>=55666 then if Lk<=56177 then if Lk>55666 then Lk,E=62337,-14679 else Lk,Ic=uk[22447]or Qk(42786,22447,42941),ik end else Lk,Ic=58679,Fb end elseif Lk>52634 then if nm then Lk=uk[20250]or Qk(20795,20250,95473)continue end Lk=uk[-22098]or Qk(58257,-22098,48087)else Ng,Lk=Xi(se_(Ng)),uk[27516]or Qk(20142,27516,49165)end elseif Lk>=59814 then if Lk>=62337 then if Lk<62769 then E,Lk=Zo(E),uk[29539]or Qk(10647,29539,73437)elseif Lk>62769 then ic,Lk=(En),31772 else Lk,En=uk[28821]or Qk(61758,28821,72288),nm(Ng,ec(En[1],1,En[2]))end elseif Lk<=60284 then if Lk>59814 then if E then Lk=uk[14455]or Qk(54913,14455,41595)continue end Lk=uk[13479]or Qk(52942,13479,54188)else En,Lk=Xi(En(ic,bn,Hj,Zl,Je,Ic)),35766 end else Lk,Hj=10587,Kn.Value end elseif Lk>57383 then if Lk>58154 then if not Ic then Lk=uk[-8225]or Qk(28181,-8225,50996)continue end Lk=48292 else Ng,Lk=ip/Ng,uk[5038]or Qk(22720,5038,114144)end elseif Lk<57297 then Lk,nm=uk[-22307]or Qk(56673,-22307,24442),Ng elseif Lk<=57297 then Ic,Lk=Fb,uk[14752]or Qk(35051,14752,32476)else Ng,Lk=Ng(ec(nm[1],1,nm[2])),uk[-21522]or Qk(53130,-21522,48590)end until Lk==58653 end)(Kh)),hj[19893]or hm(102933,52818,19893)else ai,xo=hj[-27674]or hm(61663,35352,-27674),' \226\156\133'end elseif ai>=22923 then if ai>31349 then Kh,ai=-27391,hj[3470]or hm(127269,7733,3470)elseif ai<=22923 then Yj,ai=28557,47526 else ai,mj=56987,30 end elseif ai<=18663 then vo,ai=0.023333333333333331,hj[8775]or hm(123770,1717,8775)else Ca,ai=4024,hj[4457]or hm(126584,11550,4457)end elseif ai<55925 then if ai>49613 then if ai>50982 then ai,Ue=13502,14808 else ai,fm=hj[-30395]or hm(20565,8245,-30395),''end elseif ai<=47526 then if ai>47003 then ai,ni_=55925,'%s/%s %s %s%s'else return ec(Kh[1],1,Kh[2])end else Tf,ai=-2058,hj[-22241]or hm(19635,14036,-22241)end elseif ai<=56987 then if ai<=56612 then if ai>55925 then ai,sh=65273,1 else ai,Ak=hj[-30557]or hm(29307,42453,-30557),-29216 end else ai,Kh=10277,{[Kh]=fm,[Ca]=sh,[Ij]=vo,[Tf]=xo,[Yj]=ni_,[Ak]=Ok,[Ue]=Cg,[jm]=mj}end elseif ai>61804 then ai,Ij=hj[-8113]or hm(113514,18351,-8113),14810 else Ok,ai=30,hj[-27343]or hm(78807,23093,-27343)end end end),i_[27163]or Jl(27163,109432,19518)elseif Ho<=27093 then sa,Ho=task.spawn,i_[12904]or Jl(12904,5397,59905)else Ho=i_[-3362]or Jl(-3362,11408,13168)continue end until Ho==3671 end)(Ed)),Bi[-25463]or Bp(114763,-25463,61657)elseif He<=18232 then Id,He='Progress',33346 else Ed,He=29760,46473 end else Ed,He={[Ed]=Ka,[bb]=Id},5023 end end end local eb,ee,gi,Vo,Ql,Rl;Rl,eb={},function(Qh,d_,um)Rl[Qh]=vl(um,30753)-vl(d_,15785)return Rl[Qh]end;Vo=Rl[-15921]or eb(-15921,13458,27334)repeat if Vo<=32953 then if Vo<14513 then if Vo>=4483 then if Vo<=4483 then Vo=Rl[-17584]or eb(-17584,35483,118506)continue else ee,Vo=Re[Kn.Name]:GetPropertyChangedSignal'Value',33035 end else ee,Vo=v(),Rl[-14151]or eb(-14151,11708,44747)end elseif Vo<=24113 then if Vo<=14513 then Vo,Ql=Rl[-1677]or eb(-1677,31019,11812),gi(ee,v)else Ql,Vo=gi(ee,v),Rl[8659]or eb(8659,55354,105609)end else Vo,gi=14513,ee.Connect end elseif Vo>=57295 then if Vo<=57295 then Vo,ee=32953,Re.Progress[Kn.Name]:GetPropertyChangedSignal(Vc(-38395))else if not(Re:FindFirstChild(Vc(-42473))and Re.Progress:FindFirstChild(Kn.Name))then Vo=Rl[30140]or eb(30140,48267,60036)continue else Vo=Rl[1556]or eb(1556,25386,83571)continue end Vo=4483 end elseif Vo>33035 then if not(Re:FindFirstChild(Kn.Name))then Vo=Rl[25383]or eb(25383,22270,70221)continue else Vo=Rl[8210]or eb(8210,9361,18787)continue end Vo=65301 else gi,Vo=ee.Connect,Rl[7877]or eb(7877,23854,50841)end until Vo==65433 end end al=rg[18021]or Ia(18021,5288,64472)continue end elseif al<35868 then if al>=34113 then if al<=34113 then al,Vc=34056,function(Hk)return Wj[Hk+30508]end else al,ve=rg[-13083]or Ia(-13083,15920,38367),Xi(ci(up,ve,ec(Jc[1],1,Jc[2])))end else up,al=Re.Name,28208 end elseif al<45085 then al,Jc=11694,-17012 elseif al<=45085 then al,up=rg[18878]or Ia(18878,40207,103380),Re else al,ve=35868,'(%a+)(%d+)'end elseif al>11694 then if al<28208 then if al<=24389 then al,ve=rg[-358]or Ia(-358,4181,95827),Xi(ci(up,ec(ve[1],1,ve[2])))else ci,al=up.CreateSection,rg[-5317]or Ia(-5317,30947,25555)end elseif al>30134 then ln,al=ec(ve[1],1,ve[2]),30134 elseif al<=28208 then ci,al=up.gsub,50365 else up,al=t_,rg[26994]or Ia(26994,29743,49391)end elseif al<=8280 then if al>=1968 then if al<=1968 then al,ve=11164,ln..ve else ve,al=-56227,rg[-10872]or Ia(-10872,44793,36807)end elseif al>356 then al,ve=60004,-32322 else al,ve=24389,Xi(Vc(ve))end elseif al<=11164 then ve,al=ci(up,ve),rg[6115]or Ia(6115,23825,44726)else al,Jc=35190,Xi(Vc(Jc))end until al==17298 end)(di)),an_[2321]or Oc(114149,2321,39359)else Uf,di=an_[6892]or Oc(79759,6892,57590),{[-11965]='Progress',[7584]='0/%s %s %s',[3589]=0,[2419]=2,[21695]='IntValue',[-1814]=' \240\159\147\156',[-7887]='Value',[15687]='',[-25719]='Requirements',[13496]='%1 No.%2',[-20270]='NumberValue'}end end end),ij[29349]or Tn(60857,29349,106266)end until pb==26343 end for xj,wa in ipairs(Ao:GetChildren()or{})do local _o,gm,ll,nc;gm,ll={},function(zh,Rg,tj)gm[zh]=vl(tj,61945)-vl(Rg,19014)return gm[zh]end;nc=gm[-16299]or ll(-16299,61008,12637)repeat if nc<=57940 then if nc>7310 then nc,_o=gm[-32279]or ll(-32279,50949,98883),pc(wa)else if not(wa:IsA(ok(-2013)))then nc=gm[-16277]or ll(-16277,16964,8064)continue else nc=gm[12529]or ll(12529,55258,101897)continue end nc=58999 end else nc=gm[17257]or ll(17257,53648,119888)continue end until nc==35283 end local lb=zd:CreateTab(ok(-11108));lb:CreateSection(ok(-33233))local oc=fk:WaitForChild'PlayerGui':WaitForChild(ok(22509)):WaitForChild'MainClient'local hi=require(oc:WaitForChild(ok(13275)))local op repeat local Cj,lp,Ae,Ye,vb;vb,Ae={},function(ek,g,kc)vb[g]=vl(ek,19992)-vl(kc,34051)return vb[g]end;lp=vb[-11142]or Ae(29144,-11142,40617)while lp~=7937 do if lp>=32855 then if lp>57488 then lp,Ye=vb[-18093]or Ae(57522,-18093,43856),Ye(ec(Cj[1],1,Cj[2]))elseif lp<=52158 then if lp<=32855 then lp=vb[29579]or Ae(47475,29579,23913)continue else lp,Cj=63930,Xi(ok(Cj))end else op,lp=Ye,19247 end elseif lp>=19247 then if lp>19247 then lp,Cj=52158,22494 else lp,Ye=vb[-19540]or Ae(93932,-19540,19526),task.wait end else Ye,lp=hi.characterModule,vb[-26708]or Ae(120288,-26708,15979)end end until op local cg,Xj,Ln,kp=require(Vn:WaitForChild(ok(-9022)):WaitForChild'GameData'),{{ok(23951),ok(-9107),ok(28639)},{ok(10055),ok(24169),'\240\159\155\161\239\184\143'},{ok(2465),'Chakra','\240\159\140\128'},{ok(-20087),ok(14941),ok(-18153)},{5,'Agility',ok(13996)},{ok(22440),'Speed',ok(16037)}},{},{}for _j,de in ipairs(Xj)do local Si,Y,lm=unpack(de)local Vd,Ua,Ei,_k,xg,ya,un_,ma;ma,_k={},function(Gd,zm,Ki)ma[Ki]=vl(zm,35174)-vl(Gd,22859)return ma[Ki]end;xg=ma[18489]or _k(54699,66907,18489)repeat if xg<38540 then if xg>27170 then if xg<=28223 then if xg>28187 then xg,un_=ma[6221]or _k(16996,23490,6221),-2843 else xg,Vd=1711,ok(Vd)end else un_,xg=ok(un_),57162 end elseif xg>7608 then if xg>13987 then Vd,xg=-33150,ma[19491]or _k(45806,118950,19491)else Ei,xg=ok(Ei),65086 end elseif xg<=5763 then if xg>1711 then xg=ma[-12507]or _k(250,10735,-12507)continue else un_,xg=-5992,ma[1670]or _k(11883,29790,1670)end else xg,ya=ma[1072]or _k(56330,26117,1072),Ua.CreateToggle end elseif xg<=48966 then if xg>46965 then if xg<=48921 then un_,xg=Y..un_,ma[-13042]or _k(74,29210,-13042)else Vd,xg=ya(Ua,Vd),ma[-19738]or _k(18511,44769,-19738)end elseif xg>=41595 then if xg<=41595 then Vd,xg=Vd..un_,28223 else xg,un_=ma[-32422]or _k(1020,30757,-32422),ok(un_)end else Ei,xg=28096,ma[12090]or _k(47663,103265,12090)end elseif xg<=65086 then if xg>57162 then xg,Ei=50333,Y..Ei elseif xg>50333 then un_,xg=un_..lm,48921 else Vd,xg={Name=Vd,CurrentValue=un_,Flag=Ei,Callback=function(_m)local m,Fi,Pk,Qi;Qi,Fi={},function(Ii,gl,U)Qi[U]=vl(Ii,18175)-vl(gl,15194)return Qi[U]end;m=Qi[28968]or Fi(10868,14905,28968)repeat if m>50873 then m,Pk=50873,{[Pk]=false}elseif m>27432 then Pk,m=Xi((function(Mm)local nd,gb,xf,bg,qa;bg,gb=function(ba,f_,rj)gb[f_]=vl(ba,20284)-vl(rj,12908)return gb[f_]end,{};xf=gb[-26016]or bg(61200,-26016,48010)while xf~=55000 do if xf<=27540 then if xf>=22267 then if xf>=25048 then if xf>25048 then if not(Ln[Si])then xf=gb[-15552]or bg(130558,-15552,65184)continue else xf=gb[-6753]or bg(40865,-6753,24808)continue end xf=gb[28753]or bg(99722,28753,54956)else nd,xf=0,gb[-2599]or bg(49494,-2599,21565)end elseif xf<=22267 then xf=gb[12682]or bg(70654,12682,46982)continue else nd,xf=Xi(qa(nd)),gb[-29751]or bg(38632,-29751,25526)end elseif xf<=8947 then if xf<=5702 then qa=function(To)return Mm[To- -16713]end if _m then xf=gb[27708]or bg(91273,27708,62029)continue else xf=gb[29976]or bg(77023,29976,49126)continue end xf=gb[-4034]or bg(88302,-4034,62139)else nd,xf=task.spawn,gb[13220]or bg(97936,13220,24359)end else xf,kp[Si]=gb[28022]or bg(55393,28022,17926),nd end elseif xf>=50273 then if xf<54873 then nd,xf=nd(function()local Wf,Hm,Kc,Dm,Dc,bp,gh,Af,tb,zg,Qa;tb,Hm=function(o_,Hd,_e)Hm[Hd]=vl(_e,13670)-vl(o_,9497)return Hm[Hd]end,{};bp=Hm[18382]or tb(39071,18382,89072)repeat if bp>36788 then if bp<=45328 then if bp<43149 then bp,Kc=Hm[29108]or tb(56270,29108,110840),17506 elseif bp<=43149 then bp,Dc=Hm[7137]or tb(9598,7137,42365),0.050000000000000003 else Wf,bp=6526,32931 end elseif bp>45558 then bp,gh=31440,1 else bp,zg=36832,0.10000000000000001 end elseif bp<=34503 then if bp<32931 then if bp>28075 then bp,Dm=45558,11720 else return ec(Wf[1],1,Wf[2])end elseif bp<=32931 then Qa,bp=-10249,45625 else bp,Af=Hm[-26781]or tb(22036,-26781,77564),24973 end elseif bp<=36670 then Wf,bp=Xi((function(vf)local bc,gf,Nh,vn,Rn,_i,Bf,lc,ag,Qd,Kk,dm;Kk,gf={},function(Uj,ha,od)Kk[od]=vl(ha,64788)-vl(Uj,18955)return Kk[od]end;Qd=Kk[-4050]or gf(10536,15182,-4050)while Qd~=37476 do if Qd>=30757 then if Qd<51078 then if Qd<=37071 then if Qd<=35092 then if Qd>35005 then ag,Qd='TrainStat error: ',Kk[7082]or gf(62258,119707,7082)elseif Qd>=31655 then if Qd>31655 then Qd,ag=36744,task.wait else dm,Nh=ec(ag[1],1,ag[2])if not(dm)then Qd=Kk[12180]or gf(35871,111164,12180)continue else Qd=Kk[-22403]or gf(53423,9597,-22403)continue end Qd=Kk[-20728]or gf(7047,116142,-20728)end else Qd,ag=Kk[25969]or gf(41332,76167,25969),op end elseif Qd<=36744 then bc,Qd=22163,30288 else Qd,hi.CurrentKey=Kk[9486]or gf(19569,36176,9486),Si end elseif Qd<44700 then if Qd>39627 then bc,Qd=Xi(Rn(bc)),7302 else _i,Qd=bc(ag),Kk[14617]or gf(7561,5445,14617)end elseif Qd>=47964 then if Qd>47964 then _i,Qd=Rn(_i),Kk[26745]or gf(49780,28520,26745)else Qd,op.characterStopped=Kk[-12694]or gf(27927,25173,-12694),ec(ag[1],1,ag[2])end else if Ln[Si]then Qd=61194 else Qd=Kk[14317]or gf(52148,26357,14317)end end elseif Qd<=56055 then if Qd<=54560 then if Qd<52617 then if Qd<=51078 then bc,Qd=ag,Kk[28568]or gf(54824,100878,28568)else ag,Qd=ag..Y,Kk[12500]or gf(7992,27298,12500)end elseif Qd<=52617 then Qd,ag=Kk[-10123]or gf(55077,124353,-10123),Xi(pcall(function()Vn.Remotes.RemoteEvent:FireServer('Train',Si)end))else Qd,ag=22875,ag..bc end elseif Qd<=56044 then if Qd<=55511 then Qd,kp[Si]=Kk[-24325]or gf(46455,115042,-24325),ec(ag[1],1,ag[2])else bc,Qd=57385,Kk[-381]or gf(14011,120058,-381)end else if bc then Qd=Kk[-21402]or gf(37148,123718,-21402)continue end Qd=27137 end elseif Qd>=59182 then if Qd<=59668 then if Qd>59182 then bc,Qd=ag.ResumeCharacter,Kk[20921]or gf(11511,130259,20921)else ag,Qd=Xi(tick()),Kk[26949]or gf(4389,117009,26949)end else if op.states.Dead then Qd=Kk[-15494]or gf(47710,99334,-15494)continue else Qd=Kk[277]or gf(37136,4869,277)continue end Qd=Kk[21394]or gf(52118,118061,21394)end elseif Qd>56844 then Ln[Si],Qd=ec(ag[1],1,ag[2]),Kk[-1955]or gf(63724,112735,-1955)continue else ag,Qd=ag(ec(bc[1],1,bc[2])),Kk[7432]or gf(19113,21034,7432)end elseif Qd>17211 then if Qd<27082 then if Qd<23756 then if Qd<=21047 then vn,lc=ag,ec(bc[1],1,bc[2])if not(lc-kp[Si]>=vn)then Qd=Kk[18616]or gf(27553,41904,18616)continue else Qd=Kk[4156]or gf(59924,102588,4156)continue end Qd=Kk[28187]or gf(44585,121864,28187)else ag,Qd=Da(ag),Kk[-29401]or gf(45266,73491,-29401)end elseif Qd<=24157 then if Qd<=23756 then ag,Qd=Xi(Rn(ag)),Kk[4358]or gf(7584,126483,4358)else ag,Qd=cg.Stats,Kk[2978]or gf(37846,5698,2978)end else Qd,Rn=Kk[6414]or gf(62783,102596,6414),function(Ym)return vf[Ym+-32412]end end elseif Qd>29765 then if Qd>30038 then Qd,bc=56844,Xi(Rn(bc))else bc,Qd=tostring(Nh),54560 end elseif Qd<27137 then hi[Si],Qd=false,24157 elseif Qd>27137 then ag,Qd=Xi(Rn(ag)),Kk[5302]or gf(28678,122898,5302)else _i,Qd=44132,48260 end elseif Qd>7302 then if Qd<15813 then if Qd>7751 then ag,Qd=task.wait,56044 else Qd,ag=51078,ag.Cooldown end elseif Qd<17027 then Qd,ag=Kk[18756]or gf(51314,110700,18756),'TrainStat fired for 'elseif Qd<=17027 then Qd,ag=Kk[4276]or gf(43858,79251,4276),Da(ag)else Qd,ag=Kk[401]or gf(5396,39311,401),bc end elseif Qd<=4854 then if Qd<=4473 then if Qd>=2557 then if Qd<=2557 then Qd,Bf=Kk[-27910]or gf(48579,126672,-27910),_i else ag,Qd=ag[Si],7751 end else bc,Qd=Xi(tick()),Kk[3904]or gf(5757,21433,3904)end else ag,Qd=49918,Kk[-31489]or gf(19179,41144,-31489)end elseif Qd<7164 then Qd,ag=Kk[1686]or gf(60086,124950,1686),38938 elseif Qd<=7164 then bc,Qd=Bf,Kk[6588]or gf(5398,24396,6588)else Qd,ag=Kk[-23273]or gf(37906,94625,-23273),ag(ec(bc[1],1,bc[2]))end end end)(Wf)),Hm[-16690]or tb(16961,-16690,57445)else bp,Wf=36670,{[Wf]=nil,[Qa]=gh,[Dm]=zg,[Kc]=false,[Af]=Dc}end until bp==46399 end),gb[-3787]or bg(68735,-3787,56868)elseif xf>54873 then Ln[Si],xf=true,gb[5679]or bg(59309,5679,29909)else xf,nd=23665,-32739 end elseif xf>32281 then Ln[Si],xf=ec(nd[1],1,nd[2]),gb[-6230]or bg(62392,-6230,22501)else return end end end)(Pk)),Qi[21528]or Fi(30488,9484,21528)elseif m>5009 then m,Pk=54009,-16026 else return ec(Pk[1],1,Pk[2])end until m==37836 end},ma[23733]or _k(21503,16540,23733)end else xg,Ua=ma[18058]or _k(11724,7001,18058),lb end until xg==18136 end lb:CreateSection(ok(20341))local Ve=false;lb:CreateToggle{Name=ok(-35462),CurrentValue=false,Flag=ok(-13423),Callback=function(_p)local Eo,Gm,P,ao;P,ao={},function(wc,yg,qd)P[wc]=vl(qd,57897)-vl(yg,30433)return P[wc]end;Gm=P[8205]or ao(8205,8409,13678)repeat if Gm>33039 then if Gm>34786 then Gm=P[-23625]or ao(-23625,26132,125472)continue else Gm,Eo=P[-4781]or ao(-4781,4223,117817),Eo(function()local ef,z,w_,Di;Di,z=function(Xn,bh,na)z[na]=vl(bh,24388)-vl(Xn,43755)return z[na]end,{};w_=z[-32632]or Di(59881,61368,-32632)while w_~=46501 do if w_<=31072 then if w_<=28154 then ef,w_={[23414]='Auto Chikara OFF',[7155]=false,[1929]=0,[-14972]=true,[4259]=0.10000000000000001,[20131]='Scriptable',[-22714]=10,[11167]=0,[-27559]=1,[27013]='[AutoChikara] Collected crate',[-23945]=3,[27129]='ClickBox',[27448]=10},50875 else return ec(ef[1],1,ef[2])end else ef,w_=Xi((function(Se)local uf,l_,Jf,cf,ta,ff,ak,lh,Og,wd,qc,pg,X,Sc,Dk,zl;lh,qc=function(qk,Sb,Kj)qc[Sb]=vl(qk,12700)-vl(Kj,2198)return qc[Sb]end,{};Sc=qc[5702]or lh(72692,5702,61496)repeat if Sc<=25748 then if Sc<=16438 then if Sc>=12730 then if Sc<15667 then if Sc>12730 then Sc,zl=4445,Jf else X,Sc=function(zn)return Se[zn+9327]end,qc[-24703]or lh(23384,-24703,18052)end elseif Sc>=15849 then if Sc>15849 then Sc,l_=qc[19890]or lh(103000,19890,53188),Og(cf)else Jf,Sc=wd(Dk,Jf),qc[17370]or lh(33075,17370,30423)end else Jf,Sc='ChikaraBoxes',qc[13914]or lh(44034,13914,22307)end elseif Sc<7346 then if Sc<=4445 then Sc,pg=qc[16059]or lh(54033,16059,36276),zl else wd,Sc=Dk.FindFirstChild,15667 end elseif Sc<=10124 then if Sc>7346 then cf,Sc=task.wait,11200 else Sc,cf=qc[18048]or lh(97344,18048,26180),{}end else Og,Sc=1,23344 end elseif Sc<=23344 then if Sc<20662 then if Sc>16876 then Sc,cf=qc[10585]or lh(92430,10585,50603),Xi(X(cf))else Og,Sc=Xi(X(Og)),62822 end elseif Sc<=21773 then if Sc<=20662 then Og,Sc=cf.GetChildren,qc[-29048]or lh(72641,-29048,58033)else cf,Sc=task.wait,qc[-6238]or lh(93493,-6238,50193)end else Sc,cf=qc[-19409]or lh(65853,-19409,37310),cf(Og)end elseif Sc>25598 then cf,Sc=workspace,35537 elseif Sc<=24297 then if Sc<=23915 then cf,Sc=pg,qc[-30377]or lh(55539,-30377,23348)else Sc,pg=qc[23081]or lh(44697,23081,10142),Xi(X(pg))end else Sc,cf=qc[14262]or lh(24698,14262,2470),ff end elseif Sc<=44941 then if Sc>=36898 then if Sc<38777 then if Sc<=36898 then Og,Sc=-36886,qc[11463]or lh(58121,11463,38975)else ff=cf if not(ff)then Sc=qc[7209]or lh(57199,7209,53233)continue else Sc=qc[-22386]or lh(59895,-22386,31995)continue end Sc=qc[-7821]or lh(36628,-7821,12185)end elseif Sc<44888 then if Ve then Sc=qc[-314]or lh(86639,-314,63433)else Sc=qc[-21734]or lh(62216,-21734,7057)end elseif Sc<=44888 then Sc,l_=qc[6653]or lh(78835,6653,13839),10804 else Sc,cf=qc[5831]or lh(20163,5831,15736),14087 end elseif Sc<35537 then if Sc>25799 then ta,ak=l_,ec(pg[1],1,pg[2])for qh,Ik in ipairs(ta)do if not(not Ve)then else break end local jk=Ik:FindFirstChild(X(17802))if not(jk)then else local Lb,Jd=jk:FindFirstChildWhichIsA'ClickDetector',tick()local Ug,mh,xp,en_,Ec,_l,A,cd,Qc,Ih;Qc,Ec={},function(fg,to,Tj)Qc[Tj]=vl(to,44920)-vl(fg,37190)return Qc[Tj]end;xp=Qc[-24357]or Ec(1573,12562,-24357)repeat if xp<=32581 then if xp>17173 then if xp>=25940 then if xp<29238 then if xp<=25940 then xp,_l=Qc[-25792]or Ec(16887,23907,-25792),pcall(function()Lb:FireClick(fk)end)else xp,en_=Qc[26620]or Ec(26170,85138,26620),X(en_)end elseif xp<=29238 then xp,cd=64010,Ik.CFrame else xp,Ug=40166,-5068 end elseif xp>21054 then if not(fk.Character and fk.Character.PrimaryPart)then xp=Qc[-10767]or Ec(3898,106411,-10767)continue else xp=Qc[-1144]or Ec(58483,4275,-1144)continue end xp=Qc[-29206]or Ec(56887,20144,-29206)elseif xp>19094 then _l,xp=task.wait,Qc[-8228]or Ec(49935,101753,-8228)elseif xp>18051 then _l,xp=fk.Character,63233 else _l,xp=_l(ec(Ug[1],1,Ug[2])),Qc[-15391]or Ec(55301,19479,-15391)end elseif xp<7980 then if xp>4085 then _l,xp=_l(ec(Ug[1],1,Ug[2])),Qc[29047]or Ec(53597,2583,29047)elseif xp<1799 then cd,xp=cd+mh,39285 elseif xp<=1799 then if not(Lb and(not uf[Ik]or Jd-uf[Ik]>=X(-32041)))then xp=Qc[30245]or Ec(24462,116620,30245)continue else xp=Qc[1691]or Ec(6175,17224,1691)continue end xp=Qc[9803]or Ec(53811,29401,9803)else xp,Ih=Qc[12832]or Ec(33281,107733,12832),X(Ih)end elseif xp<=8744 then if xp<8554 then xp,Ih=Qc[23263]or Ec(48997,37216,23263),-7398 elseif xp>8554 then Ug,xp=Xi(X(Ug)),18051 else _l,xp=Xi(tick()),Qc[15894]or Ec(33087,18150,15894)end elseif xp>9129 then xp,_l=Qc[13962]or Ec(11447,130592,13962),-24299 else _l,xp=17686,54582 end elseif xp>53176 then if xp>61683 then if xp<=63590 then if xp<=63233 then Ug,xp=_l.SetPrimaryPartCFrame,29238 else en_,xp=-33272,28667 end else xp,mh=7980,Vector3 .new end elseif xp>60526 then _l,xp=Da(ec(_l[1],1,_l[2])),Qc[-22022]or Ec(2327,17911,-22022)elseif xp>=55589 then if xp>55589 then xp,A=Qc[-6694]or Ec(23504,130505,-6694),1840 else xp,uf[Ik]=Qc[24988]or Ec(57065,15804,24988),ec(_l[1],1,_l[2])end else _l,xp=Xi(X(_l)),Qc[-14804]or Ec(47634,111423,-14804)end elseif xp<=39468 then if xp<37735 then if xp>34843 then _l,xp=task.wait,32581 else A,xp=Xi(X(A)),50912 end elseif xp<=39285 then if xp<=37735 then _l,xp=Xi(X(_l)),Qc[-28221]or Ec(49334,111279,-28221)else xp,cd=Qc[13907]or Ec(32414,77143,13907),Ug(_l,cd)end else xp=Qc[3979]or Ec(15531,5842,3979)continue end elseif xp>=52199 then if xp>52199 then Ug,xp=18121,8744 else xp,ak=9129,ec(_l[1],1,_l[2])end elseif xp<=40166 then Ug,xp=Xi(X(Ug)),Qc[24949]or Ec(40603,36846,24949)else mh,xp=mh(Ih,en_,ec(A[1],1,A[2])),Qc[-29027]or Ec(44555,61218,-29027)end until xp==3005 end end if not ak then Sc=qc[-12042]or lh(32962,-12042,21703)continue end Sc=qc[-12221]or lh(73578,-12221,40939)else Dk,Sc=workspace.Scriptable,6616 end elseif Sc>35537 then Sc,cf=qc[-9020]or lh(98107,-9020,31436),Da(ec(cf[1],1,cf[2]))else Sc,Og=qc[29388]or lh(49573,29388,18551),cf.FindFirstChild end elseif Sc<=56603 then if Sc>56397 then if Sc<=56434 then pg,Sc=-2172,24297 else l_,Sc=Og(cf,ec(l_[1],1,l_[2])),qc[29303]or lh(94825,29303,22518)end elseif Sc<54822 then Sc,l_=56603,Xi(X(l_))elseif Sc>54822 then Sc=qc[-29288]or lh(31062,-29288,11346)continue else if not pg then Sc=qc[-8832]or lh(43331,-8832,13282)continue end Sc=qc[10013]or lh(70043,10013,46038)end elseif Sc<=58517 then if Sc<=57098 then uf,Sc=cf,qc[-8890]or lh(35204,-8890,10249)else pg,Sc=l_,54822 end else cf,Sc=cf(ec(Og[1],1,Og[2])),qc[15185]or lh(56509,15185,23870)end until Sc==9222 end)(ef)),z[18879]or Di(38808,59799,18879)end end end)end elseif Gm<29736 then if Gm<=1547 then Gm,Eo=P[29412]or ao(29412,16707,7485),Da(Eo)else Eo,Gm='Auto Chikara OFF',P[-8761]or ao(-8761,42849,13730)end elseif Gm<=29736 then Eo,Gm=task.spawn,P[18483]or ao(18483,5714,2748)else Ve=_p if not(_p)then Gm=P[-7805]or ao(-7805,11703,29604)continue else Gm=P[20346]or ao(20346,61427,126739)continue end Gm=P[29699]or ao(29699,53994,100692)end until Gm==63252 end}local yh,mf,Ie={},ok(10737),ok(10557)local function kg()return(function(bo)local function gc(gk)return bo[gk-23829]end local Wg=fk.Character return Wg and Wg:FindFirstChild(gc(48687))end){[24858]='HumanoidRootPart'}end local function pa(Sd)return(function(Am)local function ck(zp)return Am[zp+4254]end return Sd:gsub(ck(12307),''):gsub(ck(8763),ck(25700)):lower()end){[13017]='%s+',[29954]=' ',[16561]='[%z\1-\127\194-\244][\128-\191]*'}end local ph,Oh=lb:CreateDropdown{Name=ok(11146),Options={ok(25717),ok(-9496),'Dark Fruit \240\159\140\145',ok(14110),'Explosive Fruit \240\159\146\165'},CurrentOption={},MultipleOptions=ok(-28802),Flag=ok(17688),Callback=function(Ha)yh=Ha or{};Ie=false end},lb:CreateToggle{Name='Farm Fruits \240\159\167\186',Flag=ok(-7984),CurrentValue=ok(16787),Callback=function(zo)local c,rl,_d,Wc,rd,sd,Yb,yo,po,Jn,Xo;Xo,sd=function(da,sc,Tc)sd[Tc]=vl(da,58062)-vl(sc,40106)return sd[Tc]end,{};rd=sd[24242]or Xo(3806,18588,24242)while rd~=9495 do if rd>=44966 then if rd<=46647 then if rd>=45746 then if rd<=45746 then _d,rd=-28304,43677 else Yb,rd=25273,sd[17353]or Xo(23687,37096,17353)end elseif rd<=44966 then rd,Wc=sd[13976]or Xo(114408,58758,13976),{[Wc]=false,[Yb]=yo,[po]=false,[_d]=Jn,[c]=rl}else rd,yo=18784,'Auto Farms \240\159\140\190 \226\134\146 Fruits \240\159\167\186'end elseif rd>49088 then rd,Wc=sd[9410]or Xo(124074,55822,9410),Xi((function(lo_)local Be,Cm,bj,wi,Tm,Ah,ia,Pf,dc,Tl;dc,wi={},function(Pg,Mf,p)dc[Pg]=vl(Mf,60178)-vl(p,8157)return dc[Pg]end;Tm=dc[-17419]or wi(-17419,20719,29248)repeat if Tm<33258 then if Tm>=17094 then if Tm>=29195 then if Tm<29239 then Tm,Cm=61832,bj(Cm)elseif Tm<=29239 then mf,Tm=zo,33258 else Ie=ec(Pf[1],1,Pf[2])if zo and not next(yh)then Tm=dc[8709]or wi(8709,24922,20947)continue end Tm=2731 end elseif Tm<=17094 then Tm,Pf=dc[-23573]or wi(-23573,107354,54530),Xi(bj(Pf))else bj,Tm=function(wl)return lo_[wl+-6063]end,dc[-28318]or wi(-28318,6535,40835)end elseif Tm<=11855 then if Tm<=5424 then if Tm>2731 then Cm,Tm=31336,dc[15789]or wi(15789,118735,44303)else Tm=dc[-5488]or wi(-5488,96669,34083)continue end else mf,Tm=ec(Pf[1],1,Pf[2]),dc[947]or wi(947,8075,63027)end elseif Tm<=11869 then Tm,Tl=64615,bj(Tl)else Pf,Tm=Ek,dc[16724]or wi(16724,96123,55962)end elseif Tm>=44127 then if Tm>=61832 then if Tm>=64194 then if Tm>64194 then ia,Tm=-22241,dc[26588]or wi(26588,97285,59119)else Tl,Tm=11785,11869 end else Tm,Be=64194,"You haven\'t selected any fruits yet!"end elseif Tm<=44127 then Tm,Pf=dc[-31917]or wi(-31917,9242,9153),-23923 else Ah,Tm=Pf.Notify,5424 end elseif Tm>=37612 then if Tm>37769 then Tm,ia=34496,bj(ia)elseif Tm>37612 then Tm,Cm=dc[-10057]or wi(-10057,110743,45307),Ah(Pf,Cm)else Pf,Tm=Xi(bj(Pf)),dc[-6148]or wi(-6148,24101,39221)end elseif Tm<=33258 then Tm,Pf=dc[25601]or wi(25601,13188,35341),22534 else Cm,Tm={Title=Cm,Content=Be,Duration=Tl,Image=ia},dc[-12857]or wi(-12857,122150,48502)end until Tm==63377 end)(Wc))else return ec(Wc[1],1,Wc[2])end elseif rd>=38065 then if rd>38736 then rd,Jn=38736,'bell-ring'elseif rd<=38065 then rl,rd=5,sd[-31594]or Xo(110720,15874,-31594)else rd,c=sd[-32474]or Xo(106426,29801,-32474),5722 end elseif rd<=6106 then rd,Wc=sd[18866]or Xo(106944,4221,18866),-29986 else po,rd=16471,45746 end end end};task.spawn(function()local wo,Qj,Bb,sk;wo,sk={},function(Tk,Te,tk)wo[Tk]=vl(Te,17386)-vl(tk,18147)return wo[Tk]end;Qj=wo[-1453]or sk(-1453,42343,202)repeat if Qj>41060 then Qj,Bb=wo[-12015]or sk(-12015,41633,15917),Xi((function(Sh)local Ld,fp,pm,re_,Vl,M,go,rh,Ab,Bh,Fa,Wd,vh,ob,md,yn,aa,le,ce,Gb,ii,Ke,Oi,ad,yi,ke,Wm,oo,Lm;oo,re_=function(Ji,vm,in_)re_[in_]=vl(vm,1701)-vl(Ji,58948)return re_[in_]end,{};go=re_[27595]or oo(31531,72113,27595)while go~=56772 do if go<35678 then if go<18770 then if go>6832 then if go>10147 then if go>14714 then if go<=14905 then go,ii=10182,Ab(ii)else Wd,go=Fa.CFrame,4807 end elseif go<=14562 then if go<11224 then go,Wd=re_[4990]or oo(61234,56353,4990),26976 elseif go<=11224 then if Ab(-24087)then go=re_[12085]or oo(21116,112116,12085)else go=re_[-2253]or oo(24724,71206,-2253)end else Ld,pm,Wm=ec(Gb[1],1,Gb[2]);go=re_[-24477]or oo(41310,38769,-24477)end else go,fp=21378,Gb.IsA end elseif go>=9762 then if go<9999 then if go>9762 then if not(Fa)then go=re_[-31247]or oo(36807,45720,-31247)continue else go=re_[-15635]or oo(15675,67332,-15635)continue end go=re_[21719]or oo(22021,64606,21719)else go=37680 continue end elseif go>9999 then ce,go=10725,8963 else Gb,go=le*Gb,re_[-14298]or oo(62963,33067,-14298)end elseif go<8963 then if go>8411 then go,Vl=re_[-16939]or oo(51308,68808,-16939),23291 else Gb,go=Fa,re_[-28244]or oo(19057,58122,-28244)end elseif go<=8963 then ce,go=Xi(Ab(ce)),re_[-12032]or oo(14120,94508,-12032)else Fa,go=ec(Gb[1],1,Gb[2]),56745 end elseif go>=3978 then if go>4807 then if go>6502 then go,Ie=re_[28146]or oo(2679,68523,28146),false elseif go<=4851 then go,fp=45947,Gb.GetChildren else Gb,go=Xi(Ab(Gb)),re_[-17391]or oo(64217,18171,-17391)end elseif go<4704 then if go>3978 then M,go=ec(Gb[1],1,Gb[2]),33712 else go,ii=31801,Vl end elseif go<4803 then if not ii then go=re_[5105]or oo(14064,111592,5105)continue end go=18509 elseif go<=4803 then Vl,go=Ab(Vl),1130 else vh,go=Wd,re_[10410]or oo(44914,71665,10410)end elseif go<2921 then if go<=1130 then if go>929 then ii,go=-5674,14905 else ii,go=Vl,4704 end else Gb,go=Xi(gd(Lm)),re_[16411]or oo(48122,50834,16411)end elseif go>3151 then Vl,go=fp(Gb,Vl),re_[-425]or oo(19073,56888,-425)elseif go<3045 then if fp then go=re_[-28780]or oo(30764,70249,-28780)continue end go=36921 elseif go<=3045 then go=11224 continue else Vl,go=32345,41047 end elseif go<=27417 then if go>24102 then if go>26678 then if go<=27374 then if go>27036 then ob=Gb if not(not ob)then go=re_[18569]or oo(45940,52941,18569)continue else go=re_[-3152]or oo(55918,56096,-3152)continue end go=re_[16238]or oo(42559,46358,16238)else Gb,go=Xi(ipairs(ec(Vl[1],1,Vl[2]))),re_[-29271]or oo(58610,49382,-29271)end else Gb,go=workspace,re_[-12872]or oo(50510,53143,-12872)end elseif go<26205 then if go>25209 then fp,go=0.5,52569 else Lm,ke,yi=ec(Gb[1],1,Gb[2]);go=re_[-6316]or oo(49829,62284,-6316)end elseif go<=26205 then go=11224 continue else Gb,go=Xi(gd(Ld)),re_[9744]or oo(19919,80500,9744)end elseif go>=22233 then if go<=22714 then if go<22672 then go,Gb=re_[22008]or oo(19712,65761,22008),ad.__iter elseif go<=22672 then Vl,go=-17889,re_[7739]or oo(13701,104200,7739)else Wd,go=Ab(Wd),re_[-5763]or oo(14229,88970,-5763)end elseif go>23296 then vh,go=Wd.FindFirstChild,10147 else Gb,go=Xi(Gb(Lm)),re_[-15432]or oo(63238,41952,-15432)end elseif go<=21084 then if go<19130 then if not mf then go=re_[26324]or oo(56848,17052,26324)continue end go=re_[-1696]or oo(29023,81070,-1696)elseif go>19130 then Vl,go=fp(Gb,ec(Vl[1],1,Vl[2])),3978 else Bh,rh=Ld(pm,Wm);Wm=Bh if Wm==nil then go=37680 else go=re_[-15107]or oo(2657,103497,-15107)end end else Vl,go=-21802,re_[26775]or oo(28559,97053,26775)end elseif go<31455 then if go>=29496 then if go>30155 then go,Gb=re_[15104]or oo(963,122408,15104),fp elseif go<=29655 then if go>29496 then md.CFrame,go=Gb,re_[-32448]or oo(45199,33798,-32448)else go,Gb=re_[-22419]or oo(60618,9553,-22419),-26152 end else fp,go=vh,re_[-9682]or oo(9383,81890,-9682)end elseif go>28614 then go,Gb=re_[7425]or oo(31281,43866,7425),Xi(pa(Gb))elseif go<=27617 then Fa,go=rh,9960 continue else go,Ie=re_[-18912]or oo(14160,112457,-18912),ec(Gb[1],1,Gb[2])end elseif go>33186 then if go>=33712 then if go>33712 then go=re_[11596]or oo(37353,86996,11596)continue else Gb,go=Xi(ipairs(yh)),re_[-14649]or oo(49457,49517,-14649)end else go,Ab=11224,function(hb)return Sh[hb-1227]end end elseif go<=32581 then if go>31801 then Gb,go=ii,re_[28721]or oo(63099,32136,28721)elseif go>31455 then if not ii then go=re_[-30533]or oo(1694,91834,-30533)continue end go=re_[-28088]or oo(45869,53678,-28088)else ii,go=31290,re_[13748]or oo(32872,64440,13748)end else Wd,go=workspace.Scriptable,re_[-31338]or oo(41855,42436,-31338)end elseif go>49895 then if go<56481 then if go>52569 then if go<53518 then if go<52992 then go,Gb=re_[-31892]or oo(16752,87769,-31892),Xi(ea(Lm))elseif go>52992 then Oi,aa=Lm(ke,yi);yi=Oi if yi==nil then go=re_[28297]or oo(60252,12965,28297)else go=re_[-12808]or oo(60534,52828,-12808)end else Wd,go=ii(Vl),re_[15583]or oo(19509,94442,15583)end elseif go<55194 then go,Wd=re_[-25635]or oo(37256,66251,-25635),Ab(Wd)elseif go<=55194 then ii,go=yn,32581 else go,Vl=31455,Ab(Vl)end elseif go<=52190 then if go>=51230 then if go<=51273 then if go>51230 then go,Vl=3759,{Title=Vl,Content=ii,Duration=Wd,Image=vh}else go,ii=58521,vh end else vh,go=Wd,re_[8765]or oo(58313,32253,8765)end elseif go>50061 then Vl,go=7177,re_[-13372]or oo(3564,63694,-13372)else Ld,pm,Wm=ec(Gb[1],1,Gb[2])if not(Zj(Ld)~='function')then go=re_[-429]or oo(36790,45577,-429)continue else go=re_[-15421]or oo(5628,105602,-15421)continue end go=re_[18641]or oo(48327,41880,18641)end elseif go<=52534 then if go<=52520 then go,fp=re_[-8800]or oo(44157,27199,-8800),Gb.Notify else Ke=ec(Gb[1],1,Gb[2])if M:find(Ke,1,Ab(33808))then go=re_[8143]or oo(17052,71196,8143)continue end go=re_[29883]or oo(26877,88420,29883)end else Gb,go=Gb(fp),re_[5042]or oo(3415,78528,5042)end elseif go<=61680 then if go<58521 then if go<=56891 then if go>56745 then yn,go=ce,55194 elseif go<=56481 then Gb,go=Ek,re_[12155]or oo(19612,97957,12155)else go,Gb=re_[26055]or oo(54616,16554,26055),ob end else Gb,go=Ek,re_[-22504]or oo(57143,79771,-22504)end elseif go<=60250 then if go<=58669 then if go<=58521 then Gb,go=ii,re_[24824]or oo(3084,100756,24824)else go,ii=re_[-22572]or oo(37173,82132,-22572),Vl.GetPivot end else go,fp=63209,-12858 end else go,Gb=42113,le.__iter end elseif go>62550 then if go>=63435 then if go>63435 then Gb,go=task.wait,25861 else fp,go=Gb.Notify,re_[7341]or oo(36021,79069,7341)end else fp,go=Ab(fp),re_[13038]or oo(51833,15913,13038)end elseif go>=62445 then if go>62445 then go,Gb=re_[29754]or oo(43957,29605,29754),Gb(fp,Vl,ii)else Vl,go=Xi(Ab(Vl)),re_[305]or oo(39864,83526,305)end elseif go>62214 then if not Ie then go=re_[15063]or oo(37958,78383,15063)continue end go=re_[-27932]or oo(39169,44472,-27932)else le=Gb if le and md then go=re_[23665]or oo(39477,79019,23665)continue else go=re_[13750]or oo(6081,116867,13750)continue end go=re_[12676]or oo(26890,48515,12676)end elseif go>=42217 then if go<=45279 then if go<42695 then if go>42536 then Gb,go=Xi(ea(Ld)),re_[-25499]or oo(32678,78067,-25499)elseif go<42525 then go,fp=re_[-22146]or oo(17704,43120,-22146),Gb elseif go>42525 then fp,go=Gb.FindFirstChild,22672 else go,ce=56891,vh(Wd,ec(ce[1],1,ce[2]))end elseif go<=44013 then if go>=43336 then if go<=43336 then ad=ec(Gb[1],1,Gb[2])if ad~=nil and ad.__iter~=nil then go=re_[-22903]or oo(64760,30512,-22903)continue elseif not(Zj(Lm)=='table')then go=re_[18456]or oo(38164,82685,18456)continue else go=re_[24657]or oo(46511,23296,24657)continue end go=re_[-28912]or oo(10004,103677,-28912)else go,ii=62550,0 end else Gb,go=rh.Name,28781 end elseif go>44689 then go,Gb=re_[-27794]or oo(14764,84235,-27794),Xi(Ab(Gb))else Vl,go=fp(Gb,Vl),re_[-26724]or oo(37396,42637,-26724)end elseif go>=48620 then if go>=49800 then if go>49800 then Vl,go=fp(Gb,ec(Vl[1],1,Vl[2])),re_[3653]or oo(37341,32159,3653)else Gb,go=13260,45279 end elseif go<=48620 then Vl,go=Xi(Ab(Vl)),21084 else go,Gb=re_[-11006]or oo(64327,60572,-11006),Xi(pa(aa))end elseif go<=46493 then if go<=45947 then go,Vl=re_[3190]or oo(19470,70979,3190),Xi(fp(Gb))else Gb,go=CFrame.new,60250 end else Wd,go=4147,22714 end elseif go>38741 then if go<=41307 then if go<41047 then if go<=40052 then le=ec(Gb[1],1,Gb[2])if le~=nil and le.__iter~=nil then go=re_[28217]or oo(53103,72894,28217)continue elseif not(Zj(Ld)=='table')then go=re_[11438]or oo(51462,32601,11438)continue else go=re_[-23980]or oo(21059,72344,-23980)continue end go=re_[26088]or oo(57139,33428,26088)else Lm,ke,yi=ec(Gb[1],1,Gb[2])if Zj(Lm)~='function'then go=re_[-2685]or oo(39707,85404,-2685)continue end go=re_[-20038]or oo(8432,102681,-20038)end elseif go<=41047 then go,Vl=re_[-750]or oo(39994,73934,-750),Ab(Vl)else go=re_[-1205]or oo(43999,32726,-1205)continue end elseif go<=42113 then if go<=41712 then Gb,go=Xi(kg()),re_[-18015]or oo(63950,45178,-18015)else go,Gb=re_[-17083]or oo(32840,38987,-17083),Xi(Gb(Ld))end else go,Vl=44689,{Title=Vl,Content=ii,Duration=Wd,Image=vh}end elseif go>=37680 then if go<38641 then if go<=37680 then if Fa then go=re_[22413]or oo(16873,50424,22413)continue else go=re_[7441]or oo(32189,100785,7441)continue end go=re_[-14486]or oo(5679,72422,-14486)else Lm,ke,yi=ec(Gb[1],1,Gb[2]);go=re_[8293]or oo(30900,92509,8293)end elseif go>38641 then md=ec(Gb[1],1,Gb[2])if not(not md or not next(yh))then go=re_[19856]or oo(29591,67145,19856)continue else go=re_[-26847]or oo(63719,33701,-26847)continue end go=re_[6039]or oo(32073,65667,6039)else ii,go=Ab(ii),47179 end elseif go<=36921 then if go>36002 then Vl,go=Fa,58669 elseif go<=35678 then go,vh=42210,'bell-ring'else go,vh=re_[342]or oo(21618,97498,342),'bell-ring'end else Ld,pm,Wm=ec(Gb[1],1,Gb[2]);go=re_[14165]or oo(35002,48925,14165)end end end)(Bb))elseif Qj>26749 then Qj,Bb=wo[-25602]or sk(-25602,97102,4209),{[30063]='Fruit found, but cannot get its position.',[12033]=true,[-6901]='No available fruits from your selection.',[-19116]='Scriptable',[-23029]='BasePart',[-14085]=0,[2920]=5,[-25314]=true,[5950]='Auto Farms \240\159\140\190 \226\134\146 Fruits \240\159\167\186',[32581]=true,[25749]=5,[9498]='Fruits',[31118]=3,[-27379]=nil,[22064]='Auto Farms \240\159\140\190 \226\134\146 Fruits \240\159\167\186'}else return ec(Bb[1],1,Bb[2])end until Qj==21151 end)local Cb=zd:CreateTab'Teleports \240\159\147\141'local function Bc()return fk.Character or fk.CharacterAdded:Wait()end local function Pn(tn)local Bo,hl,Kf,ie,cj,je,Xe;Bo,Xe={},function(pl,em,Sn)Bo[Sn]=vl(pl,42764)-vl(em,14377)return Bo[Sn]end;hl=Bo[-13399]or Xe(65765,50864,-13399)while hl~=50511 do if hl>=12321 then if hl>52114 then hl,cj=12321,{[cj]=je,[ie]=Kf}elseif hl<=43344 then if hl<=12321 then hl,cj=Bo[-15333]or Xe(122865,38210,-15333),Xi((function(V)local mn,Jk,eh,Cd,Yn,Lh,zc,gg,Hi,Eh,rn,fl;Hi,Lh={},function(Mi,oj,yf)Hi[oj]=vl(yf,32230)-vl(Mi,36884)return Hi[oj]end;Cd=Hi[-22415]or Lh(53769,-22415,85337)while Cd~=10057 do if Cd<=40855 then if Cd>17648 then if Cd>36821 then Cd=Hi[-6750]or Lh(48456,-6750,10563)continue elseif Cd>33111 then fl,Cd=-2757,43961 elseif Cd>27155 then Jk,Cd=tn+Jk,60975 else zc,Cd=Eh(eh,ec(zc[1],1,zc[2])),Hi[12496]or Lh(6505,12496,87282)end elseif Cd>=12463 then if Cd>12781 then Cd,Jk=Hi[12072]or Lh(29324,12072,73225),Jk(gg,fl,rn)elseif Cd>12463 then Eh,Cd=eh.SetPrimaryPartCFrame,Hi[-29630]or Lh(23164,-29630,115023)else Cd,Jk=Hi[11201]or Lh(37149,11201,51795),Vector3 .new end elseif Cd<=3371 then rn,Cd=0,Hi[12443]or Lh(43718,12443,548)else gg,Cd=Yn(gg),Hi[3388]or Lh(49079,3388,49822)end elseif Cd<=60975 then if Cd<44485 then if Cd<=43542 then mn=ec(eh[1],1,eh[2])if mn and mn.PrimaryPart then Cd=Hi[15830]or Lh(23768,15830,67447)continue end Cd=40855 else fl,Cd=Yn(fl),3371 end elseif Cd<=46764 then if Cd<=44485 then Cd,eh=Hi[7436]or Lh(31887,7436,90990),mn else gg,Cd=45952,8231 end else zc,Cd=Xi(zc(Jk)),Hi[-2735]or Lh(33610,-2735,151)end elseif Cd<62017 then Yn,Cd=function(Yf)return V[Yf-15950]end,64529 elseif Cd>62017 then eh,Cd=Xi(Bc()),Hi[31214]or Lh(20528,31214,71644)else Cd,zc=12463,CFrame.new end end end)(cj))else cj,hl=-18707,1124 end else return ec(cj[1],1,cj[2])end elseif hl>2255 then hl,Kf=Bo[15110]or Xe(69050,36369,15110),0 elseif hl>1124 then ie,hl=30002,Bo[-24715]or Xe(39315,6549,-24715)else hl,je=2255,5 end end end local function Ya(cb)local Sj,Uk,cl,im;Uk,cl={},function(yl,bd,nj)Uk[yl]=vl(bd,24401)-vl(nj,18000)return Uk[yl]end;im=Uk[19928]or cl(19928,84044,13376)while im~=56541 do if im>=15275 then if im>15275 then Sj,im={[-23685]=1000000000,[3278]='%.0fB',[-26337]=1e+21,[31395]=1000000000000000000,[-23032]=1000000,[26969]=1000,[1501]=1000000000000,[-14513]=1000000,[-8902]='%.0fT',[2314]=1000000000000000000,[30917]=1000000000000,[-8128]='%.0fK',[21958]=1000,[-11079]=1000000000,[-15630]='%.0fQn',[-27297]='%.0fQd',[15274]=1000000000000000,[-25976]='%.0fSx',[11539]=1000000000000000},4035 else return ec(Sj[1],1,Sj[2])end else Sj,im=Xi((function(cn)local r_,pj,Do,Bn,kn,ym,Jj,Zc;kn,Zc={},function(Pd,Fl,Rd)kn[Fl]=vl(Pd,51676)-vl(Rd,56336)return kn[Fl]end;Do=kn[-15764]or Zc(86638,-15764,28778)repeat if Do>=37829 then if Do>52432 then if Do>58132 then if Do<60581 then if Do<59756 then Do,Jj=13228,'%.0fM'elseif Do>59756 then Do,Bn=kn[-12083]or Zc(126219,-12083,43448),Xi(Bn(Jj,ym))else ym,Do=r_(ym),kn[-23769]or Zc(31447,-23769,36129)end elseif Do<63479 then if Do<=60581 then if not(pj>=r_(11420))then Do=kn[12039]or Zc(123869,12039,39867)continue else Do=kn[28831]or Zc(20669,28831,23019)continue end Do=kn[-2118]or Zc(101817,-2118,42617)else Do,r_=45920,function(hg)return cn[hg- -19975]end end elseif Do>63479 then ym,Do=cb/ym,kn[-11170]or Zc(113158,-11170,15845)else ym,Do=r_(ym),46514 end elseif Do>57326 then if Do>58129 then Do,Jj=kn[-26080]or Zc(14258,-26080,13071),r_(Jj)elseif Do<=57942 then if not(pj>=r_(-4701))then Do=kn[-12840]or Zc(123912,-12840,48404)continue else Do=kn[19906]or Zc(13872,19906,37585)continue end Do=kn[27991]or Zc(111041,27991,29233)else ym,Do=cb/ym,kn[-31910]or Zc(122546,-31910,12547)end elseif Do<=54125 then if Do<=53169 then if Do<=52807 then Do,Jj=18744,r_(Jj)else ym,Do=r_(ym),58129 end else return ec(Bn[1],1,Bn[2])end elseif Do>55802 then ym,Do=cb/ym,10204 else Do,Jj=kn[29506]or Zc(106697,29506,2368),-28103 end elseif Do<45920 then if Do>=44428 then if Do<=45355 then if Do>44847 then Bn,Do=string.format,5380 elseif Do<=44428 then Do,Jj=kn[-5424]or Zc(121602,-5424,27068),-16697 else return ec(Bn[1],1,Bn[2])end else ym,Do=cb/ym,kn[1352]or Zc(30876,1352,20104)end elseif Do<42101 then if Do<=37829 then Jj,Do=r_(Jj),49221 else return ec(Bn[1],1,Bn[2])end elseif Do<=42101 then Bn,Do=Xi(Bn(Jj,ym)),kn[-4067]or Zc(27243,-4067,44708)else Do,ym=kn[-29909]or Zc(102368,-29909,23423),cb/ym end elseif Do<=48999 then if Do<=48831 then if Do<=46514 then if Do>45920 then ym,Do=cb/ym,kn[16798]or Zc(74195,16798,10190)else Bn,Do=math.abs,24337 end else Do,Jj=kn[-11815]or Zc(120596,-11815,17550),-35605 end elseif Do>48845 then Bn,Do=string.format,1732 else Do,Bn=kn[27947]or Zc(10763,27947,52346),Xi(Bn(Jj,ym))end elseif Do<=51708 then if Do<50861 then ym,Do=6994,kn[15338]or Zc(36682,15338,56597)elseif Do<=50861 then return ec(Bn[1],1,Bn[2])else Do=kn[-4713]or Zc(26630,-4713,33289)continue end else if pj>=r_(10942)then Do=kn[-21223]or Zc(2322,-21223,56695)continue elseif pj>=r_(-31054)then Do=kn[-24588]or Zc(1835,-24588,7478)continue elseif pj>=r_(-34488)then Do=kn[-29381]or Zc(126793,-29381,31294)continue elseif pj>=r_(1983)then Do=kn[7455]or Zc(34062,7455,49814)continue else Do=kn[19493]or Zc(47122,19493,62031)continue end Do=kn[-661]or Zc(117073,-661,60033)end elseif Do>17263 then if Do<24337 then if Do>=19462 then if Do<=22454 then if Do<=21315 then if Do>19462 then ym,Do=r_(ym),kn[62]or Zc(93972,62,10644)else Do,Bn=kn[-9772]or Zc(85878,-9772,12192),string.format end else Do,Jj=264,r_(Jj)end else Do,Jj=35149,r_(Jj)end elseif Do>=17809 then if Do<=17809 then Do,ym=43262,r_(ym)else Do,ym=59756,-18474 end else Do,ym=kn[99]or Zc(68320,99,12187),-17661 end elseif Do>=35149 then if Do<37349 then if Do<=35149 then ym,Do=-43660,63479 else Do,ym=kn[-26516]or Zc(129798,-26516,36604),r_(ym)end elseif Do<=37349 then Do,Bn=kn[-29312]or Zc(32655,-29312,28857),Xi(Bn(Jj,ym))else Jj,Do=-45951,kn[-29173]or Zc(6717,-29173,41019)end elseif Do>32871 then Jj,Do=r_(Jj),17316 elseif Do<25050 then Do,Bn=kn[-8652]or Zc(18084,-8652,34852),Xi(Bn(cb))elseif Do>25050 then Bn,Do=string.format,59668 else ym,Do=cb/ym,kn[20875]or Zc(120767,20875,42494)end elseif Do<=5380 then if Do<=3537 then if Do>1732 then if Do<=2474 then return ec(Bn[1],1,Bn[2])else Bn,Do=string.format,44428 end elseif Do<264 then return ec(Bn[1],1,Bn[2])elseif Do<=264 then ym,Do=1e+21,65357 else Jj,Do=-28877,kn[24851]or Zc(66779,24851,8912)end elseif Do>4966 then Jj,Do=-47272,kn[18192]or Zc(108664,18192,41600)elseif Do<=4826 then if Do>3919 then return ec(Bn[1],1,Bn[2])else Do,ym=21315,-8436 end else Do,Bn=48831,string.format end elseif Do>12547 then if Do<15172 then Do,ym=kn[3942]or Zc(107370,3942,1371),-43007 elseif Do<=15172 then pj=ec(Bn[1],1,Bn[2])if not(pj>=r_(-46312))then Do=kn[20932]or Zc(120035,20932,60554)continue else Do=kn[9649]or Zc(18534,9649,59812)continue end Do=kn[-9696]or Zc(128916,-9696,43100)else Bn,Do=Xi(tostring(cb)),kn[-6823]or Zc(3942,-6823,28656)end elseif Do>=10843 then if Do<11852 then Do,Bn=kn[26144]or Zc(4105,26144,39171),Xi(Bn(Jj,ym))elseif Do<=11852 then Do,Bn=kn[24672]or Zc(101894,24672,45552),string.format else return ec(Bn[1],1,Bn[2])end elseif Do>7848 then Bn,Do=Xi(Bn(Jj,ym)),kn[-17935]or Zc(100510,-17935,42629)else Bn,Do=Xi(Bn(Jj,ym)),kn[6528]or Zc(60714,6528,63567)end until Do==17345 end)(Sj)),Uk[25464]or cl(25464,32849,58629)end end end local mc={{Name=ok(-1287),SectionEmoji='\240\159\146\170',ButtonEmoji='\240\159\147\129',StatId='1',Zones={{100,Vector3 .new(-1.9019999999999999,ok(-21551),ok(-1465))},{10000,Vector3 .new(ok(13135),ok(-967),-137.43600000000001)},{ok(20316),Vector3 .new(ok(-16972),ok(-14480),476.596)},{ok(10182),Vector3 .new(ok(-35371),ok(-4534),166.47300000000001)},{ok(-11376),Vector3 .new(ok(-14250),ok(-8316),ok(-35059))},{ok(19790),Vector3 .new(-39.747,ok(-36017),ok(3878))},{1000000000,Vector3 .new(ok(-5315),ok(19294),924.88599999999997)},{ok(-22143),Vector3 .new(1846.9490000000001,ok(18784),ok(-15174))},{ok(-22271),Vector3 .new(ok(-8003),ok(-15714),ok(3574))},{ok(-15975),Vector3 .new(ok(13258),ok(-15361),-631.73199999999997)},{ok(-23202),Vector3 .new(ok(12685),ok(15360),ok(-24520))},{2.5e+19,Vector3 .new(ok(9529),ok(-29132),890.45799999999997)},{1e+22,Vector3 .new(ok(17565),ok(-12693),ok(27193))}}},{Name=ok(25295),SectionEmoji='\240\159\155\161\239\184\143',ButtonEmoji=ok(-19687),StatId=ok(-33876),Zones={{ok(-12355),Vector3 .new(ok(-32471),56.026000000000003,ok(-25617))},{ok(20427),Vector3 .new(ok(344),ok(-20063),-541.50199999999995)},{ok(-7053),Vector3 .new(-72.534999999999997,ok(10768),2055.9870000000001)},{1000000,Vector3 .new(ok(775),ok(-5344),ok(1583))},{10000000,Vector3 .new(-1119.864,212.63,ok(13980))},{100000000,Vector3 .new(ok(-25418),ok(-33997),ok(4254))},{ok(14575),Vector3 .new(2495.5940000000001,ok(11753),ok(9640))},{100000000000,Vector3 .new(ok(-2749),ok(-14402),ok(-15273))},{ok(-1163),Vector3 .new(ok(-6242),ok(-5177),571.12099999999998)},{250000000000000,Vector3 .new(ok(19888),432.89699999999999,ok(18836))},{150000000000000000,Vector3 .new(ok(9390),ok(28108),-701.85500000000002)},{ok(-28919),Vector3 .new(ok(-19628),91.790000000000006,ok(-34766))},{ok(-21510),Vector3 .new(1718.8710000000001,ok(4122),ok(-6053))}}},{Name='Chakra',SectionEmoji=ok(-32692),ButtonEmoji='\240\159\147\129',StatId=ok(-31256),Zones={{ok(17516),Vector3 .new(ok(22525),ok(-29045),-119.76000000000001)},{ok(-7104),Vector3 .new(ok(21467),ok(3838),ok(-4919))},{100000,Vector3 .new(ok(-14058),ok(22395),ok(15732))},{ok(3873),Vector3 .new(ok(-8349),ok(18824),ok(21641))},{10000000,Vector3 .new(ok(-9364),ok(-16218),ok(-10544))},{ok(21367),Vector3 .new(1027.624,ok(21317),ok(17771))},{1000000000,Vector3 .new(ok(-20618),ok(-22110),ok(-26425))},{ok(-34842),Vector3 .new(1663.124,ok(17397),1779.3869999999999)},{ok(9121),Vector3 .new(ok(2825),ok(24482),ok(-6158))},{ok(-30530),Vector3 .new(ok(25964),ok(-23045),668.17700000000002)},{ok(-1399),Vector3 .new(ok(-29996),ok(-35216),591.14700000000005)},{ok(10811),Vector3 .new(ok(20639),-440.97800000000001,ok(-27422))},{ok(25809),Vector3 .new(337.88,61.008000000000003,ok(-193))}}},{Name=ok(-14148),SectionEmoji=ok(2994),ButtonEmoji=ok(20790),StatId=ok(15994),Zones={{ok(-35555),Vector3 .new(ok(-6325),ok(14569),ok(-2600))},{10000,Vector3 .new(ok(13107),121.923,ok(-7972))},{ok(22217),Vector3 .new(3482.9180000000001,ok(4566),ok(-18824))},{ok(-1853),Vector3 .new(ok(16744),ok(18461),ok(-12280))}}},{Name='Speed',SectionEmoji=ok(6818),ButtonEmoji=ok(-21532),StatId=ok(-7593),Zones={{100,Vector3 .new(ok(9003),ok(-33580),-508.85199999999998)},{ok(-23792),Vector3 .new(ok(-28105),ok(13436),-78.950000000000003)},{100000,Vector3 .new(3482.9180000000001,ok(-16593),ok(-10576))},{ok(-4856),Vector3 .new(4111.6819999999998,ok(1265),ok(-357))}}}};Cb:CreateSection(ok(1899))for mm,yj in ipairs(mc)do local wb=fk.Stats:FindFirstChild(yj.StatId)local kk local function xd()local Dd,Sl,Ne,ng,xh,uo,Cc;Dd,Cc={},function(wj,jb,h)Dd[h]=vl(wj,12448)-vl(jb,55111)return Dd[h]end;Sl=Dd[28871]or Cc(16422,39771,28871)repeat if Sl<=15923 then if Sl<=9322 then if Sl<7496 then Ne,Sl={[Ne]=uo,[ng]=xh},Dd[16921]or Cc(52268,58337,16921)elseif Sl>7496 then Sl,Ne=Dd[29242]or Cc(54327,56271,29242),-23353 else ng,Sl=26480,15923 end else xh,Sl=1,1513 end elseif Sl>=51174 then if Sl<=51174 then Sl,Ne=Dd[28843]or Cc(36768,63730,28843),Xi((function(Gf)local Bj,Hl,J,nk,wm,Kd,Cf,Tg,ml,Gn,Jo,Aj;J,ml=function(tc,Vk,Bd)ml[Bd]=vl(tc,3088)-vl(Vk,51661)return ml[Bd]end,{};Gn=ml[1616]or J(55145,61641,1616)repeat if Gn<=39595 then if Gn<=26696 then if Gn<22937 then if Gn<=7420 then if Gn>5225 then Hl,nk,wm=ec(Jo[1],1,Jo[2]);Gn=ml[12947]or J(70511,63840,12947)else Gn=ml[-4897]or J(41114,54706,-4897)continue end else Gn,Jo=28730,yj.Zones end elseif Gn>=26481 then if Gn>26481 then Cf=ec(Jo[1],1,Jo[2])if Cf~=nil and Cf.__iter~=nil then Gn=ml[-15774]or J(94090,13796,-15774)continue elseif not(Zj(Hl)=='table')then Gn=ml[14961]or J(72927,59440,14961)continue else Gn=ml[13517]or J(96879,6145,13517)continue end Gn=ml[20161]or J(101066,20933,20161)else Jo,Gn=Cf.__iter,43263 end else Gn,Kd=ml[11453]or J(76218,34517,11453),Jo end elseif Gn>35017 then if Gn>37609 then Gn,Jo=ml[3368]or J(98048,27438,3368),Bj[Jo]else Jo,Gn=Xi(ea(Hl)),ml[1897]or J(39451,58382,1897)end elseif Gn<34633 then Jo,Gn=Xi(ipairs(Jo)),ml[15629]or J(73428,63491,15629)elseif Gn>34633 then Gn,Jo=39595,Tg(Jo)else if Kd>=Bj[Tg(41028)]then Gn=ml[-3392]or J(80921,36521,-3392)continue end Gn=ml[-8259]or J(111803,20,-8259)end elseif Gn<=57590 then if Gn<53293 then if Gn<42163 then Tg=function(qi)return Gf[qi-14548]end if wb then Gn=ml[-32319]or J(124524,12496,-32319)continue end Gn=ml[24839]or J(20885,32977,24839)elseif Gn>42163 then Gn,Jo=ml[21617]or J(32267,40146,21617),Xi(Jo(Hl))else Jo,Gn=Xi(gd(Hl)),ml[-28417]or J(126397,12778,-28417)end elseif Gn<54930 then kk,Gn=Jo,ml[-1382]or J(68389,53678,-1382)elseif Gn>54930 then Hl,nk,wm=ec(Jo[1],1,Jo[2])if not(Zj(Hl)~='function')then Gn=ml[23004]or J(72668,57655,23004)continue else Gn=ml[6440]or J(68529,48501,6440)continue end Gn=ml[-20559]or J(81134,35809,-20559)else Gn,kk=14356,nil end elseif Gn<=61138 then if Gn<=59782 then if Gn>59557 then Hl,nk,wm=ec(Jo[1],1,Jo[2]);Gn=ml[-9121]or J(88540,44855,-9121)else Jo,Gn=-8805,35017 end else Aj,Bj=Hl(nk,wm);wm=Aj if wm==nil then Gn=ml[5710]or J(17973,64625,5710)else Gn=34633 end end else Jo,Gn=wb.Value,ml[16307]or J(45204,43814,16307)end until Gn==36875 end)(Ne))else Sl,uo=Dd[1259]or Cc(29389,62050,1259),2 end else return ec(Ne[1],1,Ne[2])end until Sl==24050 end local Xc,vk,Tb,Xm,fa_,uc,B,th_;Xc,th_=function(Vi,Yc,qe)th_[Vi]=vl(Yc,55002)-vl(qe,30345)return th_[Vi]end,{};B=th_[26945]or Xc(26945,105954,53757)while B~=2303 do if B<27438 then if B<12548 then if B>=9382 then if B>9382 then uc,B={Name=uc,Callback=function()local Za,hp,Co,Pl;Za,Pl={},function(hk,sl,hd)Za[hd]=vl(sl,17221)-vl(hk,15997)return Za[hd]end;Co=Za[9543]or Pl(31759,10320,9543)while Co~=24628 do if Co>=15014 then if Co<=15014 then Co=Za[1965]or Pl(45152,44308,1965)continue else hp,Co=Pn(kk),Za[-26015]or Pl(21951,58669,-26015)end else if kk then Co=Za[-9883]or Pl(16604,92291,-9883)continue end Co=15014 end end end},th_[-5915]or Xc(-5915,11087,22831)else fa_,B=1784,24025 end elseif B<=6804 then B,vk=th_[-8968]or Xc(-8968,87756,64339),Xm.Connect else B,uc=10053,uc..fa_ end elseif B<=23694 then if B>=21860 then if B>21860 then vk,B=Xm.CreateButton,th_[-2687]or Xc(-2687,94214,33581)else B,Xm=th_[-32722]or Xc(-32722,23297,1486),wb:GetPropertyChangedSignal(ok(-29634))end else fa_,B=fa_..Tb,th_[21394]or Xc(21394,60676,28474)end else fa_,B=ok(fa_),th_[5004]or Xc(5004,28728,24391)end elseif B<=45368 then if B>=32020 then if B>41924 then B,uc=9382,yj.Name elseif B>32020 then Xm,B=xd(),th_[-14401]or Xc(-14401,11988,16456)else B,Tb=12548,yj.SectionEmoji end elseif B<=27438 then Xm,B=Cb,th_[-27965]or Xc(-27965,14056,62765)else B=th_[9801]or Xc(9801,20065,63797)continue end elseif B<52719 then if not(wb)then B=th_[25155]or Xc(25155,14604,61985)continue else B=th_[18078]or Xc(18078,34849,32542)continue end B=th_[10073]or Xc(10073,42326,32471)elseif B>52719 then uc,B=vk(Xm,xd),th_[29221]or Xc(29221,5729,8964)else B,uc=th_[23556]or Xc(23556,31375,17217),vk(Xm,uc)end end end for Lj,ac in ipairs(mc)do local Nk,La,rb,Df,s_,Ee,pd,io,Ci,gn,Xb,Ai,No,mo,lf,id,xm,Oj;io,gn=function(te,u_,pn)gn[pn]=vl(te,32170)-vl(u_,402)return gn[pn]end,{};La=gn[5367]or io(45072,50299,5367)while La~=55565 do if La<=26825 then if La>12496 then if La>=21107 then if La>24343 then if La>25816 then La,s_=gn[27863]or io(70333,57481,27863),mo(Nk,s_)else pd,Oj,xm=ec(Nk[1],1,Nk[2])if Zj(pd)~='function'then La=gn[-1133]or io(57445,23389,-1133)continue end La=gn[555]or io(91537,35757,555)end elseif La<21627 then La,mo=gn[-22551]or io(128209,39057,-22551),mo..s_ elseif La<=21627 then La,mo=gn[-6009]or io(97317,47109,-6009),Ya(mo)else s_,La=Xi(mo(Nk,s_)),gn[12645]or io(66142,50926,12645)end elseif La>=17663 then if La<18424 then La,No=gn[29832]or io(23861,2669,29832),No..Ee elseif La<=18424 then La,s_=gn[16855]or io(41817,52379,16855),-15329 else s_,La=(function(wp)return function()Pn(wp)end end)(lf),gn[-26068]or io(73274,62892,-26068)end elseif La>16701 then Nk,La=Xi(ea(pd)),gn[-16214]or io(65542,41409,-16214)else La,Nk=gn[8503]or io(47654,25382,8503),Xi(ipairs(Nk))end elseif La>5280 then if La<=7227 then if La<6282 then pd,Oj,xm=ec(Nk[1],1,Nk[2]);La=gn[32413]or io(35558,26818,32413)elseif La<=6282 then La,mo=19450,Nk.CreateButton else La,Nk=16701,ac.Zones end elseif La>10632 then La,id=39583,' 'else La,Nk=gn[30274]or io(80274,50762,30274),Ai.__iter end elseif La<=3769 then if La<=3050 then if La>=2001 then if La<=2001 then La,Nk=gn[6474]or io(89999,14776,6474),Cb else Nk,La=2,gn[-2724]or io(90035,22404,-2724)end else La,No=45079,' 'end else pd,Oj,xm=ec(Nk[1],1,Nk[2]);La=gn[19161]or io(34827,26167,19161)end elseif La<=4586 then La,s_=54226,ok(s_)else La,id=gn[9255]or io(66145,41195,9255),id..No end elseif La>=53818 then if La>=56987 then if La<59351 then if La<=56987 then La=gn[2801]or io(87127,20834,2801)continue else mo,La=1,gn[25538]or io(44372,25995,25538)end elseif La<59899 then La,id=44793,id..No elseif La>59899 then La,lf,Xb=gn[-28644]or io(67280,41752,-28644),Nk,mo else La,mo=gn[-9223]or io(75520,35298,-9223),Nk.CreateSection end elseif La>55536 then if La>56665 then s_,La=s_..id,21107 else Ai=ec(Nk[1],1,Nk[2])if Ai~=nil and Ai.__iter~=nil then La=gn[-5130]or io(7068,15676,-5130)continue elseif not(Zj(pd)=='table')then La=gn[16295]or io(40573,21577,16295)continue else La=gn[24457]or io(93853,40743,24457)continue end La=gn[23798]or io(42276,19200,23798)end elseif La<=54226 then if La<=53818 then s_,La=ac.Name,12496 else id,La=ac.Name,310 end else La,Nk=6282,Cb end elseif La>39583 then if La>47224 then Nk,La=Df[Nk],gn[16168]or io(76280,27790,16168)elseif La<=45079 then if La<=44793 then La,s_=24343,s_..id else La,Ee=17663,ac.ButtonEmoji end else La,rb=gn[-11522]or io(3678,22059,-11522),ec(s_[1],1,s_[2])end elseif La>31840 then if La<=36348 then Ci,Df=pd(Oj,xm);xm=Ci if xm==nil then La=gn[3459]or io(121597,51502,3459)else La=gn[5625]or io(11792,17986,5625)end else La,No=59351,ac.SectionEmoji end elseif La<=29826 then if La<=28498 then if La<=27877 then La,mo=gn[-9315]or io(79727,63448,-9315),Df[mo]else La,s_=26825,{Name=Xb,Callback=s_}end else Nk,La=Xi(gd(pd)),gn[17326]or io(10401,15363,17326)end else La,Nk=gn[-4261]or io(42664,52699,-4261),Xi(Nk(pd))end end end local lg=zd:CreateTab(ok(2281));lg:CreateSection'Quality Of Life \226\156\168';lg:CreateButton{Name=ok(-2821),Callback=function()local Pe,I,Lo,Uh,Zm,wh_,oi,Gi,jh,ti,qb;ti,jh={},function(Ui,Il,ga)ti[ga]=vl(Il,58279)-vl(Ui,43803)return ti[ga]end;Lo=ti[-18788]or jh(27287,97135,-18788)repeat if Lo<41004 then if Lo>=9280 then if Lo>=20956 then if Lo<=20956 then return ec(Uh[1],1,Uh[2])else Lo,Zm=45333,5213 end else qb,Lo=-2792,56901 end elseif Lo<=1223 then I,Lo=-23564,ti[-23822]or jh(49441,125377,-23822)else Lo,Uh=ti[13043]or jh(34490,40154,13043),Xi((function(Dj)local lj,zk,Mg,rk,np,ca,Kl,Ej,hn,db;Kl,np={},function(Yd,yc,kj)Kl[kj]=vl(Yd,25769)-vl(yc,48849)return Kl[kj]end;lj=Kl[-2853]or np(100152,20763,-2853)while lj~=2327 do if lj<=44688 then if lj<26543 then if lj<17094 then if lj<=13572 then lj,db=25894,Mg(db)else lj,hn=Kl[-13210]or np(64950,48569,-13210),rk(ca,hn)end elseif lj<24390 then hn,lj=2002,Kl[-14589]or np(55989,59580,-14589)elseif lj<=24390 then lj,ca=Kl[7495]or np(45451,65475,7495),ca.Position else zk,lj=73,Kl[-8172]or np(46583,43746,-8172)end elseif lj>=37904 then if lj<=38327 then if lj>37904 then lj=Kl[-18086]or np(13222,62249,-18086)continue else _G.SavedPosition,lj=ca,44688 end else lj,ca=Kl[-722]or np(47548,60881,-722),Ek end elseif lj>26543 then lj,rk=Kl[4539]or np(46025,10827,4539),ca.Notify else lj,hn=Kl[23678]or np(40381,36283,23678),Mg(hn)end elseif lj>61560 then if lj>=62823 then if lj>62823 then ca,lj=fk.Character,57028 else lj,Ej=Kl[-25298]or np(71626,6022,-25298),-6003 end else Mg=function(Td)return Dj[Td+3211]end if not(fk.Character and fk.Character:FindFirstChild'HumanoidRootPart')then lj=Kl[24188]or np(78862,1057,24188)continue else lj=Kl[-22845]or np(101914,21065,-22845)continue end lj=Kl[5061]or np(54659,42402,5061)end elseif lj>=51724 then if lj<57028 then Ej,lj=Mg(Ej),Kl[-30585]or np(94592,39520,-30585)elseif lj>57028 then lj,hn=Kl[-9384]or np(8971,46072,-9384),{Title=hn,Content=db,Duration=zk,Image=Ej}else ca,lj=ca.HumanoidRootPart,Kl[31118]or np(42828,55886,31118)end elseif lj>48427 then db,lj=-26775,13572 else lj,zk=62823,Mg(zk)end end end)(Uh))end elseif Lo>=55100 then if Lo<=56901 then if Lo>55100 then Lo,Pe=ti[8716]or jh(12571,107927,8716),'bell-ring'else Uh,Lo=3284,62524 end else Lo,Gi=25694,3 end elseif Lo<44080 then wh_,Lo='Position saved successfully!',9280 elseif Lo>44080 then oi,Lo='Misc \226\154\153\239\184\143 -> Quality Of Life \226\156\168',1223 else Uh,Lo={[Uh]=Gi,[Zm]=oi,[I]=wh_,[qb]=Pe},ti[-19024]or jh(6871,13288,-19024)end until Lo==43958 end};lg:CreateButton{Name=ok(-16881),Callback=function()local Ub,b_,Pa,Wn,Ig,Fg,Ti,L,jn,Pi,Xd,fi,Oo,si,jp,Oe,ub,fh,Wh;fi,Ig={},function(Zb,Qm,wk)fi[wk]=vl(Zb,37)-vl(Qm,36222)return fi[wk]end;Wn=fi[-8735]or Ig(64764,6961,-8735)while Wn~=47481 do if Wn>=32939 then if Wn<40913 then if Wn<=34237 then if Wn>=33301 then if Wn<=33301 then return ec(Fg[1],1,Fg[2])else Wn,b_=fi[-7215]or Ig(115105,17657,-7215),'bell-ring'end else fh,Wn='Misc \226\154\153\239\184\143 -> Quality Of Life \226\156\168',23337 end elseif Wn>39550 then Wn,jn=fi[10378]or Ig(61543,8307,10378),25705 else Wn,Fg=17830,{[Fg]=Oe,[jn]=Pi,[Ti]=Oo,[jp]=fh,[ub]=Wh,[Pa]=b_,[Ub]=Xd,[si]=L}end elseif Wn<63485 then if Wn<=40913 then Wh,Wn='HumanoidRootPart',fi[32442]or Ig(36113,48874,32442)else Wn,Oe=fi[-32068]or Ig(59397,50623,-32068),0 end elseif Wn<64242 then Wn,Ub=19741,-20297 elseif Wn<=64242 then Wn,Oo=18197,'No saved position found!'else Wn,si=26110,-11331 end elseif Wn<=22944 then if Wn<=18197 then if Wn>=17830 then if Wn>17830 then jp,Wn=419,fi[-6451]or Ig(41256,44316,-6451)else Fg,Wn=Xi((function(jf)local G,ed,xi,Q,tm,ab,bi,td,Me,Xk;ab,xi=function(Em,Ag,N)xi[Ag]=vl(N,23184)-vl(Em,37492)return xi[Ag]end,{};Xk=xi[31001]or ab(29066,31001,95023)repeat if Xk<28212 then if Xk>17857 then if Xk<=25160 then if Xk>=19917 then if Xk<23989 then Xk,Me=xi[-9046]or ab(20752,-9046,66384),39211 elseif Xk>23989 then Xk,G=29981,tm(G)else Xk=xi[24577]or ab(911,24577,40125)continue end elseif Xk>19568 then bi,Xk=tm(bi),14700 else bi,Xk=tm(bi),37757 end elseif Xk>=27733 then if Xk<=27733 then Xk,Q=xi[660]or ab(35012,660,7455),Xi(Q(ed))else Xk,G=47044,G(bi,td,Me)end else Me,Xk=22510,31815 end elseif Xk>=11284 then if Xk>=14421 then if Xk>=14700 then if Xk>14700 then tm=function(Nm)return jf[Nm+-13506]end if not(fk.Character and fk.Character:FindFirstChild(tm(-14669))and _G.SavedPosition)then Xk=xi[-1600]or ab(35101,-1600,47429)continue else Xk=xi[-14616]or ab(48647,-14616,535)continue end Xk=xi[29680]or ab(42066,29680,51531)else td,Xk=5,xi[23587]or ab(21728,23587,39940)end else G,Xk=-6791,xi[-25662]or ab(40115,-25662,9835)end elseif Xk>11284 then fk.Character.HumanoidRootPart.CFrame,Xk=ec(Q[1],1,Q[2]),50291 else Xk,Q=397,CFrame.new end elseif Xk<=519 then if Xk<397 then Xk,Me=xi[3875]or ab(49474,3875,39841),0 elseif Xk>397 then Xk,td=xi[15506]or ab(23436,15506,85333),3 else Xk,ed=xi[30657]or ab(62742,30657,80947),_G.SavedPosition end else Xk,G=xi[-14940]or ab(12998,-14940,42231),ed(Q,G)end elseif Xk<=39799 then if Xk<=35513 then if Xk>=31815 then if Xk>=34862 then if Xk>34862 then ed,Xk=Q.Notify,xi[-5601]or ab(16269,-5601,65750)else Xk,bi=19572,-3278 end else Me,Xk=tm(Me),xi[5990]or ab(53833,5990,37942)end elseif Xk>=29781 then if Xk<=29781 then Xk,bi=xi[-27915]or ab(14805,-27915,73096),-16926 else Xk,bi=xi[4282]or ab(22518,4282,84834),2175 end else G,Xk=tm(G),29781 end elseif Xk>38492 then bi,Xk=tm(bi),519 elseif Xk>=37757 then if Xk<=37757 then Xk,td=27300,3 else Xk,Me=49113,tm(Me)end else G,Xk={Title=G,Content=bi,Duration=td,Image=Me},xi[-25718]or ab(33901,-25718,30380)end elseif Xk<=50291 then if Xk<47044 then if Xk<=44109 then Xk,G=25160,13925 else Xk,ed=xi[-22415]or ab(32212,-22415,97637),Q.Notify end elseif Xk>49113 then Q,Xk=Ek,35513 elseif Xk<=47044 then ed,Xk=ed+G,xi[7270]or ab(7902,7270,41583)else G,Xk={Title=G,Content=bi,Duration=td,Image=Me},57490 end elseif Xk>57490 then Xk,G=xi[9071]or ab(39129,9071,51275),Vector3 .new elseif Xk>51308 then G,Xk=ed(Q,G),xi[-10395]or ab(28239,-10395,66400)else Xk,Q=xi[-22080]or ab(31787,-22080,129909),Ek end until Xk==13362 end)(Fg)),fi[26593]or Ig(51847,50675,26593)end else Pi,Wn='bell-ring',fi[-390]or Ig(80419,18613,-390)end elseif Wn>19741 then Wn,Pa=fi[28883]or Ig(64676,64442,28883),9004 else Wn,Xd=fi[14789]or Ig(108502,8553,14789),'Misc \226\154\153\239\184\143 -> Quality Of Life \226\156\168'end elseif Wn>26250 then Ti,Wn=-30432,64242 elseif Wn<=26110 then if Wn<=23337 then Wn,ub=fi[7549]or Ig(71915,62851,7549),-28175 else L,Wn='Teleported to saved position!',39550 end else Wn,Fg=fi[29511]or Ig(80118,54785,29511),-16784 end end end}local og=ok(-4197);lg:CreateToggle{Name='Spawn At Position \240\159\154\128',CurrentValue=false,Flag=ok(-8611),Callback=function(kl)og=kl end};fk.CharacterAdded:Connect(function(uj)local xa,Bg,Gj,hc,va,tl,Rh,Wk,Ko;xa,Ko=function(Jh,Ja,Aa)Ko[Jh]=vl(Ja,10618)-vl(Aa,59162)return Ko[Jh]end,{};Rh=Ko[-15702]or xa(-15702,57273,15000)while Rh~=23840 do if Rh<33052 then if Rh>13175 then Rh,tl=55295,5 elseif Rh<=6465 then if Rh>1595 then va,Rh=-25929,27165 else hc,Rh=0,56425 end else Wk,Rh='HumanoidRootPart',Ko[3169]or xa(3169,89377,13197)end elseif Rh>=40900 then if Rh<=55295 then if Rh>40900 then Gj,Rh=-18488,13175 else Rh,Bg=Ko[-14285]or xa(-14285,56280,2941),9678 end else Rh,va=Ko[-5528]or xa(-5528,34560,49848),{[va]=tl,[Gj]=Wk,[Bg]=hc}end elseif Rh>33052 then Rh,va=Ko[-18812]or xa(-18812,78930,31510),Xi((function(il)local Gl,Ol,co,T,Rm,bf,am,W,Qe,Dn,Ad;Rm,co=function(Ri,mp,qo)co[mp]=vl(Ri,22065)-vl(qo,15667)return co[mp]end,{};Dn=co[-9148]or Rm(79997,-9148,60803)while Dn~=42978 do if Dn>24262 then if Dn>44990 then if Dn>56136 then Dn,am=21841,Ol.WaitForChild elseif Dn>52640 then am,Dn=am+Gl,co[-7095]or Rm(54165,-7095,28180)elseif Dn>47380 then Dn,T=4034,-5383 else am,Dn=_G.SavedPosition,24262 end elseif Dn<=40348 then if Dn<36441 then Dn=co[-14701]or Rm(81125,-14701,65473)continue elseif Dn<=36441 then Qe,Dn=30224,1718 else bf=function(Li)return il[Li+-20546]end if og and _G.SavedPosition then Dn=co[21431]or Rm(35968,21431,44733)continue end Dn=co[-29411]or Rm(77971,-29411,52980)end elseif Dn<=44355 then Dn,Ad=52640,0 else Dn,W.CFrame=co[-5636]or Rm(75363,-5636,49220),ec(Ol[1],1,Ol[2])end elseif Dn<12925 then if Dn>=8453 then if Dn<10232 then Dn,Ol=co[-12458]or Rm(37174,-12458,12480),CFrame.new elseif Dn<=10232 then Dn,Gl=co[-28354]or Rm(1253,-28354,11521),Xi(bf(Gl))else Dn,W=co[27219]or Rm(9676,27219,28619),ec(Gl[1],1,Gl[2])end elseif Dn<=1718 then Dn,Qe=co[-30964]or Rm(84604,-30964,62054),Xi(bf(Qe))else Dn,T=36441,bf(T)end elseif Dn>=19704 then if Dn>=21841 then if Dn<=21841 then Gl,Dn=2058,10232 else Gl,Dn=Vector3 .new,44355 end else Gl,Dn=Gl(Ad,T,ec(Qe[1],1,Qe[2])),co[29449]or Rm(95727,29449,30117)end elseif Dn<17058 then Ol,Dn=Xi(Ol(am)),co[1984]or Rm(120145,1984,61073)elseif Dn<=17058 then Dn,Gl=co[29358]or Rm(9443,29358,30938),Xi(am(Ol,ec(Gl[1],1,Gl[2])))else Dn,Ol=co[-13806]or Rm(77928,-13806,22472),uj end end end)(va))else return ec(va[1],1,va[2])end end end);lg:CreateSection(ok(-4858))local Hn={{Code='SecretCode',Reward=ok(-6047)},{Code=ok(1512),Reward=ok(19874)},{Code=ok(-26117),Reward=5000},{Code=ok(26247),Reward=ok(7085)}};table.sort(Hn,function(S,Pb)return S.Reward>Pb.Reward end)for jg,Zh in ipairs(Hn)do local Yh,Na,xl,gj,Jg,ue,a_;a_,Na={},function(vi,pe,Vj)a_[Vj]=vl(pe,8928)-vl(vi,42291)return a_[Vj]end;xl=a_[32684]or Na(35293,40753,32684)repeat if xl<=37091 then if xl>=12140 then if xl<=14248 then if xl>12140 then ue,xl=gj(Yh,ue),a_[-22194]or Na(22992,126696,-22194)else ue,xl=ue..Jg,40386 end else xl,Yh=5655,lg end elseif xl<=5655 then gj,xl=Yh.CreateButton,9202 else ue,xl=Zh.Reward,48955 end elseif xl>=51721 then if xl>51721 then xl=a_[-15016]or Na(2814,54730,-15016)continue else Jg,xl=ok(Jg),12140 end elseif xl<=40386 then ue,xl={Name=ue,Callback=function()return(function(Nj)local function eo(Yg)return Nj[Yg+-16910]end setclipboard(Zh.Code);Ek:Notify{Title=eo(-5785),Content=eo(37631)..Zh.Code..' to clipboard!',Duration=3,Image=eo(9968)}end){[-22695]='Misc \226\154\153\239\184\143 -> Yen \240\159\146\176',[20721]='Copied ',[-6942]='bell-ring'}end},a_[-31072]or Na(32118,77069,-31072)else Jg,xl=-18351,a_[31871]or Na(57495,77133,31871)end until xl==18269 end local Od,Zd,zf,on,e_,jl,j,Ck,qn,R,Gh;qn,Gh=function(Ga,yp,Wb)Gh[Wb]=vl(yp,43351)-vl(Ga,16223)return Gh[Wb]end,{};e_=Gh[19371]or qn(42242,73989,19371)repeat if e_>=33757 then if e_<53735 then if e_<=42578 then if e_>=40249 then if e_<41383 then if e_>40249 then e_,zf=Gh[22954]or qn(31029,112505,22954),zf(Od,function(vj,of)return vj.Reward>of.Reward end)else e_,Ck=Gh[25874]or qn(24314,106592,25874),23012 end elseif e_>41383 then jl,e_=Xi(ok(jl)),13420 else zf,e_={zf,Ck,jl,R},Gh[22405]or qn(36307,32656,22405)end elseif e_>=39281 then if e_>39281 then zf,e_=zf(j,function(he,Ml)return he.Reward>Ml.Reward end),Gh[-217]or qn(9421,22225,-217)else e_,jl=21483,-8067 end elseif e_<=33757 then e_,zf=39001,lg else Ck,e_=zf.CreateLabel,Gh[9918]or qn(8201,30203,9918)end elseif e_<48470 then if e_<44049 then Ck,e_=ok(Ck),31668 elseif e_<=44049 then j,e_=zf,Gh[28496]or qn(62507,66395,28496)else e_,zf=23313,ok(zf)end elseif e_>51414 then e_,R=Gh[26703]or qn(41013,77784,26703),22504 elseif e_<=48470 then jl,e_=-16545,Gh[-25490]or qn(40843,126577,-25490)else e_,Zd=Gh[12383]or qn(25386,14323,12383),-7061 end elseif e_>58356 then if e_>60917 then if e_>=64134 then if e_>64134 then e_,Ck=Gh[19783]or qn(2109,9947,19783),zf.CreateSection else jl,e_=ok(jl),Gh[10359]or qn(39598,18992,10359)end else on,e_=ok(on),31700 end elseif e_<=59379 then if e_>=59292 then if e_<=59292 then e_,jl=Gh[-32398]or qn(54612,105953,-32398),Ck(zf,jl)else jl,e_=3446,64134 end else e_,R=18028,ok(R)end else zf,e_=lg,10168 end elseif e_<=56984 then if e_<=55236 then if e_>55116 then for Oa,dk in ipairs(Od)do local tf,Ta,Fe,ld,rp,Vg,Um,bl,Qn;Ta,Vg={},function(ri,zi,so)Ta[zi]=vl(so,10261)-vl(ri,14122)return Ta[zi]end;ld=Ta[20001]or Vg(26401,20001,63869)repeat if ld>38504 then if ld<=50649 then if ld>=44299 then if ld>=48538 then if ld>48538 then ld,bl=38504,Um else Fe,ld=Qn,39597 end else Fe,ld=bl,36882 end elseif ld<41717 then if not Fe then ld=Ta[1243]or Vg(10857,1243,34112)continue end ld=1883 elseif ld>41717 then ld=Ta[30701]or Vg(32898,30701,59758)continue else tf,ld=rp.CreateButton,Ta[-25188]or Vg(55030,-25188,105808)end elseif ld>63357 then ld,Um=25040,-8598 elseif ld<=54121 then if ld>53778 then Qn,ld=dk.Reward,Ta[18793]or Vg(60719,18793,77566)else Um,ld=ok(Um),31057 end else ld,Qn=Ta[31465]or Vg(10459,31465,62878),Qn>=Fe end elseif ld<=25305 then if ld>=17014 then if ld>25146 then if Fe then ld=Ta[16926]or Vg(59106,16926,91516)continue end ld=Ta[-18527]or Vg(34020,-18527,104593)elseif ld>25040 then ld,Qn=Ta[-16784]or Vg(20730,-16784,74535),tf(rp,Qn)elseif ld<=17014 then Qn,ld={Name=Qn,Callback=function()return(function(El)local function Lg(mb)return El[mb+25370]end setclipboard(dk.Code);Ek:Notify{Title=Lg(-22633),Content=Lg(-56853)..dk.Code..' to clipboard!',Duration=Lg(-12707),Image=Lg(-44403)}end){[-19033]='bell-ring',[2737]='Misc \226\154\153\239\184\143 -> Boosts \226\154\161',[-31483]='Copied ',[12663]=3}end},25146 else ld,Um=Ta[-32556]or Vg(8642,-32556,62676),ok(Um)end elseif ld<=11494 then if ld<=1883 then ld,Um=53778,12309 else Fe,ld=1440,63357 end else ld,Fe=25305,Qn end elseif ld<33117 then if ld<=31057 then bl,ld=Um,Ta[9171]or Vg(37954,9171,96358)else Qn,ld=Fe,17014 end elseif ld<=36882 then if ld>33117 then ld,Qn=11675,Fe else ld,rp=Ta[6912]or Vg(44207,6912,71279),lg end else ld,Fe=31649,bl end until ld==2515 end e_=18583 elseif e_<=53735 then e_,jl=Gh[-28180]or qn(25608,49689,-28180),Xi(ok(jl))else e_,jl=30546,24343 end elseif e_<=55318 then e_,jl=Gh[1650]or qn(6372,12969,1650),Ck(zf,ec(jl[1],1,jl[2]))else zf,e_=table.sort,Gh[-4441]or qn(15038,13877,-4441)end elseif e_>58179 then for Wl,Vb in ipairs(j)do local Cn,Vh,cp,Fm,rf,Sg,fc;Cn,fc={},function(So,_b,nh)Cn[nh]=vl(_b,35389)-vl(So,37710)return Cn[nh]end;Fm=Cn[15491]or fc(8790,28190,15491)while Fm~=6056 do if Fm<24296 then if Fm<12009 then if Fm<=685 then Fm,rf=45990,rf..Sg else Fm,rf=Cn[22755]or fc(62183,16468,22755),cp(Vh,rf)end elseif Fm>12009 then Fm,Vh=12009,lg else cp,Fm=Vh.CreateButton,65388 end elseif Fm>=45990 then if Fm>45990 then rf,Fm=Vb.Reward,Cn[-30239]or fc(30588,117031,-30239)else Fm,rf=9491,{Name=rf,Callback=function()return(function(aj)local function ul(mg)return aj[mg+26814]end setclipboard(Vb.Code);Ek:Notify{Title=ul(-44949),Content=ul(-26565)..Vb.Code..ul(-23639),Duration=ul(-38769),Image=ul(-8476)}end){[-11955]=3,[18338]='bell-ring',[-18135]='Misc \226\154\153\239\184\143 -> Chikara \240\159\146\141',[3175]=' to clipboard!',[249]='Copied '}end}end elseif Fm<=24296 then Sg,Fm=' Chikara \240\159\146\142',Cn[-1665]or fc(62198,61016,-1665)else Fm=Cn[-19874]or fc(64160,2987,-19874)continue end end end e_=9780 elseif e_>57512 then e_,jl=Gh[24774]or qn(44360,117298,24774),ok(jl)else e_,Ck=22027,zf.CreateSection end elseif e_>=18028 then if e_<=23313 then if e_<=22027 then if e_>19115 then if e_>21483 then e_,jl=53735,-33698 else jl,e_=Xi(ok(jl)),55318 end elseif e_<18583 then e_,Ck=Gh[-4941]or qn(36929,81478,-4941),{Code=Ck,Reward=jl,Name=R}elseif e_>18583 then e_,zf=46534,-5649 else e_,zf=Gh[-1393]or qn(6478,110574,-1393),lg end elseif e_>=22701 then if e_<=22701 then R,e_=ok(R),7139 else Ck,e_=-26218,Gh[-14048]or qn(1505,52671,-14048)end else e_,jl=59292,'Boosts \226\154\161'end elseif e_<30546 then if e_<=27216 then if e_>24320 then e_=Gh[-22536]or qn(48843,111581,-22536)continue else jl,e_={Code=jl,Reward=R,Name=Zd},Gh[28908]or qn(15189,34402,28908)end else e_,zf=Gh[-29813]or qn(32553,17872,-29813),{{Code=ok(20648),Reward=ok(16823)},{Code='MobsUpdate',Reward=75000},{Code=ok(-25504),Reward=75000},{Code=ok(18248),Reward=ok(-29156)},{Code='SecretCode',Reward=50000},{Code=ok(471),Reward=50000},{Code='1MVisits',Reward=ok(-3336)},{Code=ok(19500),Reward=ok(-26381)},{Code='FreeChikara2',Reward=ok(-18869)},{Code='FreeChikara',Reward=ok(-14659)}}end elseif e_>31668 then R,e_={Code=R,Reward=Zd,Name=on},Gh[-3201]or qn(4766,26175,-3201)elseif e_>30546 then jl,e_=-25513,Gh[-9405]or qn(18266,127519,-9405)else e_,jl=Gh[22089]or qn(40841,6353,22089),ok(jl)end elseif e_<=10168 then if e_<7362 then if e_>=4272 then if e_>4272 then Zd,e_='1 Day Boost',24320 else zf,e_={Code=zf,Reward=Ck,Name=jl},40249 end elseif e_<=1368 then e_,R=51414,ok(R)else jl,e_=Ck(zf,ec(jl[1],1,jl[2])),Gh[2028]or qn(8686,3033,2028)end elseif e_>9780 then e_,Ck=Gh[-10467]or qn(22476,109395,-10467),zf.CreateSection elseif e_>9275 then e_,zf=Gh[-11429]or qn(44449,75425,-11429),lg elseif e_>7362 then e_,Od=7362,zf else e_,zf=41017,table.sort end elseif e_>14702 then if e_<=15734 then e_,R=22701,13503 else e_,Zd=Gh[-2689]or qn(51831,100289,-2689),ok(Zd)end elseif e_<=13420 then if e_<=11051 then if e_<=10794 then e_,Ck=55116,ok(Ck)else R,e_=-35806,1368 end else e_,jl=Gh[23873]or qn(41558,110094,23873),Ck(zf,ec(jl[1],1,jl[2]))end else on,e_=11868,Gh[1933]or qn(53707,96007,1933)end until e_==39158 end)(Hb,ec(Al[1],1,Al[2]))),Pj[-31351]or y(58187,-31351,20541)else return ec(Hb[1],1,Hb[2])end elseif tp<=14729 then Al,tp=Xi(...),Pj[-5209]or y(25032,-5209,101251)else Hb,tp={[8223]=60,[-5707]=336.62599999999998,[4709]=1,[18072]=844.18700000000001,[-25388]=65,[31205]='Class: ...',[-4169]='150Qd',[-29226]=-383.322,[31765]=773.59100000000001,[31479]='\226\152\129\239\184\143',[-540]=false,[15525]='1 Hour Boost',[-26873]=250000000000000,[-9390]=61.615000000000002,[-5959]='Hokage \240\159\166\138',[29621]=-402.68700000000001,[-6861]=9,[28799]=15,[-11616]=358.41500000000002,[16932]='StatFunctions',[19416]=121.923,[-30340]=72.620000000000005,[-11083]='100M',[908]=-2678.0210000000002,[24974]=251,[-29003]='150Qd',[-1199]=5000000,[18232]=1000000000,[30571]=18,[-6887]=-1802.547,[-22724]=10000,[5938]='Misc \226\154\153\239\184\143',[23024]=194.01900000000001,[4116]='Ghoul \240\159\145\187',[-14884]=1027.624,[30531]=2495.5940000000001,[-28814]=112.002,[19017]=207,[18226]=69.183000000000007,[3974]=207,[-29227]='Value',[-27463]='5M',[-31898]=100,[-11677]=41.676000000000002,[-15583]='Kishin \240\159\145\191',[17767]='Quake Fruit \240\159\140\138',[8044]='25Qn',[-13284]=10,[-30593]='Pirate \226\152\160\239\184\143',[5006]=-541.50199999999995,[21428]=-630.80899999999997,[21345]='SelectedFruits',[-22460]='ChristmasDelay',[23550]=true,[-3223]=153.96299999999999,[16627]='5T',[29374]='Rubber Fruit \240\159\145\138',[32470]='Speed',[-21761]=-338.33800000000002,[-16795]=6,[-17853]=1e+22,[-8698]=100,[-17525]=-1.9019999999999999,[-877]=83.519999999999996,[-20574]=1917.442,[-31978]='Dear ',[30850]=-1254.075,[7231]=429.31999999999999,[-10593]=-2305.319,[30203]='100K',[-21215]=17,[-16065]='10K',[24225]=141,[20401]=4111.6819999999998,[27608]=1,[-11704]=60,[-3404]=60,[-4692]=1628.384,[-20678]=-39.747,[22951]=151.251,[11036]=166.47300000000001,[2192]=127.968,[14394]=false,[-1687]=179,[321]=50000,[-21847]='1WeekAnniversary',[26151]=0.10000000000000001,[26161]='1 Day Boost',[7103]='400CCU',[-4941]='1 Hour Boost \226\143\177\239\184\143',[-14771]=11,[26929]='250T',[510]=453.42399999999998,[28139]=101.133,[6784]='1B',[17361]='6',[16792]=1341.7470000000001,[31318]=60,[-32360]=64.289000000000001,[-2837]=3873.9029999999998,[15314]=-1119.864,[3300]=844.18700000000001,[-14074]=2175.6399999999999,[25874]=100000,[16342]=812.39300000000003,[12922]=4,[-27599]='3',[-31805]='Collect Chikara \240\159\146\142',[-31559]=2792.6759999999999,[21111]='100B',[7495]=147,[-18614]=5000000000000,[-11672]=' ',[-31109]=1756.2539999999999,[12483]='Ultra Instinct \226\156\168',[-19545]=150000000000000000,[-2390]=50000,[17347]=924.88599999999997,[-30041]='Easter Egg \240\159\164\171',[-10248]='\240\159\148\170',[21635]='150Qd',[5556]='Best Stat Zones \240\159\147\138',[-22561]=1440,[7779]=2305.067,[-15797]='Speed',[-10823]=59,[-8623]=844.18700000000001,[-12363]=59,[26166]='Main',[-30219]='2',[-25262]=2.5e+19,[23545]=1669.4549999999999,[6651]='\226\152\129\239\184\143',[3464]=1917.442,[-3447]=10000,[19021]=false,[26848]=4340.0309999999999,[-13607]='\226\128\162 Updated Auto Farm section,\n\226\128\162 Added Misc tab,\n\226\128\162 Added Auto Fruit,\n\226\128\162 Improved Performance,\n\226\128\162 Stay tuned for Auto Quests!\n',[-9038]='MurzzHub | v1.1 Release',[-24235]=1252.99,[28468]=1669.4549999999999,[-15446]=27,[-14352]=1628.384,[21054]=556.154,[15966]='1 Day Boost \226\143\177\239\184\143',[-1201]='Yen \240\159\146\176',[25124]=1425.6679999999999,[11562]=-949.09699999999998,[14214]=false,[-24627]='10Sx',[4504]='250T',[8436]=-6.4790000000000001,[-12856]='10K',[-18878]=429.31999999999999,[-1520]=519.57899999999995,[-27043]='Sword',[-32104]=69.183000000000007,[30450]=14,[2494]=5000000000000,[14803]='Select Fruits \240\159\141\142',[22441]=141.19999999999999,[31177]=-631.73199999999997,[31753]='Toggle',[-25145]=true,[23157]='FreeChikara3',[-5819]=-424.44799999999998,[-5043]='25Qn',[-22768]=1105.384,[13186]=3873.9029999999998,[23447]=100000000,[18757]='Kill',[7401]='100K',[-16430]=4,[12690]=61,[-427]='2',[32296]='\240\159\146\170',[22481]=388.75,[23973]=100000,[22118]=60.921999999999997,[-24754]=881.74199999999996,[32468]=-1238.425,[-18761]='MurzzHub v1.1 Release',[4001]=-1606.8420000000001,[-14496]='\240\159\151\161\239\184\143',[4496]='10Sx',[13712]=2,[23809]='Strength',[20745]=': ... ',[-4315]=-78.950000000000003,[5240]=731.07299999999998,[20031]='4',[12778]=5000000000000,[17637]=-949.09699999999998,[-26059]=24,[-12936]=60,[-29923]=61,[3243]='Durability',[25601]='1',[18425]='5T',[-24443]=22,[-2542]=812.39300000000003,[-8509]='\240\159\140\128',[20571]='25Qn',[-13149]=13,[7530]=1000000,[-19918]='Angel \240\159\152\135',[18943]='Kill',[-26599]=668.17700000000002,[-30353]=141.19999999999999,[-10745]=-229.85499999999999,[5814]=-768.22199999999998,[-22021]=251,[26574]='\226\154\148\239\184\143',[-29687]='10M',[12304]=2792.6759999999999,[29466]=1e+22,[-19388]=1252.99,[-30520]=696.62300000000005,[-18453]=110.90000000000001,[13297]=-383.322,[-11517]=92.584999999999994,[18886]='Thank you for using Murzzhub!\nI appreciate every second of you using my script!\nIf you have any suggestions, or want to see sneak peeks,\nJoin the discord! (None for now srry!)\n',[-7719]=10000000,[-22385]=432.89699999999999,[9131]='100B',[26669]='100kVisits',[-3936]='6',[4922]=60.921999999999997,[-5662]='Gorosei \240\159\167\147',[25024]=100000000,[814]=false,[-27219]='TotalPower',[5390]='Quests',[24305]='Krampus',[-11411]=92.584999999999994,[-17444]=65,[-31185]=100000000000,[-13315]=-1238.425,[-21856]=1440,[-12561]=-156,[24447]='\240\159\147\129',[23531]=5000,[28519]='100',[27653]='100',[-31714]=-915.29399999999998,[29410]=83.519999999999996,[-26090]='\240\159\140\128',[26097]=6,[4432]=-619.58399999999995,[-4327]='FarmFruits',[24891]='Money: ... \240\159\146\176',[18678]=-137.43600000000001,[17653]='\226\152\129\239\184\143',[30247]=617.49199999999996,[2690]=153.96299999999999,[-8738]='MurzzHub',[-13838]=731.07299999999998,[-20135]=10000,[1057]=453.42399999999998,[-13224]='Teleport to Position \240\159\147\141',[15033]='Saiyan \240\159\146\165',[-11475]='AFSE_UI',[2669]=591.06600000000003,[-31128]=112.002,[26249]=8,[5441]=' ',[27853]='100M',[-3402]='Hakaishin \240\159\146\128',[2622]=2,[-17894]=65,[32058]=1341.7470000000001,[7535]=-1307.1199999999999,[-16030]='\240\159\147\129',[-6989]='5',[-32149]='50Likes',[6482]=-6.2110000000000003,[-2335]=' ',[15627]='Sword',[-26681]='Sage \240\159\149\138\239\184\143',[-29493]='Train ',[-2501]=-480.24700000000001,[31747]=151.251,[-6919]=130.89099999999999,[-16961]=3053.817,[30356]='10M',[29904]='Gullible67',[-1985]='2',[25851]=65,[5169]='10kVisits',[-9036]=1110.712,[7936]='Chakra',[-5365]='Modules',[-17986]=60,[-31402]=527.04600000000005,[5330]='Espada \226\154\148\239\184\143',[21905]='100Favs',[-17875]='\240\159\147\129',[-25499]=75000,[-5839]='Thunder Fruit \226\154\161',[5419]='Magi \240\159\167\153',[3103]=-440.97800000000001,[-25732]=1663.124,[7911]=-1651.415,[-29087]=26,[2370]='Strength',[12196]=0.5,[4049]='3',[-12318]=250000000000000,[10742]=1,[-22879]='Akuma \240\159\152\161',[5446]=136.01499999999999,[15694]='Chikara: ',[-2668]=41.676000000000002,[-5878]=-1651.415,[-2585]=2175.6399999999999,[6116]=-1606.8420000000001,[-22571]='Home \240\159\143\160',[13839]=1000000,[20480]=500000,[-7956]=127.968,[28000]='1 Day Boost',[-16298]='OtherData',[836]='Save Position \240\159\147\140',[-4659]=617.49199999999996,[23436]=-424.44799999999998,[13897]='Shinigami \240\159\145\185',[23998]='Auto Resource \226\154\160\239\184\143 | AUTOCLICKER NEEDED',[-11048]='100M',[7113]='Discord \240\159\146\172',[24296]=3226.973,[-31394]='Strength',[-10401]=915.29200000000003,[22493]=-1345.6980000000001,[-5192]=',',[11692]=358.41500000000002,[-4410]='Chikara \240\159\146\141',[19389]=783.25300000000004,[-22135]=5,[15713]='Durability',[-11002]=5000,[-31468]='100K',[-16406]=61.615000000000002,[24084]=10000,[26052]=141,[17160]=1440,[6122]=3,[-26142]='1',[-21669]=1543.135,[14468]=2.5e+19,[14601]=23,[-9779]='\240\159\146\176',[12660]=-109.675,[2258]=150000000000000000,[-19786]='1B',[30238]=3482.9180000000001,[30945]=12,[-5450]='Strength',[-23765]=-244.40600000000001,[-9766]='AutoChikaraToggle',[-14694]=' Yen \240\159\146\181',[-27658]=61.008000000000003,[-19709]=-244.40600000000001,[-1658]=718.49199999999996,[-25977]='Value',[21222]=3869.009,[-28545]=-22.187999999999999,[4128]='10kLikes',[31509]=571.12099999999998,[14425]=61.008000000000003,[-1582]=-915.29399999999998,[12399]='\226\152\129\239\184\143',[-6508]=336.62599999999998,[19651]='5',[23135]=2055.9870000000001,[20541]=890.45799999999997,[-29881]=-119.76000000000001,[-15212]=10000,[17660]=101.133,[-5353]=527.04600000000005,[19694]='\240\159\146\168',[15410]=1543.135,[-24448]=-424.44799999999998,[19309]=-229.85499999999999,[24658]=1756.2539999999999,[1243]='10Sx',[-21189]='\240\159\146\168',[7029]=121.923,[32727]=2564.9299999999998,[1804]=5000000,[10475]='\240\159\146\168',[-1992]='100CCU',[-12057]=696.62300000000005,[16915]=4340.0309999999999,[2473]='\240\159\146\170',[-7451]='Auto Farms \240\159\140\190',[20444]=false,[-31845]='Agility',[25298]=591.06600000000003,[-27001]=476.596,[-12443]='Live Stats \240\159\147\138',[-4625]=61.008000000000003,[-12888]='Thx for 500 script views!',[18598]='Sword',[-20863]=-1001.867,[23890]='Hero \240\159\166\184',[-4527]=-1001.867,[27826]='Durability',[-4954]='SpawnAtPosition',[-5137]=1110.712,[-18486]=100000000000,[16221]=130.89099999999999,[-13281]='Yen',[-25475]=136.01499999999999,[26182]=-6.4790000000000001,[-32699]=2305.067,[9807]='4',[13047]=194.01900000000001,[1154]=-1307.1199999999999,[-29035]='\240\159\140\128',[17093]=121.923,[20368]=-630.80899999999997,[-32363]=25,[19629]='ReplicatedStorage',[21173]=100,[-26339]=-768.22199999999998,[32286]=91.790000000000006,[-4925]=3226.973,[28952]='Durability',[-15971]=2564.9299999999998,[-21960]=881.74199999999996,[-18642]=1779.3869999999999,[-3396]=100000,[2380]='\240\159\146\142',[-8542]='\240\159\146\170',[22347]='[MurzzHub] Rayfield load failed, retrying...',[-21424]='1B',[-4346]=626.39999999999998,[-29576]='Auto Train \240\159\143\139\239\184\143',[16764]=-424.44799999999998,[-2396]=-22.187999999999999,[1644]='Folder',[8582]=-338.33800000000002,[-3993]='\226\154\161',[-19435]='Pirate King \240\159\143\180\226\128\141\226\152\160\239\184\143\240\159\145\145',[-27228]=-2305.319,[-1262]=-581.48699999999997,[-9045]='Sin \240\159\152\136',[-10491]='Agility',[-16787]=21,[-7487]=-701.85500000000002,[-15167]=130.89099999999999,[19227]=3482.9180000000001},Pj[17240]or y(34455,17240,62410)end end
+-- MurzzHub v1.1 Full Release
+-- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara + Auto Quest + Teleports + Misc)
+-- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
+-- Fully optimized for performance
+
+-------------------------------------------------
+-- SERVICES
+-------------------------------------------------
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+
+local OtherData = Player:WaitForChild("OtherData")
+local StatsFolder = Player:WaitForChild("Stats")
+local QuestsFolder = Player:WaitForChild("Quests")
+
+-------------------------------------------------
+-- VERSION
+-------------------------------------------------
+local VERSION = "v1.1 Release"
+
+-------------------------------------------------
+-- SAFE DEBUG
+-------------------------------------------------
+local warned = false
+local function safeRun(fn)
+    local ok, err = pcall(fn)
+    if not ok and not warned then
+        warned = true
+        warn("[MurzzHub Debug] "..err)
+    end
+end
+
+local function log(msg)
+    print("[MurzzHub DEBUG] "..tostring(msg))
+end
+
+-------------------------------------------------
+-- RAYFIELD
+-------------------------------------------------
+local Rayfield
+repeat
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+    end)
+    if success then
+        Rayfield = result
+    else
+        warn("[MurzzHub] Rayfield load failed, retrying...")
+        task.wait(0.5)
+    end
+until Rayfield
+
+local Window = Rayfield:CreateWindow({
+    Name = "MurzzHub | "..VERSION,
+    LoadingTitle = "MurzzHub "..VERSION,
+    LoadingSubtitle = "Auto Train, Chikara and more!",
+    ConfigurationSaving = {Enabled=true, FolderName="MurzzHub", FileName="AFSE_UI"}
+})
+
+-------------------------------------------------
+-- UTIL (ABBREVIATION & ANIMATION)
+-------------------------------------------------
+local function abbreviate(n)
+    if n >= 1e24 then return string.format("%.2fSp", n / 1e24)
+    elseif n >= 1e21 then return string.format("%.2fSx", n / 1e21)
+    elseif n >= 1e18 then return string.format("%.2fQn", n / 1e18)
+    elseif n >= 1e15 then return string.format("%.2fQd", n / 1e15)
+    elseif n >= 1e12 then return string.format("%.2fT", n / 1e12)
+    elseif n >= 1e9 then return string.format("%.2fB", n / 1e9)
+    elseif n >= 1e6 then return string.format("%.2fM", n / 1e6)
+    elseif n >= 1e3 then return string.format("%.2fK", n / 1e3)
+    else return tostring(n)
+    end
+end
+
+local function easeOutQuad(t) return 1 - (1 - t)^2 end
+
+local AnimateQueue = {}
+local function animateNumber(label, startValue, endValue, prefix, emoji, duration)
+    duration = duration or 0.5
+    if AnimateQueue[label] then
+        AnimateQueue[label].target = endValue
+        return
+    end
+    AnimateQueue[label] = {current=startValue, target=endValue, prefix=prefix, emoji=emoji, duration=duration, elapsed=0}
+end
+
+RunService.Heartbeat:Connect(function(dt)
+    for label,data in pairs(AnimateQueue) do
+        data.elapsed = data.elapsed + dt
+        local t = math.min(1, data.elapsed/data.duration)
+        local val = data.current + (data.target - data.current) * easeOutQuad(t)
+        if label and label.Set then
+            label:Set(data.prefix..abbreviate(math.floor(val)).." "..data.emoji)
+        end
+        if t >= 1 then
+            data.current = data.target
+            AnimateQueue[label] = nil
+        end
+    end
+end)
+
+-------------------------------------------------
+-- MAPS
+-------------------------------------------------
+local ClassMap = {
+    [1]="Fighter 🥊",[2]="Shinobi 🌀",[3]="Pirate ☠️",[4]="Ghoul 👻",[5]="Hero 🦸",
+    [6]="Reaper ☠️",[7]="Saiyan 💥",[8]="Sin 😈",[9]="Magi 🧙",[10]="Akuma 😡",
+    [11]="Yonko 🏴‍☠️",[12]="Gorosei 🧓",[13]="Overlord 👑",[14]="Hokage 🦊",
+    [15]="Kaioshin 👼",[16]="Sage 🕊️",[17]="Espada ⚔️",[18]="Shinigami 👹",
+    [19]="Hashira ⚔️",[20]="Hakaishin 💀",[21]="Otsutsuki 🌌",
+    [22]="Pirate King 🏴‍☠️👑",[23]="Kishin 👿",[24]="Angel 😇",
+    [25]="Demon King 👹",[26]="Ultra Instinct ✨",[27]="Upper Moon 🌙"
+}
+
+local StatMap = {
+    ["1"]={"Strength","💪"},["2"]={"Durability","🛡️"},["3"]={"Chakra","🌀"},
+    ["4"]={"Sword","🗡️"},["5"]={"Agility","☁️"},["6"]={"Speed","💨"},["Kill"]={"Kill","🔪"},
+}
+
+-------------------------------------------------
+-- ZONE POSITIONS
+-------------------------------------------------
+local ZonePositions = {
+    Strength = {
+        ["100"] = Vector3.new(-1.902,65.000,127.968),
+        ["10K"] = Vector3.new(1341.747,153.963,-137.436),
+        ["100K"] = Vector3.new(-1238.425,59.000,476.596),
+        ["1M"] = Vector3.new(-915.294,83.520,166.473),
+        ["10M"] = Vector3.new(-2305.319,617.492,527.046),
+        ["100M"] = Vector3.new(-39.747,64.289,-1307.120),
+        ["1B"] = Vector3.new(718.492,151.251,924.886),
+        ["100B"] = Vector3.new(1846.949,141.200,92.585),
+        ["5T"] = Vector3.new(626.400,696.623,429.320),
+        ["250T"] = Vector3.new(4340.031,60.000,-631.732),
+        ["150Qd"] = Vector3.new(812.393,207.000,-1001.867),
+        ["25Qn"] = Vector3.new(3873.903,136.015,890.458),
+        ["10Sx"] = Vector3.new(3869.009,1110.712,-1254.075),
+    },
+    Durability = {
+        ["100"] = Vector3.new(112.002,56.026,881.742),
+        ["10K"] = Vector3.new(-1606.842,61.615,-541.502),
+        ["100K"] = Vector3.new(-72.535,61.008,2055.987),
+        ["1M"] = Vector3.new(-619.584,179.000,731.073),
+        ["10M"] = Vector3.new(-1119.864,212.630,-949.097),
+        ["100M"] = Vector3.new(-338.338,72.620,-1651.415),
+        ["1B"] = Vector3.new(2495.594,1543.135,-383.322),
+        ["100B"] = Vector3.new(-2678.021,-229.855,358.415),
+        ["5T"] = Vector3.new(2175.640,519.579,571.121),
+        ["250T"] = Vector3.new(1669.455,432.897,-1345.698),
+        ["150Qd"] = Vector3.new(194.019,773.591,-701.855),
+        ["25Qn"] = Vector3.new(2564.930,91.790,1756.254),
+        ["10Sx"] = Vector3.new(1718.871,2305.067,-22.188),
+    },
+    Chakra = {
+        ["100"] = Vector3.new(-6.479,65.000,-119.760),
+        ["10K"] = Vector3.new(1425.668,147.000,-581.487),
+        ["100K"] = Vector3.new(915.292,141.000,783.253),
+        ["1M"] = Vector3.new(1628.384,388.750,591.066),
+        ["10M"] = Vector3.new(336.626,-156.000,-1802.547),
+        ["100M"] = Vector3.new(1027.624,251.000,-630.809),
+        ["1B"] = Vector3.new(3053.817,110.900,1105.384),
+        ["100B"] = Vector3.new(1663.124,556.154,1779.387),
+        ["5T"] = Vector3.new(-6.211,101.133,-480.247),
+        ["250T"] = Vector3.new(-402.687,1252.990,668.177),
+        ["150Qd"] = Vector3.new(-768.222,2792.676,591.147),
+        ["25Qn"] = Vector3.new(3226.973,-440.978,-244.406),
+        ["10Sx"] = Vector3.new(337.880,61.008,1917.442),
+    },
+    Agility = {
+        ["100"] = Vector3.new(41.676,69.183,453.424),
+        ["10K"] = Vector3.new(-424.448,121.923,-78.950),
+        ["100K"] = Vector3.new(3482.918,60.000,130.891),
+        ["5M"] = Vector3.new(4111.682,60.922,844.187),
+    },
+    Speed = {
+        ["100"] = Vector3.new(-109.675,61.000,-508.852),
+        ["10K"] = Vector3.new(-424.448,121.923,-78.950),
+        ["100K"] = Vector3.new(3482.918,60.000,130.891),
+        ["5M"] = Vector3.new(4111.682,60.922,844.187),
+    },
+    Sword = {},
+}
+-------------------------------------------------
+-- INFO TAB
+-------------------------------------------------
+local InfoTab = Window:CreateTab("Info 🛠️")
+
+InfoTab:CreateSection("Update Log 📝")
+InfoTab:CreateParagraph({Title = VERSION, Content = [[
+• Updated Auto Farm section,
+• Added Misc tab,
+• Added Auto Fruit,
+• Improved Performance,
+• Stay tuned for Auto Quests!
+]]})
+
+InfoTab:CreateSection("Discord 💬")
+InfoTab:CreateParagraph({Title = "Dear "..Player.DisplayName..",", Content = [[
+Thank you for using Murzzhub!
+I appreciate every second of you using my script!
+If you have any suggestions, or want to see sneak peeks,
+Join the discord! (None for now srry!)
+]]})
+
+InfoTab:CreateButton({Name = "Join The Discord!", Callback = function() setclipboard("No Discord For Now Sorry :(") end})
+
+-------------------------------------------------
+-- HOME TAB
+-------------------------------------------------
+local HomeTab = Window:CreateTab("Home 🏠")
+HomeTab:CreateSection("Player Data 👤")
+
+local ClassLabel = HomeTab:CreateLabel("Class: ...")
+local PowerLabel = HomeTab:CreateLabel("Total Power: ... ⚡")
+local YenLabel = HomeTab:CreateLabel("Money: ... 💰")
+local ChikaraLabel = HomeTab:CreateLabel("Chikara: ... 💎")
+
+local function bindValue(obj, label, prefix, emoji)
+    if not obj or not label then return end
+    local current = obj.Value
+    local function update()
+        local newVal = obj.Value
+        task.spawn(function() animateNumber(label, current, newVal, prefix, emoji, 0.7) current=newVal end)
+    end
+    update()
+    obj:GetPropertyChangedSignal("Value"):Connect(update)
+end
+
+bindValue(OtherData:FindFirstChild("TotalPower"), PowerLabel, "Total Power: ", "⚡")
+bindValue(OtherData:FindFirstChild("Yen"), YenLabel, "Money: ", "💰")
+bindValue(OtherData:FindFirstChild("Chikara"), ChikaraLabel, "Chikara: ", "💎")
+
+if OtherData:FindFirstChild("Class") then
+    local function update()
+        ClassLabel:Set("Class: "..(ClassMap[OtherData.Class.Value] or "Unknown ❓"))
+    end
+    update()
+    OtherData.Class:GetPropertyChangedSignal("Value"):Connect(update)
+end
+
+-------------------------------------------------
+-- LIVE STATS
+-------------------------------------------------
+HomeTab:CreateSection("Live Stats 📊")
+
+local OrderedStats = {
+    {id="1", name="Strength", emoji="💪"},
+    {id="2", name="Durability", emoji="🛡️"},
+    {id="3", name="Chakra", emoji="🌀"},
+    {id="4", name="Sword", emoji="⚔️"},
+    {id="6", name="Speed", emoji="💨"},
+    {id="5", name="Agility", emoji="☁️"},
+}
+
+for _, data in ipairs(OrderedStats) do
+    local stat = StatsFolder:FindFirstChild(data.id)
+    if stat then
+        local current = stat.Value
+        local label = HomeTab:CreateLabel(data.name..": ... "..data.emoji)
+        local function update()
+            local newVal = stat.Value
+            task.spawn(function() animateNumber(label, current, newVal, data.name..": ", data.emoji, 0.7) current=newVal end)
+        end
+        update()
+        stat:GetPropertyChangedSignal("Value"):Connect(update)
+    end
+end
+
+-------------------------------------------------
+-- QUESTS TAB HELPERS
+-------------------------------------------------
+local QuestsTab = Window:CreateTab("Quests 📜")
+
+local function setupQuest(quest)
+    safeRun(function()
+        local display = quest.Name:gsub("(%a+)(%d+)", "%1 No.%2")
+        QuestsTab:CreateSection(display.." 📜")
+
+        local reqs = quest:FindFirstChild("Requirements")
+        if not reqs then return end
+
+        for _, req in ipairs(reqs:GetChildren() or {}) do
+            if req:IsA("IntValue") or req:IsA("NumberValue") then
+                local name, emoji = StatMap[req.Name] and StatMap[req.Name][1] or req.Name,
+                                    StatMap[req.Name] and StatMap[req.Name][2] or ""
+                local label = QuestsTab:CreateLabel(string.format("0/%s %s %s", abbreviate(req.Value), name, emoji))
+                local current = 0
+
+                local function update()
+                    local progress = 0
+                    if quest:FindFirstChild(req.Name) then
+                        progress = quest[req.Name].Value
+                    elseif quest:FindFirstChild("Progress") and quest.Progress:FindFirstChild(req.Name) then
+                        progress = quest.Progress[req.Name].Value
+                    end
+                    local done = progress >= req.Value
+
+                    task.spawn(function()
+                        local steps = 30
+                        local duration = 0.7
+                        for i = 1, steps do
+                            local t = easeOutQuad(i/steps)
+                            local val = current + (progress - current) * t
+                            label:Set(string.format("%s/%s %s %s%s",
+                                abbreviate(math.floor(val)), abbreviate(req.Value), name, emoji, done and " ✅" or ""))
+                            task.wait(duration/steps)
+                        end
+                        label:Set(string.format("%s/%s %s %s%s",
+                            abbreviate(progress), abbreviate(req.Value), name, emoji, done and " ✅" or ""))
+                        current = progress
+                    end)
+                end
+
+                update()
+
+                if quest:FindFirstChild(req.Name) then
+                    quest[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
+                end
+                if quest:FindFirstChild("Progress") and quest.Progress:FindFirstChild(req.Name) then
+                    quest.Progress[req.Name]:GetPropertyChangedSignal("Value"):Connect(update)
+                end
+            end
+        end
+    end)
+end
+
+-- Setup all quests
+for _, q in ipairs(QuestsFolder:GetChildren() or {}) do
+    if q:IsA("Folder") then setupQuest(q) end
+end
+
+-------------------------------------------------
+-- AUTO FARMS TAB
+-------------------------------------------------
+local AutoTab = Window:CreateTab("Auto Farms 🌾")
+
+-- Auto Train Section
+AutoTab:CreateSection("Auto Train 🏋️")
+local mainClient = Player:WaitForChild("PlayerGui"):WaitForChild("Main"):WaitForChild("MainClient")
+local StatFunctions = require(mainClient:WaitForChild("StatFunctions"))
+local CharacterModule
+repeat CharacterModule = StatFunctions.characterModule task.wait(0.1) until CharacterModule
+
+local GameData = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameData"))
+local AutoStats = {
+    {1,"Strength","💪"},{2,"Durability","🛡️"},{3,"Chakra","🌀"},
+    {4,"Sword","🗡️"},{5,"Agility","☁️"},{6,"Speed","💨"},
+}
+
+local ActiveTrains = {}
+local LastFire = {}
+
+for _,stat in ipairs(AutoStats) do
+    local statID, name, emoji = unpack(stat)
+    AutoTab:CreateToggle({
+        Name = "Train "..name.." "..emoji,
+        CurrentValue = false,
+        Flag = name.."Toggle",
+        Callback = function(val)
+            if val then
+                if ActiveTrains[statID] then return end
+                ActiveTrains[statID] = true
+                LastFire[statID] = 0
+                task.spawn(function()
+                    while ActiveTrains[statID] do
+                        if CharacterModule.states.Dead then task.wait(1)
+                        else
+                            CharacterModule.characterStopped = false
+                            CharacterModule:ResumeCharacter()
+                            StatFunctions.CurrentKey = statID
+                            StatFunctions[statID] = false
+
+                            local cooldown = GameData.Stats[statID].Cooldown or 0.1
+                            local now = tick()
+                            if now - LastFire[statID] >= cooldown then
+                                local success, err = pcall(function()
+                                    ReplicatedStorage.Remotes.RemoteEvent:FireServer("Train", statID)
+                                end)
+                                if success then log("TrainStat fired for "..name) else log("TrainStat error: "..tostring(err)) end
+                                LastFire[statID] = tick()
+                            end
+                            task.wait(0.05)
+                        end
+                    end
+                    ActiveTrains[statID] = nil
+                end)
+            else ActiveTrains[statID] = false end
+        end
+    })
+end
+
+-- Auto Chikara Section
+AutoTab:CreateSection("Auto Resource ⚠️ | AUTOCLICKER NEEDED")
+local AutoChikaraActive = false
+
+AutoTab:CreateToggle({
+    Name = "Collect Chikara 💎",
+    CurrentValue = false,
+    Flag = "AutoChikaraToggle",
+    Callback = function(val)
+        AutoChikaraActive = val
+        if val then
+            task.spawn(function()
+                local lastCollected = {}
+                while AutoChikaraActive do
+                    local cratesFolder = workspace:FindFirstChild("Scriptable") and workspace.Scriptable:FindFirstChild("ChikaraBoxes")
+                    if cratesFolder then
+                        local crates = cratesFolder:GetChildren()
+                        local hasCollected = false
+                        for _, crate in ipairs(crates) do
+                            if not AutoChikaraActive then break end
+                            local clickBox = crate:FindFirstChild("ClickBox")
+                            if clickBox then
+                                local clickDetector = clickBox:FindFirstChildWhichIsA("ClickDetector")
+                                local now = tick()
+                                if clickDetector and (not lastCollected[crate] or now - lastCollected[crate] >= 10) then
+                                    if Player.Character and Player.Character.PrimaryPart then
+                                        Player.Character:SetPrimaryPartCFrame(crate.CFrame + Vector3.new(0,3,0))
+                                    end
+                                    task.wait(0.1)
+                                    pcall(function() clickDetector:FireClick(Player) end)
+                                    lastCollected[crate] = tick()
+                                    hasCollected = true
+                                    log("[AutoChikara] Collected crate")
+                                    task.wait(10)
+                                end
+                            end
+                        end
+                        if not hasCollected then task.wait(1) end
+                    else task.wait(1) end
+                end
+                log("Auto Chikara OFF")
+            end)
+        else log("Auto Chikara OFF") end
+    end
+})
+
+-------------------------------------------------
+-- AUTO FRUITS SECTION (SAFE)
+-------------------------------------------------
+local selectedFruits = {}        -- always table
+local farmFruitsToggle = false
+local notifiedNoFruits = false
+
+local function getHRP()
+    local char = Player.Character
+    return char and char:FindFirstChild("HumanoidRootPart")
+end
+
+-- helper: strip emoji + extra text
+local function cleanName(name)
+    return name:gsub("[%z\1-\127\194-\244][\128-\191]*", ""):gsub("%s+", " "):lower()
+end
+
+-- DROPDOWN: SELECT FRUITS
+local SelectFruitsDropdown = AutoTab:CreateDropdown({
+    Name = "Select Fruits 🍎",
+    Options = {
+        "Rubber Fruit 👊",
+        "Thunder Fruit ⚡",
+        "Dark Fruit 🌑",
+        "Quake Fruit 🌊",
+        "Explosive Fruit 💥"
+    },
+    CurrentOption = {},
+    MultipleOptions = true,
+    Flag = "SelectedFruits",
+    Callback = function(options)
+        selectedFruits = options or {}
+        notifiedNoFruits = false
+    end
+})
+
+-- TOGGLE: FARM FRUITS
+local FarmFruitsToggle = AutoTab:CreateToggle({
+    Name = "Farm Fruits 🧺",
+    Flag = "FarmFruits",
+    CurrentValue = false,
+    Callback = function(state)
+        farmFruitsToggle = state
+        notifiedNoFruits = false
+
+        if state and not next(selectedFruits) then
+            Rayfield:Notify({
+                Title = "Auto Farms 🌾 → Fruits 🧺",
+                Content = "You haven't selected any fruits yet!",
+                Duration = 5,
+                Image = "bell-ring"
+            })
+            farmFruitsToggle = false
+        end
+    end
+})
+
+-- AUTO FRUITS LOOP
+task.spawn(function()
+    while true do
+        task.wait(0.5)
+
+        if not farmFruitsToggle then continue end
+
+        local hrp = getHRP()
+        if not hrp or not next(selectedFruits) then continue end
+
+        local fruitFolder =
+            workspace:FindFirstChild("Scriptable")
+            and workspace.Scriptable:FindFirstChild("Fruits")
+
+        if not fruitFolder then continue end
+
+        local foundFruit = nil
+
+        -- find matching fruit (emoji-safe)
+        for _, fruit in ipairs(fruitFolder:GetChildren()) do
+            local fruitName = cleanName(fruit.Name)
+            for _, selected in ipairs(selectedFruits) do
+                local selectedName = cleanName(selected)
+                if fruitName:find(selectedName, 1, true) then
+                    foundFruit = fruit
+                    break
+                end
+            end
+            if foundFruit then break end
+        end
+
+        if foundFruit then
+            notifiedNoFruits = false
+            local targetCFrame = foundFruit:IsA("BasePart") and foundFruit.CFrame or foundFruit:GetPivot()
+            if targetCFrame and hrp then
+                hrp.CFrame = targetCFrame * CFrame.new(0, 3, 0)
+            else
+                Rayfield:Notify({
+                    Title = "Auto Farms 🌾 → Fruits 🧺",
+                    Content = "Fruit found, but cannot get its position.",
+                    Duration = 5,
+                    Image = "bell-ring"
+                })
+            end
+        else
+            if not notifiedNoFruits then
+                notifiedNoFruits = true
+                Rayfield:Notify({
+                    Title = "Auto Farms 🌾 → Fruits 🧺",
+                    Content = "No available fruits from your selection.",
+                    Duration = 5,
+                    Image = "bell-ring"
+                })
+            end
+        end
+    end
+end)
+
+-------------------------------------------------
+-- TELEPORTS TAB
+-------------------------------------------------
+local TeleportsTab = Window:CreateTab("Teleports 📍")
+local function getCharacter() return Player.Character or Player.CharacterAdded:Wait() end
+local function teleportTo(position)
+    local char = getCharacter()
+    if char and char.PrimaryPart then
+        char:SetPrimaryPartCFrame(CFrame.new(position + Vector3.new(0,5,0)))
+    end
+end
+
+local function formatNumber(n)
+    local absN = math.abs(n)
+    if absN >= 1e21 then return string.format("%.0fSx", n/1e21)
+    elseif absN >= 1e18 then return string.format("%.0fQn", n/1e18)
+    elseif absN >= 1e15 then return string.format("%.0fQd", n/1e15)
+    elseif absN >= 1e12 then return string.format("%.0fT", n/1e12)
+    elseif absN >= 1e9 then return string.format("%.0fB", n/1e9)
+    elseif absN >= 1e6 then return string.format("%.0fM", n/1e6)
+    elseif absN >= 1e3 then return string.format("%.0fK", n/1e3)
+    else return tostring(n)
+    end
+end
+
+-- Stats Data
+local StatsData = {
+    {Name="Strength", SectionEmoji="💪", ButtonEmoji="📁", StatId="1", Zones={
+        {100, Vector3.new(-1.902,65.000,127.968)}, {10000, Vector3.new(1341.747,153.963,-137.436)},
+        {100000, Vector3.new(-1238.425,59.000,476.596)}, {1e6, Vector3.new(-915.294,83.520,166.473)},
+        {1e7, Vector3.new(-2305.319,617.492,527.046)}, {1e8, Vector3.new(-39.747,64.289,-1307.120)},
+        {1e9, Vector3.new(718.492,151.251,924.886)}, {1e11, Vector3.new(1846.949,141.200,92.585)},
+        {5e12, Vector3.new(626.400,696.623,429.320)}, {2.5e14, Vector3.new(4340.031,60.000,-631.732)},
+        {1.5e17, Vector3.new(812.393,207.000,-1001.867)}, {2.5e19, Vector3.new(3873.903,136.015,890.458)},
+        {1e22, Vector3.new(3869.009,1110.712,-1254.075)}
+    }},
+    {Name="Durability", SectionEmoji="🛡️", ButtonEmoji="📁", StatId="2", Zones={
+        {100, Vector3.new(112.002,56.026,881.742)}, {10000, Vector3.new(-1606.842,61.615,-541.502)},
+        {100000, Vector3.new(-72.535,61.008,2055.987)}, {1e6, Vector3.new(-619.584,179.000,731.073)},
+        {1e7, Vector3.new(-1119.864,212.630,-949.097)}, {1e8, Vector3.new(-338.338,72.620,-1651.415)},
+        {1e9, Vector3.new(2495.594,1543.135,-383.322)}, {1e11, Vector3.new(-2678.021,-229.855,358.415)},
+        {5e12, Vector3.new(2175.640,519.579,571.121)}, {2.5e14, Vector3.new(1669.455,432.897,-1345.698)},
+        {1.5e17, Vector3.new(194.019,773.591,-701.855)}, {2.5e19, Vector3.new(2564.930,91.790,1756.254)},
+        {1e22, Vector3.new(1718.871,2305.067,-22.188)}
+    }},
+    {Name="Chakra", SectionEmoji="🌀", ButtonEmoji="📁", StatId="3", Zones={
+        {100, Vector3.new(-6.479,65.000,-119.760)}, {10000, Vector3.new(1425.668,147.000,-581.487)},
+        {100000, Vector3.new(915.292,141.000,783.253)}, {1e6, Vector3.new(1628.384,388.750,591.066)},
+        {1e7, Vector3.new(336.626,-156.000,-1802.547)}, {1e8, Vector3.new(1027.624,251.000,-630.809)},
+        {1e9, Vector3.new(3053.817,110.900,1105.384)}, {1e11, Vector3.new(1663.124,556.154,1779.387)},
+        {5e12, Vector3.new(-6.211,101.133,-480.247)}, {2.5e14, Vector3.new(-402.687,1252.990,668.177)},
+        {1.5e17, Vector3.new(-768.222,2792.676,591.147)}, {2.5e19, Vector3.new(3226.973,-440.978,-244.406)},
+        {1e22, Vector3.new(337.880,61.008,1917.442)}
+    }},
+    {Name="Agility", SectionEmoji="☁️", ButtonEmoji="📁", StatId="5", Zones={
+        {100, Vector3.new(41.676,69.183,453.424)}, {10000, Vector3.new(-424.448,121.923,-78.950)},
+        {100000, Vector3.new(3482.918,60.000,130.891)}, {5e6, Vector3.new(4111.682,60.922,844.187)}
+    }},
+    {Name="Speed", SectionEmoji="💨", ButtonEmoji="📁", StatId="6", Zones={
+        {100, Vector3.new(-109.675,61.000,-508.852)}, {10000, Vector3.new(-424.448,121.923,-78.950)},
+        {100000, Vector3.new(3482.918,60.000,130.891)}, {5e6, Vector3.new(4111.682,60.922,844.187)}
+    }},
+}
+
+-- Best Stat Zones Section
+TeleportsTab:CreateSection("Best Stat Zones 📊")
+for _, stat in ipairs(StatsData) do
+    local playerStat = Player.Stats:FindFirstChild(stat.StatId)
+    local currentZone
+    local function updateZone()
+        if playerStat then
+            local value = playerStat.Value
+            currentZone = nil
+            for _, z in ipairs(stat.Zones) do
+                if value >= z[1] then currentZone = z[2] end
+            end
+        end
+    end
+    updateZone()
+    if playerStat then playerStat:GetPropertyChangedSignal("Value"):Connect(updateZone) end
+    TeleportsTab:CreateButton({
+        Name = stat.Name.." "..stat.SectionEmoji,
+        Callback = function() if currentZone then teleportTo(currentZone) end end
+    })
+end
+
+-- Regular Stat Teleports
+for _, stat in ipairs(StatsData) do
+    local section = TeleportsTab:CreateSection(stat.Name.." "..stat.SectionEmoji)
+    for _, zone in ipairs(stat.Zones) do
+        local zoneCFrame = zone[2]  -- capture per-iteration variable
+        local label = formatNumber(zone[1]).." "..stat.Name.." "..stat.ButtonEmoji
+        TeleportsTab:CreateButton({
+            Name = label,
+            Callback = (function(pos)  -- ensure unique CFrame per button
+                return function()
+                    teleportTo(pos)
+                end
+            end)(zoneCFrame)
+        })
+    end
+end
+
+-------------------------------------------------
+-- MISC TAB
+-------------------------------------------------
+local MiscTab = Window:CreateTab("Misc ⚙️") -- ensure tab exists
+
+-- Quality Of Life Section
+MiscTab:CreateSection("Quality Of Life ✨")
+
+-- Save Position Button
+MiscTab:CreateButton({
+    Name = "Save Position 📌",
+    Callback = function()
+        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            _G.SavedPosition = Player.Character.HumanoidRootPart.Position
+            Rayfield:Notify({
+                Title = "Misc ⚙️ -> Quality Of Life ✨",
+                Content = "Position saved successfully!",
+                Duration = 3,
+                Image = "bell-ring"
+            })
+        end
+    end
+})
+
+-- Teleport To Position Button
+MiscTab:CreateButton({
+    Name = "Teleport to Position 📍",
+    Callback = function()
+        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") and _G.SavedPosition then
+            Player.Character.HumanoidRootPart.CFrame = CFrame.new(_G.SavedPosition + Vector3.new(0,5,0))
+            Rayfield:Notify({
+                Title = "Misc ⚙️ -> Quality Of Life ✨",
+                Content = "Teleported to saved position!",
+                Duration = 3,
+                Image = "bell-ring"
+            })
+        else
+            Rayfield:Notify({
+                Title = "Misc ⚙️ -> Quality Of Life ✨",
+                Content = "No saved position found!",
+                Duration = 3,
+                Image = "bell-ring"
+            })
+        end
+    end
+})
+
+-- Spawn At Position Toggle
+local spawnAtPosition = false
+MiscTab:CreateToggle({
+    Name = "Spawn At Position 🚀",
+    CurrentValue = false,
+    Flag = "SpawnAtPosition",
+    Callback = function(state)
+        spawnAtPosition = state
+    end
+})
+
+Player.CharacterAdded:Connect(function(char)
+    if spawnAtPosition and _G.SavedPosition then
+        local hrp = char:WaitForChild("HumanoidRootPart")
+        hrp.CFrame = CFrame.new(_G.SavedPosition + Vector3.new(0,5,0))
+    end
+end)
+
+-------------------------------------------------
+-- CODES SECTIONS (DESCENDING ORDER, NUMBER + NAME + EMOJI)
+-------------------------------------------------
+
+-- =======================
+-- YEN SECTION
+-- =======================
+MiscTab:CreateSection("Yen 💰")
+local YenEmoji = "💵"
+local YenCodes = {
+    {Code="SecretCode", Reward=50000},
+    {Code="10kVisits", Reward=5000},
+    {Code="ChristmasDelay", Reward=5000},
+    {Code="Gullible67", Reward=1},
+}
+
+-- Sort descending
+table.sort(YenCodes, function(a,b) return a.Reward > b.Reward end)
+
+for _, entry in ipairs(YenCodes) do
+    MiscTab:CreateButton({
+        Name = entry.Reward.." Yen "..YenEmoji, -- number + "Yen" + emoji
+        Callback = function()
+            setclipboard(entry.Code)
+            Rayfield:Notify({
+                Title = "Misc ⚙️ -> Yen 💰",
+                Content = "Copied "..entry.Code.." to clipboard!",
+                Duration = 3,
+                Image = "bell-ring"
+            })
+        end
+    })
+end
+
+-- =======================
+-- CHIKARA SECTION
+-- =======================
+MiscTab:CreateSection("Chikara 💍")
+local ChikaraEmoji = "💎"
+local ChikaraCodes = {
+    {Code="Krampus", Reward=500000},
+    {Code="MobsUpdate", Reward=75000},
+    {Code="1WeekAnniversary", Reward=75000},
+    {Code="100Favs", Reward=75000},
+    {Code="SecretCode", Reward=50000},
+    {Code="10kLikes", Reward=50000},
+    {Code="1MVisits", Reward=50000},
+    {Code="FreeChikara3", Reward=10000},
+    {Code="FreeChikara2", Reward=10000},
+    {Code="FreeChikara", Reward=5000},
+}
+
+-- Sort descending
+table.sort(ChikaraCodes, function(a,b) return a.Reward > b.Reward end)
+
+for _, entry in ipairs(ChikaraCodes) do
+    MiscTab:CreateButton({
+        Name = entry.Reward.." Chikara "..ChikaraEmoji, -- number + "Chikara" + emoji
+        Callback = function()
+            setclipboard(entry.Code)
+            Rayfield:Notify({
+                Title = "Misc ⚙️ -> Chikara 💍",
+                Content = "Copied "..entry.Code.." to clipboard!",
+                Duration = 3,
+                Image = "bell-ring"
+            })
+        end
+    })
+end
+
+-- =======================
+-- BOOSTS SECTION
+-- =======================
+MiscTab:CreateSection("Boosts ⚡")
+local BoostEmoji = "⏱️"
+local BoostCodes = {
+    {Code="100CCU", Reward=24*60, Name="1 Day Boost"},      -- 1 Day
+    {Code="100kVisits", Reward=24*60, Name="1 Day Boost"},
+    {Code="400CCU", Reward=24*60, Name="1 Day Boost"},
+    {Code="50Likes", Reward=60, Name="1 Hour Boost"},        -- 1 Hour
+}
+
+-- Sort descending
+table.sort(BoostCodes, function(a,b) return a.Reward > b.Reward end)
+
+for _, entry in ipairs(BoostCodes) do
+    MiscTab:CreateButton({
+        Name = entry.Reward >= 1440 and "1 Day Boost "..BoostEmoji or "1 Hour Boost "..BoostEmoji,
+        Callback = function()
+            setclipboard(entry.Code)
+            Rayfield:Notify({
+                Title = "Misc ⚙️ -> Boosts ⚡",
+                Content = "Copied "..entry.Code.." to clipboard!",
+                Duration = 3,
+                Image = "bell-ring"
+            })
+        end
+    })
+end
+
+MiscTab:CreateSection("Easter Egg 🤫")
+MiscTab:CreateLabel("Thx for 500 script views!")
