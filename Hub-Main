@@ -552,48 +552,6 @@ task.spawn(function()
 end)
 
 -------------------------------------------------
--- MISC TAB
--------------------------------------------------
-local MiscTab = Window:CreateTab("Misc ⚙️")  -- Misc tab with gear emoji
-
--- Quality Of Life Section
-MiscTab:CreateSection("Quality Of Life ✨")
-
--- Save Position Button
-MiscTab:CreateButton({
-    Name = "Save Position 📌",
-    Callback = function()
-        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-            _G.SavedPosition = Player.Character.HumanoidRootPart.Position
-            Rayfield:Notify({
-                Title = "Misc⚙️ | Quality Of Life ✨",
-                Content = "Position saved successfully!",
-                Duration = 3,
-                Image = 4483362458
-            })
-        end
-    end
-})
-
--- Spawn At Position Toggle
-local spawnAtPosition = false
-MiscTab:CreateToggle({
-    Name = "Spawn At Position 🚀",
-    CurrentValue = false,
-    Flag = "SpawnAtPosition",
-    Callback = function(state)
-        spawnAtPosition = state
-        if spawnAtPosition and _G.SavedPosition then
-            local hrp = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
-            if hrp then
-                hrp.CFrame = CFrame.new(_G.SavedPosition + Vector3.new(0,5,0))
-            end
-        end
-    end
-})
-
-
--------------------------------------------------
 -- TELEPORTS TAB
 -------------------------------------------------
 local TeleportsTab = Window:CreateTab("Teleports 📍")
@@ -690,3 +648,59 @@ for _, stat in ipairs(StatsData) do
         })
     end
 end
+
+-------------------------------------------------
+-- MISC TAB
+-------------------------------------------------
+local MiscTab = Window:CreateTab("Misc ⚙️")  -- Misc tab with gear emoji
+
+MiscTab:CreateSection("Quality Of Life ✨")
+
+-- Save Position Button
+MiscTab:CreateButton({
+    Name = "Save Position 📌",
+    Callback = function()
+        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            _G.SavedPosition = Player.Character.HumanoidRootPart.Position
+            Rayfield:Notify({
+                Title = "Quality Of Life",
+                Content = "Position saved successfully!",
+                Duration = 3,
+                Image = 4483362458
+            })
+        end
+    end
+})
+
+-- Spawn At Position Toggle
+local spawnAtPosition = false
+MiscTab:CreateToggle({
+    Name = "Spawn At Position 🚀",
+    CurrentValue = false,
+    Flag = "SpawnAtPosition",
+    Callback = function(state)
+        spawnAtPosition = state
+        -- immediately teleport if toggled on
+        if spawnAtPosition and _G.SavedPosition then
+            local char = Player.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                hrp.CFrame = CFrame.new(_G.SavedPosition + Vector3.new(0,5,0))
+            end
+        end
+    end
+})
+
+-- Continuous handler + Respawn support
+local function teleportLoop()
+    while true do
+        task.wait(0.2)
+        if spawnAtPosition and _G.SavedPosition then
+            local char = Player.Character or Player.CharacterAdded:Wait()
+            local hrp = char:WaitForChild("HumanoidRootPart")
+            hrp.CFrame = CFrame.new(_G.SavedPosition + Vector3.new(0,5,0))
+        end
+    end
+end
+
+task.spawn(teleportLoop)
