@@ -800,3 +800,6 @@ for _, entry in ipairs(BoostCodes) do
         end
     })
 end
+
+MiscTab:CreateSection("Easter Egg 🤫")
+MiscTab:CreateLabel("Thx for 500 views!")
