@@ -712,3 +712,61 @@ Player.CharacterAdded:Connect(function(char)
         hrp.CFrame = CFrame.new(_G.SavedPosition + Vector3.new(0,5,0))
     end
 end)
+
+-- Codes Section Helper
+local CodesTab = MiscTab -- using the same Misc tab
+
+-- Define codes
+local Codes = {
+    Chikara = {
+        {Code="Krampus", Reward="500,000 Chikara"},
+        {Code="SecretCode", Reward="50,000 Chikara"},
+        {Code="10kLikes", Reward="50,000 Chikara"},
+        {Code="1MVisits", Reward="50,000 Chikara"},
+        {Code="5kLikes", Reward="50,000 Chikara"},
+        {Code="MobsUpdate", Reward="75,000 Chikara"},
+        {Code="1WeekAnniversary", Reward="75,000 Chikara"},
+        {Code="FreeChikara3", Reward="10,000 Chikara"},
+        {Code="FreeChikara2", Reward="10,000 Chikara"},
+        {Code="FreeChikara", Reward="5,000 Chikara"},
+    },
+    Yen = {
+        {Code="ChristmasDelay", Reward="5,000 Yen"},
+        {Code="Gullible67", Reward="1 Yen"},
+        {Code="2kLikes", Reward="5,000 Yen"},
+        {Code="10kVisits", Reward="5,000 Yen"},
+        {Code="YenCode", Reward="1,000 Yen"},
+    },
+    Boosts = {
+        {Code="ChristmasTime", Reward="1 Day Boost"},
+        {Code="100kVisits", Reward="1 Day Boost"},
+        {Code="1000Members", Reward="1 Day Boost"},
+        {Code="400CCU", Reward="1 Day Boost"},
+        {Code="100CCU", Reward="1 Day Boost"},
+        {Code="50Likes", Reward="1 Hour Boost"},
+    }
+}
+
+-- Helper function to create code buttons
+local function createCodeButtons(sectionName, codeTable, emoji)
+    CodesTab:CreateSection(sectionName.." "..emoji)
+    for _, entry in ipairs(codeTable) do
+        CodesTab:CreateButton({
+            Name = entry.Reward,
+            Callback = function()
+                setclipboard(entry.Code)
+                Rayfield:Notify({
+                    Title = sectionName.." Codes",
+                    Content = entry.Code.." copied to clipboard!",
+                    Duration = 3,
+                    Image = 4483362458
+                })
+            end
+        })
+    end
+end
+
+-- Create sections
+createCodeButtons("Chikara", Codes.Chikara, "💎")
+createCodeButtons("Yen", Codes.Yen, "💴")
+createCodeButtons("Boosts", Codes.Boosts, "⚡")
