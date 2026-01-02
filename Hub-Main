@@ -445,15 +445,14 @@ AutoTab:CreateToggle({
 })
 
 -------------------------------------------------
--- AUTO FRUITS SECTION
+-- AUTO FRUITS SECTION FIXED
 -------------------------------------------------
-local selectedFruits = {}       -- always a table
+local selectedFruits = {}
 local farmFruitsToggle = false
 local Stock = true
 local notifiedNoFruits = false
-local hrp = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
 
--- DROPDOWN: Select Fruits
+-- DROPDOWN
 local SelectFruitsDropdown = AutoTab:CreateDropdown({
     Name = "Select Fruits 🍎",
     Options = {
@@ -463,16 +462,16 @@ local SelectFruitsDropdown = AutoTab:CreateDropdown({
         "Quake Fruit 🌊",
         "Explosive Fruit 💥"
     },
-    CurrentOption = {},           -- empty default
-    MultipleOptions = true,       -- allow multi-select
+    CurrentOption = {},
+    MultipleOptions = true,
     Flag = "SelectedFruits",
     Callback = function(Options)
-        selectedFruits = Options or {}        -- always a table
-        notifiedNoFruits = false              -- reset notification
+        selectedFruits = Options or {}
+        notifiedNoFruits = false
     end
 })
 
--- TOGGLE: Farm Fruits
+-- TOGGLE
 local FarmFruitsToggle = AutoTab:CreateToggle({
     Name = "Farm Fruits 🧺",
     Flag = "FarmFruits",
@@ -496,58 +495,63 @@ local FarmFruitsToggle = AutoTab:CreateToggle({
 -- AUTO FRUITS LOOP
 task.spawn(function()
     while true do
-        task.wait(0.5) -- safe for performance
+        task.wait(0.5)
 
-        if farmFruitsToggle and hrp and next(selectedFruits) then
+        if farmFruitsToggle and next(selectedFruits) then
+            local char = Player.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            if not hrp then continue end  -- skip if HRP missing
+
             local fruitFolder = workspace:FindFirstChild("Scriptable") and workspace.Scriptable:FindFirstChild("Fruits")
-            if fruitFolder then
-                local foundFruit = nil
+            if not fruitFolder then continue end
 
-                -- find first matching fruit (ignores emoji)
-                for _, fruit in pairs(fruitFolder:GetChildren()) do
-                    local fruitNameOnly = fruit.Name:gsub(" 👊",""):gsub(" ⚡",""):gsub(" 🌑",""):gsub(" 🌊",""):gsub(" 💥","")
-                    for _, selected in ipairs(selectedFruits) do
-                        local selectedNameOnly = selected:gsub(" 👊",""):gsub(" ⚡",""):gsub(" 🌑",""):gsub(" 🌊",""):gsub(" 💥","")
-                        if fruitNameOnly == selectedNameOnly then
-                            foundFruit = fruit
-                            break
-                        end
+            local foundFruit = nil
+
+            for _, fruit in pairs(fruitFolder:GetChildren()) do
+                local fruitNameOnly = fruit.Name:gsub(" 👊",""):gsub(" ⚡",""):gsub(" 🌑",""):gsub(" 🌊",""):gsub(" 💥","")
+                for _, selected in ipairs(selectedFruits) do
+                    local selectedNameOnly = selected:gsub(" 👊",""):gsub(" ⚡",""):gsub(" 🌑",""):gsub(" 🌊",""):gsub(" 💥","")
+                    if fruitNameOnly == selectedNameOnly then
+                        foundFruit = fruit
+                        break
                     end
-                    if foundFruit then break end
+                end
+                if foundFruit then break end
+            end
+
+            if foundFruit then
+                Stock = true
+                notifiedNoFruits = false
+
+                local targetCFrame
+                if foundFruit:IsA("BasePart") then
+                    targetCFrame = foundFruit.CFrame
+                elseif foundFruit:IsA("Model") then
+                    targetCFrame = foundFruit.PrimaryPart and foundFruit.PrimaryPart.CFrame
+                        or foundFruit:FindFirstChildWhichIsA("BasePart") and foundFruit:FindFirstChildWhichIsA("BasePart").CFrame
                 end
 
-                -- handle Stock & notifications
-                if foundFruit then
-                    Stock = true
-                    notifiedNoFruits = false
-
-                    -- determine CFrame safely
-                    local targetCFrame = nil
-
-                    if foundFruit:IsA("BasePart") then
-                        targetCFrame = foundFruit.CFrame
-                    elseif foundFruit:IsA("Model") and foundFruit.PrimaryPart then
-                        targetCFrame = foundFruit.PrimaryPart.CFrame
-                    elseif foundFruit:FindFirstChildWhichIsA("BasePart") then
-                        targetCFrame = foundFruit:FindFirstChildWhichIsA("BasePart").CFrame
-                    end
-
-                    -- teleport player safely
-                    if targetCFrame then
-                        hrp.CFrame = targetCFrame + Vector3.new(0,3,0)
-                    end
-
+                if targetCFrame then
+                    hrp.CFrame = targetCFrame + Vector3.new(0,3,0)
                 else
-                    Stock = false
-                    if not notifiedNoFruits then
-                        notifiedNoFruits = true
-                        Rayfield:Notify({
-                            Title = "Auto Farms 🌾 -> Farm Fruits 🧺",
-                            Content = "There currently isn't any available fruits of your selection. Sorry!",
-                            Duration = 5,
-                            Image = "bell-ring"
-                        })
-                    end
+                    Rayfield:Notify({
+                        Title = "Auto Fruits",
+                        Content = "Found fruit, but cannot get CFrame!",
+                        Duration = 5,
+                        Image = "bell-ring"
+                    })
+                end
+
+            else
+                Stock = false
+                if not notifiedNoFruits then
+                    notifiedNoFruits = true
+                    Rayfield:Notify({
+                        Title = "Auto Fruits",
+                        Content = "No available fruits of your selection.",
+                        Duration = 5,
+                        Image = "bell-ring"
+                    })
                 end
             end
         end
