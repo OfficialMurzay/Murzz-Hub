@@ -461,7 +461,7 @@ local SelectFruitsDropdown = AutoTab:CreateDropdown({
         "Thunder Fruit ⚡",
         "Dark Fruit 🌑",
         "Quake Fruit 🌊",
-        "Explosion Fruit 💥"
+        "Explosive Fruit 💥"
     },
     CurrentOption = {},           -- empty default
     MultipleOptions = true,       -- allow multi-select
@@ -503,12 +503,17 @@ task.spawn(function()
             if fruitFolder then
                 local foundFruit = nil
 
-                -- find first matching fruit
+                -- find first matching fruit (ignores emoji)
                 for _, fruit in pairs(fruitFolder:GetChildren()) do
-                    if fruit.Name and table.find(selectedFruits, fruit.Name) then
-                        foundFruit = fruit
-                        break
+                    local fruitNameOnly = fruit.Name:gsub(" 👊",""):gsub(" ⚡",""):gsub(" 🌑",""):gsub(" 🌊",""):gsub(" 💥","")
+                    for _, selected in ipairs(selectedFruits) do
+                        local selectedNameOnly = selected:gsub(" 👊",""):gsub(" ⚡",""):gsub(" 🌑",""):gsub(" 🌊",""):gsub(" 💥","")
+                        if fruitNameOnly == selectedNameOnly then
+                            foundFruit = fruit
+                            break
+                        end
                     end
+                    if foundFruit then break end
                 end
 
                 -- handle Stock & notifications
