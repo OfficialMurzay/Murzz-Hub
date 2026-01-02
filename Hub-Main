@@ -554,13 +554,44 @@ end)
 -------------------------------------------------
 -- MISC TAB
 -------------------------------------------------
-local MiscTab = Window:CreateTab("Misc ⚙️")  -- you can change the emoji if you like
+local MiscTab = Window:CreateTab("Misc ⚙️")  -- Misc tab with gear emoji
 
 -- Quality Of Life Section
 MiscTab:CreateSection("Quality Of Life ✨")
 
--- Codes Section
-MiscTab:CreateSection("Codes 🎮")
+-- Save Position Button
+MiscTab:CreateButton({
+    Name = "Save Position 📌",
+    Callback = function()
+        if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+            _G.SavedPosition = Player.Character.HumanoidRootPart.Position
+            Rayfield:Notify({
+                Title = "Misc⚙️ | Quality Of Life ✨",
+                Content = "Position saved successfully!",
+                Duration = 3,
+                Image = 4483362458
+            })
+        end
+    end
+})
+
+-- Spawn At Position Toggle
+local spawnAtPosition = false
+MiscTab:CreateToggle({
+    Name = "Spawn At Position 🚀",
+    CurrentValue = false,
+    Flag = "SpawnAtPosition",
+    Callback = function(state)
+        spawnAtPosition = state
+        if spawnAtPosition and _G.SavedPosition then
+            local hrp = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                hrp.CFrame = CFrame.new(_G.SavedPosition + Vector3.new(0,5,0))
+            end
+        end
+    end
+})
+
 
 -------------------------------------------------
 -- TELEPORTS TAB
@@ -659,10 +690,3 @@ for _, stat in ipairs(StatsData) do
         })
     end
 end
-
--------------------------------------------------
--- SETTINGS TAB
--------------------------------------------------
-local SettingsTab = Window:CreateTab("Settings ⚙️")
-
-SettingsTab:CreateLabel("None for now, srry!")
