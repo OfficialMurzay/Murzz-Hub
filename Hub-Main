@@ -537,7 +537,6 @@ end)
 -- TELEPORTS TAB
 -------------------------------------------------
 local TeleportsTab = Window:CreateTab("Teleports 📍")
-
 local function getCharacter() return Player.Character or Player.CharacterAdded:Wait() end
 local function teleportTo(position)
     local char = getCharacter()
@@ -559,16 +558,55 @@ local function formatNumber(n)
     end
 end
 
+-- Stats Data
+local StatsData = {
+    {Name="Strength", SectionEmoji="💪", ButtonEmoji="📁", StatId="1", Zones={
+        {100, Vector3.new(-1.902,65.000,127.968)}, {10000, Vector3.new(1341.747,153.963,-137.436)},
+        {100000, Vector3.new(-1238.425,59.000,476.596)}, {1e6, Vector3.new(-915.294,83.520,166.473)},
+        {1e7, Vector3.new(-2305.319,617.492,527.046)}, {1e8, Vector3.new(-39.747,64.289,-1307.120)},
+        {1e9, Vector3.new(718.492,151.251,924.886)}, {1e11, Vector3.new(1846.949,141.200,92.585)},
+        {5e12, Vector3.new(626.400,696.623,429.320)}, {2.5e14, Vector3.new(4340.031,60.000,-631.732)},
+        {1.5e17, Vector3.new(812.393,207.000,-1001.867)}, {2.5e19, Vector3.new(3873.903,136.015,890.458)},
+        {1e22, Vector3.new(3869.009,1110.712,-1254.075)}
+    }},
+    {Name="Durability", SectionEmoji="🛡️", ButtonEmoji="📁", StatId="2", Zones={
+        {100, Vector3.new(112.002,56.026,881.742)}, {10000, Vector3.new(-1606.842,61.615,-541.502)},
+        {100000, Vector3.new(-72.535,61.008,2055.987)}, {1e6, Vector3.new(-619.584,179.000,731.073)},
+        {1e7, Vector3.new(-1119.864,212.630,-949.097)}, {1e8, Vector3.new(-338.338,72.620,-1651.415)},
+        {1e9, Vector3.new(2495.594,1543.135,-383.322)}, {1e11, Vector3.new(-2678.021,-229.855,358.415)},
+        {5e12, Vector3.new(2175.640,519.579,571.121)}, {2.5e14, Vector3.new(1669.455,432.897,-1345.698)},
+        {1.5e17, Vector3.new(194.019,773.591,-701.855)}, {2.5e19, Vector3.new(2564.930,91.790,1756.254)},
+        {1e22, Vector3.new(1718.871,2305.067,-22.188)}
+    }},
+    {Name="Chakra", SectionEmoji="🌀", ButtonEmoji="📁", StatId="3", Zones={
+        {100, Vector3.new(-6.479,65.000,-119.760)}, {10000, Vector3.new(1425.668,147.000,-581.487)},
+        {100000, Vector3.new(915.292,141.000,783.253)}, {1e6, Vector3.new(1628.384,388.750,591.066)},
+        {1e7, Vector3.new(336.626,-156.000,-1802.547)}, {1e8, Vector3.new(1027.624,251.000,-630.809)},
+        {1e9, Vector3.new(3053.817,110.900,1105.384)}, {1e11, Vector3.new(1663.124,556.154,1779.387)},
+        {5e12, Vector3.new(-6.211,101.133,-480.247)}, {2.5e14, Vector3.new(-402.687,1252.990,668.177)},
+        {1.5e17, Vector3.new(-768.222,2792.676,591.147)}, {2.5e19, Vector3.new(3226.973,-440.978,-244.406)},
+        {1e22, Vector3.new(337.880,61.008,1917.442)}
+    }},
+    {Name="Agility", SectionEmoji="☁️", ButtonEmoji="📁", StatId="5", Zones={
+        {100, Vector3.new(41.676,69.183,453.424)}, {10000, Vector3.new(-424.448,121.923,-78.950)},
+        {100000, Vector3.new(3482.918,60.000,130.891)}, {5e6, Vector3.new(4111.682,60.922,844.187)}
+    }},
+    {Name="Speed", SectionEmoji="💨", ButtonEmoji="📁", StatId="6", Zones={
+        {100, Vector3.new(-109.675,61.000,-508.852)}, {10000, Vector3.new(-424.448,121.923,-78.950)},
+        {100000, Vector3.new(3482.918,60.000,130.891)}, {5e6, Vector3.new(4111.682,60.922,844.187)}
+    }},
+}
+
 -- Best Stat Zones Section
 TeleportsTab:CreateSection("Best Stat Zones 📊")
-for _, stat in ipairs(AutoStats) do
-    local playerStat = Player.Stats:FindFirstChild(tostring(stat[1]))
+for _, stat in ipairs(StatsData) do
+    local playerStat = Player.Stats:FindFirstChild(stat.StatId)
     local currentZone
     local function updateZone()
         if playerStat then
             local value = playerStat.Value
             currentZone = nil
-            for _, z in ipairs(ZonePositions[stat[2]] or {}) do
+            for _, z in ipairs(stat.Zones) do
                 if value >= z[1] then currentZone = z[2] end
             end
         end
@@ -576,19 +614,24 @@ for _, stat in ipairs(AutoStats) do
     updateZone()
     if playerStat then playerStat:GetPropertyChangedSignal("Value"):Connect(updateZone) end
     TeleportsTab:CreateButton({
-        Name = stat[2].." "..stat[3],
+        Name = stat.Name.." "..stat.SectionEmoji,
         Callback = function() if currentZone then teleportTo(currentZone) end end
     })
 end
 
 -- Regular Stat Teleports
-for _, stat in ipairs(AutoStats) do
-    local section = TeleportsTab:CreateSection(stat[2].." "..stat[3])
-    for _, z in ipairs(ZonePositions[stat[2]] or {}) do
-        local label = formatNumber(z[1]).." "..stat[2].." 📁"
+for _, stat in ipairs(StatsData) do
+    local section = TeleportsTab:CreateSection(stat.Name.." "..stat.SectionEmoji)
+    for _, zone in ipairs(stat.Zones) do
+        local zoneCFrame = zone[2]  -- capture per-iteration variable
+        local label = formatNumber(zone[1]).." "..stat.Name.." "..stat.ButtonEmoji
         TeleportsTab:CreateButton({
             Name = label,
-            Callback = function() teleportTo(z[2]) end
+            Callback = (function(pos)  -- ensure unique CFrame per button
+                return function()
+                    teleportTo(pos)
+                end
+            end)(zoneCFrame)
         })
     end
 end
