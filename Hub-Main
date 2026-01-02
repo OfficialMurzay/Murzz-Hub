@@ -336,6 +336,8 @@ for _, q in ipairs(QuestsFolder:GetChildren() or {}) do
     if q:IsA("Folder") then setupQuest(q) end
 end
 
+QuestsTab:CreateLabel("Auto Quests in the works, stay tuned!")
+
 -------------------------------------------------
 -- AUTO FARMS TAB
 -------------------------------------------------
@@ -548,6 +550,17 @@ task.spawn(function()
         end
     end
 end)
+
+-------------------------------------------------
+-- MISC TAB
+-------------------------------------------------
+local MiscTab = Window:CreateTab("Misc ⚙️")  -- you can change the emoji if you like
+
+-- Quality Of Life Section
+MiscTab:CreateSection("Quality Of Life ✨")
+
+-- Codes Section
+MiscTab:CreateSection("Codes 🎮")
 
 -------------------------------------------------
 -- TELEPORTS TAB
