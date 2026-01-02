@@ -1,4 +1,4 @@
--- MurzzHub v1.2 Release
+-- MurzzHub v1.05 Release
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara + Auto Quest)
 -- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
 -- Fully optimized for performance (no changes to functionality, UI, text, or behavior)
@@ -662,7 +662,7 @@ MiscTab:CreateButton({
         if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
             _G.SavedPosition = Player.Character.HumanoidRootPart.Position
             Rayfield:Notify({
-                Title = "Misc ⚙️ -> "Quality Of Life ✨",
+                Title = "Misc ⚙️ -> Quality Of Life ✨",
                 Content = "Position saved successfully!",
                 Duration = 3,
                 Image = 4483362458
@@ -678,14 +678,14 @@ MiscTab:CreateButton({
         if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") and _G.SavedPosition then
             Player.Character.HumanoidRootPart.CFrame = CFrame.new(_G.SavedPosition + Vector3.new(0,5,0))
             Rayfield:Notify({
-                Title = "Misc ⚙️ -> "Quality Of Life ✨",
+                Title = "Misc ⚙️ -> Quality Of Life ✨",
                 Content = "Teleported to saved position!",
                 Duration = 3,
                 Image = 4483362458
             })
         else
             Rayfield:Notify({
-                Title = "Misc ⚙️ -> "Quality Of Life ✨",
+                Title = "Misc ⚙️ -> Quality Of Life ✨",
                 Content = "No saved position found!",
                 Duration = 3,
                 Image = 4483362458
