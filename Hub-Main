@@ -486,7 +486,7 @@ local FarmFruitsToggle = AutoTab:CreateToggle({
                 Title = "Auto Fruits",
                 Content = "You haven't selected any fruits yet!",
                 Duration = 5,
-                Image = 4483362458
+                Image = "bell-ring"
             })
             farmFruitsToggle = false
         end
@@ -540,7 +540,7 @@ task.spawn(function()
                             Title = "Auto Farms 🌾 -> Farm Fruits 🧺",
                             Content = "There currently isn't any available fruits of your selection. Sorry!",
                             Duration = 5,
-                            Image = 4483362458
+                            Image = "bell-ring"
                         })
                     end
                 end
@@ -665,7 +665,7 @@ MiscTab:CreateButton({
                 Title = "Misc ⚙️ -> Quality Of Life ✨",
                 Content = "Position saved successfully!",
                 Duration = 3,
-                Image = 4483362458
+                Image = "bell-ring"
             })
         end
     end
@@ -681,14 +681,14 @@ MiscTab:CreateButton({
                 Title = "Misc ⚙️ -> Quality Of Life ✨",
                 Content = "Teleported to saved position!",
                 Duration = 3,
-                Image = 4483362458
+                Image = "bell-ring"
             })
         else
             Rayfield:Notify({
                 Title = "Misc ⚙️ -> Quality Of Life ✨",
                 Content = "No saved position found!",
                 Duration = 3,
-                Image = 4483362458
+                Image = "bell-ring"
             })
         end
     end
@@ -738,7 +738,7 @@ for _, entry in ipairs(YenCodes) do
                 Title = "Misc ⚙️ -> Yen 💰",
                 Content = "Copied "..entry.Code.." to clipboard!",
                 Duration = 3,
-                Image = 4483362458
+                Image = "bell-ring"
             })
         end
     })
@@ -771,7 +771,7 @@ for _, entry in ipairs(ChikaraCodes) do
                 Title = "Misc ⚙️ -> Chikara 💍",
                 Content = "Copied "..entry.Code.." to clipboard!",
                 Duration = 3,
-                Image = 4483362458
+                Image = "bell-ring"
             })
         end
     })
@@ -798,7 +798,7 @@ for _, entry in ipairs(BoostCodes) do
                 Title = "Misc ⚙️ -> Boosts ⚡",
                 Content = "Copied "..entry.Code.." to clipboard!",
                 Duration = 3,
-                Image = 4483362458
+                Image = "bell-ring"
             })
         end
     })
