@@ -650,10 +650,8 @@ for _, stat in ipairs(StatsData) do
 end
 
 -------------------------------------------------
--- MISC TAB
+-- Quality Of Life Section
 -------------------------------------------------
-local MiscTab = Window:CreateTab("Misc ⚙️")  -- Misc tab with gear emoji
-
 MiscTab:CreateSection("Quality Of Life ✨")
 
 -- Save Position Button
@@ -680,27 +678,14 @@ MiscTab:CreateToggle({
     Flag = "SpawnAtPosition",
     Callback = function(state)
         spawnAtPosition = state
-        -- immediately teleport if toggled on
-        if spawnAtPosition and _G.SavedPosition then
-            local char = Player.Character
-            local hrp = char and char:FindFirstChild("HumanoidRootPart")
-            if hrp then
-                hrp.CFrame = CFrame.new(_G.SavedPosition + Vector3.new(0,5,0))
-            end
-        end
     end
 })
 
--- Continuous handler + Respawn support
-local function teleportLoop()
-    while true do
-        task.wait(0.2)
-        if spawnAtPosition and _G.SavedPosition then
-            local char = Player.Character or Player.CharacterAdded:Wait()
-            local hrp = char:WaitForChild("HumanoidRootPart")
-            hrp.CFrame = CFrame.new(_G.SavedPosition + Vector3.new(0,5,0))
-        end
+-- Teleport once after respawn
+Player.CharacterAdded:Connect(function(char)
+    if spawnAtPosition and _G.SavedPosition then
+        local hrp = char:WaitForChild("HumanoidRootPart")
+        hrp.CFrame = CFrame.new(_G.SavedPosition + Vector3.new(0,5,0))
     end
-end
+end)
 
-task.spawn(teleportLoop)
