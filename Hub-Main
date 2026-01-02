@@ -1,4 +1,4 @@
--- MurzzHub v1.05 Release
+-- MurzzHub v1.1 Release
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara + Auto Quest)
 -- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
 -- Fully optimized for performance (no changes to functionality, UI, text, or behavior)
@@ -18,7 +18,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.1 Pre-Release"
+local VERSION = "v1.1 Release"
 
 -------------------------------------------------
 -- SAFE DEBUG
@@ -181,7 +181,7 @@ InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({Title = VERSION, Content = [[
 • Updated Auto Farm section,
 • Added Misc tab,
-• Added Auto Teleport,
+• Added Auto Fruit,
 • Imrpoved Performance,
 • Stay tuned for Auto Quests!
 ]]})
@@ -499,7 +499,7 @@ local FarmFruitsToggle = AutoTab:CreateToggle({
 
         if state and not next(selectedFruits) then
             Rayfield:Notify({
-                Title = "Auto Fruits",
+                Title = "Auto Farms 🌾 → Fruits 🧺",
                 Content = "You haven't selected any fruits yet!",
                 Duration = 5,
                 Image = "bell-ring"
@@ -568,7 +568,7 @@ task.spawn(function()
                 hrp.CFrame = targetCFrame * CFrame.new(0, 3, 0)
             else
                 Rayfield:Notify({
-                    Title = "Auto Fruits",
+                    Title = "Auto Farms 🌾 → Fruits 🧺",
                     Content = "Fruit found, but cannot get its position.",
                     Duration = 5,
                     Image = "bell-ring"
