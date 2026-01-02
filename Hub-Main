@@ -650,8 +650,11 @@ for _, stat in ipairs(StatsData) do
 end
 
 -------------------------------------------------
--- Quality Of Life Section
+-- MISC TAB
 -------------------------------------------------
+local MiscTab = Window:CreateTab("Misc 🛠️") -- make sure this exists
+
+-- Quality Of Life Section
 MiscTab:CreateSection("Quality Of Life ✨")
 
 -- Save Position Button
@@ -688,4 +691,3 @@ Player.CharacterAdded:Connect(function(char)
         hrp.CFrame = CFrame.new(_G.SavedPosition + Vector3.new(0,5,0))
     end
 end)
-
