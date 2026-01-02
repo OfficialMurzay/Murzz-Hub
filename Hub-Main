@@ -702,49 +702,101 @@ Player.CharacterAdded:Connect(function(char)
 end)
 
 -------------------------------------------------
--- CODES SECTION
+-- CODES SECTIONS (DESCENDING ORDER)
 -------------------------------------------------
-local function createCodeButtons(sectionName, codeTable, emoji)
-    MiscTab:CreateSection(sectionName)
-    for _, entry in ipairs(codeTable) do
-        MiscTab:CreateButton({
-            Name = entry.Reward.." "..emoji,
-            Callback = function()
-                setclipboard(entry.Code)
-                Rayfield:Notify({
-                    Title = "Misc ⚙️ -> "..sectionName,
-                    Content = "Copied "..entry.Code.." to clipboard!",
-                    Duration = 3,
-                    Image = "bell-ring"
-                })
-            end
-        })
-    end
+
+-- =======================
+-- YEN SECTION
+-- =======================
+MiscTab:CreateSection("Yen 💰")
+local YenEmoji = "💵"
+local YenCodes = {
+    {Code="SecretCode", Reward=50000},
+    {Code="10kVisits", Reward=5000},
+    {Code="ChristmasDelay", Reward=5000},
+    {Code="Gullible67", Reward=1},
+}
+
+-- Sort descending
+table.sort(YenCodes, function(a,b) return a.Reward > b.Reward end)
+
+for _, entry in ipairs(YenCodes) do
+    MiscTab:CreateButton({
+        Name = string.format("%s Yen %s", entry.Reward, YenEmoji),
+        Callback = function()
+            setclipboard(entry.Code)
+            Rayfield:Notify({
+                Title = "Misc ⚙️ -> Yen 💰",
+                Content = "Copied "..entry.Code.." to clipboard!",
+                Duration = 3,
+                Image = "bell-ring"
+            })
+        end
+    })
 end
 
-createCodeButtons("Yen 💰", {
-    {Code="SecretCode", Reward="50,000 Yen"},
-    {Code="10kVisits", Reward="5,000 Yen"},
-    {Code="ChristmasDelay", Reward="5,000 Yen"},
-    {Code="Gullible67", Reward="1 Yen"},
-}, "💵")
+-- =======================
+-- CHIKARA SECTION
+-- =======================
+MiscTab:CreateSection("Chikara 💍")
+local ChikaraEmoji = "💎"
+local ChikaraCodes = {
+    {Code="Krampus", Reward=500000},
+    {Code="MobsUpdate", Reward=75000},
+    {Code="1WeekAnniversary", Reward=75000},
+    {Code="100Favs", Reward=75000},
+    {Code="SecretCode", Reward=50000},
+    {Code="10kLikes", Reward=50000},
+    {Code="1MVisits", Reward=50000},
+    {Code="FreeChikara3", Reward=10000},
+    {Code="FreeChikara2", Reward=10000},
+    {Code="FreeChikara", Reward=5000},
+}
 
-createCodeButtons("Chikara 💍", {
-    {Code="Krampus", Reward="500,000 Chikara"},
-    {Code="SecretCode", Reward="50,000 Chikara"},
-    {Code="10kLikes", Reward="50,000 Chikara"},
-    {Code="1MVisits", Reward="50,000 Chikara"},
-    {Code="MobsUpdate", Reward="75,000 Chikara"},
-    {Code="1WeekAnniversary", Reward="75,000 Chikara"},
-    {Code="100Favs", Reward="75,000 Chikara"},
-    {Code="FreeChikara3", Reward="10,000 Chikara"},
-    {Code="FreeChikara2", Reward="10,000 Chikara"},
-    {Code="FreeChikara", Reward="5,000 Chikara"},
-}, "💎")
+table.sort(ChikaraCodes, function(a,b) return a.Reward > b.Reward end)
 
-createCodeButtons("Boosts ⚡", {
-    {Code="100CCU", Reward="1 Day Boost"},
-    {Code="100kVisits", Reward="1 Day Boost"},
-    {Code="400CCU", Reward="1 Day Boost"},
-    {Code="50Likes", Reward="1 Hour Boost"},
-}, "⏱️")
+for _, entry in ipairs(ChikaraCodes) do
+    MiscTab:CreateButton({
+        Name = entry.Reward.." "..ChikaraEmoji,
+        Callback = function()
+            setclipboard(entry.Code)
+            Rayfield:Notify({
+                Title = "Misc ⚙️ -> Chikara 💍",
+                Content = "Copied "..entry.Code.." to clipboard!",
+                Duration = 3,
+                Image = "bell-ring"
+            })
+        end
+    })
+end
+
+-- =======================
+-- BOOSTS SECTION
+-- =======================
+MiscTab:CreateSection("Boosts ⚡")
+local BoostEmoji = "⏱️"
+local BoostCodes = {
+    {Code="100CCU", Reward=24*60},      -- 1 Day in minutes
+    {Code="100kVisits", Reward=24*60},
+    {Code="400CCU", Reward=24*60},
+    {Code="50Likes", Reward=60},        -- 1 Hour
+}
+
+-- Sort descending
+table.sort(BoostCodes, function(a,b) return a.Reward > b.Reward end)
+
+for _, entry in ipairs(BoostCodes) do
+    local durationStr = entry.Reward >= 1440 and "1 Day Boost" or "1 Hour Boost"
+    MiscTab:CreateButton({
+        Name = durationStr.." "..BoostEmoji,
+        Callback = function()
+            setclipboard(entry.Code)
+            Rayfield:Notify({
+                Title = "Misc ⚙️ -> Boosts ⚡",
+                Content = "Copied "..entry.Code.." to clipboard!",
+                Duration = 3,
+                Image = "bell-ring"
+            })
+        end
+    })
+end
