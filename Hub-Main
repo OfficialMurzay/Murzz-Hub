@@ -722,7 +722,7 @@ table.sort(YenCodes, function(a,b) return a.Reward > b.Reward end)
 
 for _, entry in ipairs(YenCodes) do
     MiscTab:CreateButton({
-        Name = string.format("%s Yen %s", entry.Reward, YenEmoji),
+        Name = entry.Reward.." "..YenEmoji,
         Callback = function()
             setclipboard(entry.Code)
             Rayfield:Notify({
@@ -753,11 +753,12 @@ local ChikaraCodes = {
     {Code="FreeChikara", Reward=5000},
 }
 
+-- Sort descending
 table.sort(ChikaraCodes, function(a,b) return a.Reward > b.Reward end)
 
 for _, entry in ipairs(ChikaraCodes) do
     MiscTab:CreateButton({
-        Name = entry.Reward.." "..ChikaraEmoji,
+        Name = entry.Reward.." Chikara "..ChikaraEmoji, -- number + "Chikara" + emoji
         Callback = function()
             setclipboard(entry.Code)
             Rayfield:Notify({
@@ -800,3 +801,4 @@ for _, entry in ipairs(BoostCodes) do
         end
     })
 end
+
