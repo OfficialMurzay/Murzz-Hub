@@ -445,14 +445,29 @@ AutoTab:CreateToggle({
 })
 
 -------------------------------------------------
--- AUTO FRUITS SECTION FIXED
+-- AUTO FRUITS SECTION (FIXED + SAFE)
 -------------------------------------------------
-local selectedFruits = {}
+
+local selectedFruits = {}        -- always table
 local farmFruitsToggle = false
-local Stock = true
 local notifiedNoFruits = false
 
--- DROPDOWN
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+
+local function getHRP()
+    local char = Player.Character
+    return char and char:FindFirstChild("HumanoidRootPart")
+end
+
+-- helper: strip emoji + extra text
+local function cleanName(name)
+    return name:gsub("[%z\1-\127\194-\244][\128-\191]*", ""):gsub("%s+", " "):lower()
+end
+
+-------------------------------------------------
+-- DROPDOWN: SELECT FRUITS
+-------------------------------------------------
 local SelectFruitsDropdown = AutoTab:CreateDropdown({
     Name = "Select Fruits 🍎",
     Options = {
@@ -465,13 +480,15 @@ local SelectFruitsDropdown = AutoTab:CreateDropdown({
     CurrentOption = {},
     MultipleOptions = true,
     Flag = "SelectedFruits",
-    Callback = function(Options)
-        selectedFruits = Options or {}
+    Callback = function(options)
+        selectedFruits = options or {}
         notifiedNoFruits = false
     end
 })
 
--- TOGGLE
+-------------------------------------------------
+-- TOGGLE: FARM FRUITS
+-------------------------------------------------
 local FarmFruitsToggle = AutoTab:CreateToggle({
     Name = "Farm Fruits 🧺",
     Flag = "FarmFruits",
@@ -480,7 +497,7 @@ local FarmFruitsToggle = AutoTab:CreateToggle({
         farmFruitsToggle = state
         notifiedNoFruits = false
 
-        if not next(selectedFruits) then
+        if state and not next(selectedFruits) then
             Rayfield:Notify({
                 Title = "Auto Fruits",
                 Content = "You haven't selected any fruits yet!",
@@ -492,67 +509,80 @@ local FarmFruitsToggle = AutoTab:CreateToggle({
     end
 })
 
+-------------------------------------------------
 -- AUTO FRUITS LOOP
+-------------------------------------------------
 task.spawn(function()
     while true do
         task.wait(0.5)
 
-        if farmFruitsToggle and next(selectedFruits) then
-            local char = Player.Character
-            local hrp = char and char:FindFirstChild("HumanoidRootPart")
-            if not hrp then continue end  -- skip if HRP missing
+        if not farmFruitsToggle then
+            continue
+        end
 
-            local fruitFolder = workspace:FindFirstChild("Scriptable") and workspace.Scriptable:FindFirstChild("Fruits")
-            if not fruitFolder then continue end
+        local hrp = getHRP()
+        if not hrp or not next(selectedFruits) then
+            continue
+        end
 
-            local foundFruit = nil
+        local fruitFolder =
+            workspace:FindFirstChild("Scriptable")
+            and workspace.Scriptable:FindFirstChild("Fruits")
 
-            for _, fruit in pairs(fruitFolder:GetChildren()) do
-                local fruitNameOnly = fruit.Name:gsub(" 👊",""):gsub(" ⚡",""):gsub(" 🌑",""):gsub(" 🌊",""):gsub(" 💥","")
-                for _, selected in ipairs(selectedFruits) do
-                    local selectedNameOnly = selected:gsub(" 👊",""):gsub(" ⚡",""):gsub(" 🌑",""):gsub(" 🌊",""):gsub(" 💥","")
-                    if fruitNameOnly == selectedNameOnly then
-                        foundFruit = fruit
-                        break
-                    end
+        if not fruitFolder then
+            continue
+        end
+
+        local foundFruit = nil
+
+        -- find matching fruit (emoji-safe)
+        for _, fruit in ipairs(fruitFolder:GetChildren()) do
+            local fruitName = cleanName(fruit.Name)
+
+            for _, selected in ipairs(selectedFruits) do
+                local selectedName = cleanName(selected)
+
+                if fruitName:find(selectedName, 1, true) then
+                    foundFruit = fruit
+                    break
                 end
-                if foundFruit then break end
             end
 
             if foundFruit then
-                Stock = true
-                notifiedNoFruits = false
+                break
+            end
+        end
 
-                local targetCFrame
-                if foundFruit:IsA("BasePart") then
-                    targetCFrame = foundFruit.CFrame
-                elseif foundFruit:IsA("Model") then
-                    targetCFrame = foundFruit.PrimaryPart and foundFruit.PrimaryPart.CFrame
-                        or foundFruit:FindFirstChildWhichIsA("BasePart") and foundFruit:FindFirstChildWhichIsA("BasePart").CFrame
-                end
+        if foundFruit then
+            notifiedNoFruits = false
 
-                if targetCFrame then
-                    hrp.CFrame = targetCFrame + Vector3.new(0,3,0)
-                else
-                    Rayfield:Notify({
-                        Title = "Auto Fruits",
-                        Content = "Found fruit, but cannot get CFrame!",
-                        Duration = 5,
-                        Image = "bell-ring"
-                    })
-                end
+            local targetCFrame = nil
 
+            if foundFruit:IsA("BasePart") then
+                targetCFrame = foundFruit.CFrame
+            elseif foundFruit:IsA("Model") then
+                targetCFrame = foundFruit:GetPivot() -- 🔥 FIX
+            end
+
+            if targetCFrame then
+                hrp.CFrame = targetCFrame * CFrame.new(0, 3, 0)
             else
-                Stock = false
-                if not notifiedNoFruits then
-                    notifiedNoFruits = true
-                    Rayfield:Notify({
-                        Title = "Auto Fruits",
-                        Content = "No available fruits of your selection.",
-                        Duration = 5,
-                        Image = "bell-ring"
-                    })
-                end
+                Rayfield:Notify({
+                    Title = "Auto Fruits",
+                    Content = "Fruit found, but cannot get its position.",
+                    Duration = 5,
+                    Image = "bell-ring"
+                })
+            end
+        else
+            if not notifiedNoFruits then
+                notifiedNoFruits = true
+                Rayfield:Notify({
+                    Title = "Auto Farms 🌾 → Fruits 🧺",
+                    Content = "No available fruits from your selection.",
+                    Duration = 5,
+                    Image = "bell-ring"
+                })
             end
         end
     end
