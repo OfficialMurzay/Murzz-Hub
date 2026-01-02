@@ -1,4 +1,4 @@
--- MurzzHub v1.1 Release
+-- MurzzHub v1.2 Release
 -- Full Stable Build (Home + Live Stats + Quests + Auto Train + Auto Chikara + Auto Quest)
 -- Author: Murzay | Animated Numbers + Auto Train + Auto Chikara (auto-click + dynamic cooldown)
 -- Fully optimized for performance (no changes to functionality, UI, text, or behavior)
@@ -18,7 +18,7 @@ local QuestsFolder = Player:WaitForChild("Quests")
 -------------------------------------------------
 -- VERSION
 -------------------------------------------------
-local VERSION = "v1.1 Testing"
+local VERSION = "v1.1 Pre-Release"
 
 -------------------------------------------------
 -- SAFE DEBUG
@@ -179,10 +179,11 @@ local InfoTab = Window:CreateTab("Info 🛠️")
 
 InfoTab:CreateSection("Update Log 📝")
 InfoTab:CreateParagraph({Title = VERSION, Content = [[
-• Added Unit Abbreviations
-• Added Auto Fruit
-• Added Misc Tab
-• Auto Quest coming soon!
+• Updated Auto Farm section,
+• Added Misc tab,
+• Added Auto Teleport,
+• Imrpoved Performance,
+• Stay tuned for Auto Quests!
 ]]})
 
 InfoTab:CreateSection("Discord 💬")
@@ -335,9 +336,6 @@ end
 for _, q in ipairs(QuestsFolder:GetChildren() or {}) do
     if q:IsA("Folder") then setupQuest(q) end
 end
-
-QuestsTab:CreateLabel("Auto Quests in the works, stay tuned!")
-
 -------------------------------------------------
 -- AUTO FARMS TAB
 -------------------------------------------------
@@ -539,7 +537,7 @@ task.spawn(function()
                     if not notifiedNoFruits then
                         notifiedNoFruits = true
                         Rayfield:Notify({
-                            Title = "Auto Fruits",
+                            Title = "Auto Farms 🌾 -> Farm Fruits 🧺",
                             Content = "There currently isn't any available fruits of your selection. Sorry!",
                             Duration = 5,
                             Image = 4483362458
@@ -652,7 +650,7 @@ end
 -------------------------------------------------
 -- MISC TAB
 -------------------------------------------------
-local MiscTab = Window:CreateTab("Misc 🛠️") -- ensure tab exists
+local MiscTab = Window:CreateTab("Misc ⚙️") -- ensure tab exists
 
 -- Quality Of Life Section
 MiscTab:CreateSection("Quality Of Life ✨")
@@ -664,7 +662,7 @@ MiscTab:CreateButton({
         if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
             _G.SavedPosition = Player.Character.HumanoidRootPart.Position
             Rayfield:Notify({
-                Title = "Quality Of Life",
+                Title = "Misc ⚙️ -> "Quality Of Life ✨",
                 Content = "Position saved successfully!",
                 Duration = 3,
                 Image = 4483362458
@@ -680,14 +678,14 @@ MiscTab:CreateButton({
         if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") and _G.SavedPosition then
             Player.Character.HumanoidRootPart.CFrame = CFrame.new(_G.SavedPosition + Vector3.new(0,5,0))
             Rayfield:Notify({
-                Title = "Quality Of Life",
+                Title = "Misc ⚙️ -> "Quality Of Life ✨",
                 Content = "Teleported to saved position!",
                 Duration = 3,
                 Image = 4483362458
             })
         else
             Rayfield:Notify({
-                Title = "Quality Of Life",
+                Title = "Misc ⚙️ -> "Quality Of Life ✨",
                 Content = "No saved position found!",
                 Duration = 3,
                 Image = 4483362458
