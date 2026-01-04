@@ -1,5 +1,4 @@
 --// WaveUI Basic Template
---// Made for Roblox (LocalScript)
 
 -- Load WaveUI
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
