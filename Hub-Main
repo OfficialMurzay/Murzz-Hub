@@ -3,62 +3,62 @@
 -- Load WaveUI
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
--- Create Window
-local Window = WaveUI:CreateWindow({
-    Name = "WaveUI Template",
-    LoadingTitle = "WaveUI",
-    LoadingSubtitle = "Basic Template",
-    ConfigurationSaving = {
+local Window = WindUI:CreateWindow({
+    Title = "My Super Hub",
+    Icon = "door-open", -- lucide icon
+    Author = "by .ftgs and .ftgs",
+    Folder = "MySuperHub",
+    
+    -- ↓ This all is Optional. You can remove it.
+    Size = UDim2.fromOffset(580, 460),
+    MinSize = Vector2.new(560, 350),
+    MaxSize = Vector2.new(850, 560),
+    Transparent = true,
+    Theme = "Dark",
+    Resizable = true,
+    SideBarWidth = 200,
+    BackgroundImageTransparency = 0.42,
+    HideSearchBar = true,
+    ScrollBarEnabled = false,
+    
+    -- ↓ Optional. You can remove it.
+    --[[ You can set 'rbxassetid://' or video to Background.
+        'rbxassetid://':
+            Background = "rbxassetid://", -- rbxassetid
+        Video:
+            Background = "video:YOUR-RAW-LINK-TO-VIDEO.webm", -- video 
+    --]]
+    
+    -- ↓ Optional. You can remove it.
+    User = {
         Enabled = true,
-        FolderName = "WaveUI",
-        FileName = "Template"
+        Anonymous = true,
+        Callback = function()
+            print("clicked")
+        end,
     },
-    Discord = {
-        Enabled = false
+    
+    --       remove this all, 
+    -- !  ↓  if you DON'T need the key system
+    KeySystem = { 
+        -- ↓ Optional. You can remove it.
+        Key = { "1234", "5678" },
+        
+        Note = "Example Key System.",
+        
+        -- ↓ Optional. You can remove it.
+        Thumbnail = {
+            Image = "rbxassetid://",
+            Title = "Thumbnail",
+        },
+        
+        -- ↓ Optional. You can remove it.
+        URL = "YOUR LINK TO GET KEY (Discord, Linkvertise, Pastebin, etc.)",
+        
+        -- ↓ Optional. You can remove it.
+        SaveKey = false, -- automatically save and load the key.
+        
+        -- ↓ Optional. You can remove it.
+        -- API = {} ← Services. Read about it below ↓
     },
-    KeySystem = false
-})
-
--- Create Tab
-local MainTab = Window:CreateTab("Main", "home")
-
--- Section
-local MainSection = MainTab:CreateSection("Main Controls")
-
--- Button
-MainTab:CreateButton({
-    Name = "Test Button",
-    Callback = function()
-        print("Button clicked!")
-    end
-})
-
--- Toggle
-MainTab:CreateToggle({
-    Name = "Test Toggle",
-    CurrentValue = false,
-    Callback = function(Value)
-        print("Toggle is now:", Value)
-    end
-})
-
--- Slider
-MainTab:CreateSlider({
-    Name = "Test Slider",
-    Range = {0, 100},
-    Increment = 1,
-    CurrentValue = 50,
-    Callback = function(Value)
-        print("Slider value:", Value)
-    end
-})
-
--- Dropdown
-MainTab:CreateDropdown({
-    Name = "Test Dropdown",
-    Options = {"Option 1", "Option 2", "Option 3"},
-    CurrentOption = "Option 1",
-    Callback = function(Value)
-        print("Selected:", Value)
-    end
 })
