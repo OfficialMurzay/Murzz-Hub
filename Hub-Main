@@ -1,2 +1,27 @@
 local UI = loadstring(game:HttpGet("https://xan.bar/init.lua"))()
-UI.Demo()  -- Opens a demo window showcasing all elements
+
+local themes = UI.GetThemes()
+UI.SetTheme("Forest")
+
+local Window = UI.New({
+    -- Basic
+    Title = "MurzzHub Premium 👑",
+    Subtitle = "v1.0",
+    
+    -- Appearance
+    Theme = "Forest",
+    Layout = "Default",
+    Size = UDim2.new(0, 620, 0, 480),
+    Logo = UI.Logos.XanBar,
+    ShowLogo = false,
+    WindowButtonStyle = "Default",
+    
+    -- Features
+    ShowUserInfo = true,
+    ShowActiveList = true,
+    ShowSettings = true,
+    
+    -- Config
+    ConfigName = "Base_Config"
+    }
+})
