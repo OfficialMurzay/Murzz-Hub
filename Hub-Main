@@ -1,93 +1,29 @@
---[[
-    PRODUCTION HUB TEMPLATE
-    Copy and customize this for your own hub
-]]
-
 local UI = loadstring(game:HttpGet("https://xan.bar/init.lua"))()
 
--- ═══════════════════════════════════════
--- CONFIGURATION (Edit these!)
--- ═══════════════════════════════════════
-local CONFIG = {
-    HubName = "My Hub",
-    Version = "1.0.0",
-    Logo = UI.Logos.XanBar,           -- Replace with your logo
-    Theme = "Default",                -- Default, Rose, Midnight, etc.
-    DiscordInvite = "discord.gg/xxx",
-    ApiUrl = "https://yoursite.com/api",
-}
--- ═══════════════════════════════════════
--- MAIN WINDOW
--- ═══════════════════════════════════════
-function CreateMainWindow()
-    local Window = UI.New({
-        Title = CONFIG.HubName,
-        Subtitle = "v" .. CONFIG.Version,
-        Theme = CONFIG.Theme,
-        Logo = CONFIG.Logo,
-        ShowLogo = true,
-        ShowActiveList = true,
-        ConfigName = CONFIG.HubName:gsub(" ", "_"):lower()
-    })
+local Window = UI.New({
+    -- Basic
+    Title = "MurzzHub Premium",
+    Subtitle = "v1.0",
     
-    -- Games Tab
-    local Games = Window:AddTab("Games", UI.Icons.Hubs)
-    Games:CreateHubHeader({ Title = "Select a Game" })
+    -- Appearance
+    Theme = "Forest",
+    Layout = "Default",
+    Size = UDim2.new(0, 620, 0, 480),
+    Logo = UI.Logos.XanBar,
+    ShowLogo = true,
+    WindowButtonStyle = "macOS",
     
-    Games:CreateGameCard({
-        Name = "Frontlines",
-        Image = UI.GameIcons.Frontlines,
-        Description = "Aimbot, ESP, Radar",
-        Popular = true,
-        OnLoad = function()
-            Window:Destroy()
-            loadstring(game:HttpGet("YOUR_FRONTLINES_SCRIPT"))()
-        end
-    })
+    -- Features
+    ShowUserInfo = true,
+    ShowActiveList = true,
+    ShowSettings = true,
     
-    Games:CreateGameCard({
-        Name = "Deadline",
-        Image = UI.GameIcons.Deadline,
-        Description = "Silent Aim, Wallhacks",
-        New = true,
-        OnLoad = function()
-            Window:Destroy()
-            loadstring(game:HttpGet("YOUR_DEADLINE_SCRIPT"))()
-        end
-    })
+    -- Config
+    ConfigName = "base_config",
     
-    -- Settings Tab
-    local Settings = Window:AddTab("Settings", UI.Icons.Settings)
-    Settings:AddSection("Appearance")
-    Settings:CreateThemeSelector({ Name = "Theme" })
-    
-    Settings:AddSection("Config")
-    Settings:AddButton("Save Config", function()
-        UI.Save()
-        UI.Success("Saved!", "Config saved successfully")
-    end)
-    Settings:AddButton("Load Config", function()
-        UI.Load()
-        UI.Success("Loaded!", "Config loaded")
-    end)
-    
-    Settings:AddSection("Info")
-    Settings:AddParagraph("License", "Tier: " .. (UserData.tier or "Unknown"))
-    Settings:AddLabel("Expires: " .. (UserData.expires or "Never"))
-    
-    Settings:AddDangerButton("Unload", function()
-        UI.Unload()
-    end)
-    
-    -- Mobile support
-    if UI.IsMobile then
-        UI.FloatingButton({
-            Position = UDim2.new(0, 20, 1, -80),
-            Icon = CONFIG.Logo,
-            Draggable = true,
-            Callback = function() Window:Toggle() end
-        })
-    end
-    
-    UI.Success("Welcome!", "Logged in successfully")
-end
+    -- Hub System (optional)
+    ProfilePage = {
+        ProductName = "MurzzHub Premium",
+        DefaultGame = "Anime Fighting Simulator: Endless"
+    }
+})
